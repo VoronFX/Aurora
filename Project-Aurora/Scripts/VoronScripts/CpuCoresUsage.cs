@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Aurora.Devices;
@@ -24,6 +25,14 @@ namespace Aurora.Scripts.VoronScripts
 			DeviceKeys.NUM_ONE, DeviceKeys.NUM_FOUR, DeviceKeys.NUM_SEVEN, DeviceKeys.NUM_EIGHT,
 			DeviceKeys.NUM_NINE, DeviceKeys.NUM_SIX, DeviceKeys.NUM_THREE, DeviceKeys.NUM_TWO
 		};
+		static readonly PingAnimation Ping = new PingAnimation(5, 12, 1000, new ColorSpectrum(Color.Black, Color.Lime));
+		static readonly DeviceKeys[] PingKeys = {
+			DeviceKeys.F1, DeviceKeys.F2, DeviceKeys.F3, DeviceKeys.F4,
+			DeviceKeys.F5, DeviceKeys.F6, DeviceKeys.F7, DeviceKeys.F8,
+			DeviceKeys.F9, DeviceKeys.F10, DeviceKeys.F11, DeviceKeys.F12
+		};
+
+		private static readonly Pinger PingerTest = new Pinger();
 
 		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
 		{
@@ -67,7 +76,7 @@ namespace Aurora.Scripts.VoronScripts
 							CpuCoresPerformanceCounter.EasedCpuCoresLoad[1] +
 							CpuCoresPerformanceCounter.EasedCpuCoresLoad[2] +
 							CpuCoresPerformanceCounter.EasedCpuCoresLoad[3]) / 4f;
-
+			var time = Utils.Time.GetMillisecondsSinceEpoch();
 			var per = (totalLoad - 95) / 5f;
 			per = Math.Max(0, Math.Min(1, per));
 
@@ -76,8 +85,10 @@ namespace Aurora.Scripts.VoronScripts
 			EffectLayer CPULayer = new EffectLayer(this.ID + " - CPULayer", cx);
 			EffectLayer CPULayerBlink = new EffectLayer(this.ID + " - CPULayerBlink");
 			EffectLayer CPULayerRainbowCircle = new EffectLayer(this.ID + " - CPULayerRainbowCircle");
+			EffectLayer PingAnimation = new EffectLayer(this.ID + " - PingAnimation");
+			EffectLayer PingAnimation2 = new EffectLayer(this.ID + " - PingAnimation2");
 
-			var blink_color = blinking.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % 1000) / 1000.0f);
+			var blink_color = blinking.GetColorAt((time % 1000) / 1000.0f);
 
 			var setLoad = new Action<DeviceKeys, float>((keys, load) =>
 			{
@@ -94,14 +105,174 @@ namespace Aurora.Scripts.VoronScripts
 			ColorSpectrum.RainbowLoop.Shift((float)(-0.005 + -0.02 * totalLoad / 100f));
 			for (int i = 0; i < RainbowCircleKeys.Length; i++)
 			{
-				CPULayerRainbowCircle.Set(RainbowCircleKeys[i], Color.FromArgb((byte)(255* totalLoad / 100f), ColorSpectrum.RainbowLoop.GetColorAt(i, RainbowCircleKeys.Length)));
+				CPULayerRainbowCircle.Set(RainbowCircleKeys[i], Color.FromArgb((byte)(255 * totalLoad / 100f), ColorSpectrum.RainbowLoop.GetColorAt(i, RainbowCircleKeys.Length)));
 			}
+			if (DateTime.Now.Second % 2 == 0)
+			{
+				Ping.Ping();
+			}
+
+			for (int i = 0; i < PingKeys.Length; i++)
+			{
+				PingAnimation.Set(PingKeys[i], Ping.Render(i, time));
+			}
+
+			PingerTest.Render(PingAnimation2, PingKeys, 10);
 
 			layers.Enqueue(CPULayer);
 			layers.Enqueue(CPULayerBlink);
 			layers.Enqueue(CPULayerRainbowCircle);
+			//layers.Enqueue(PingAnimation);
+			layers.Enqueue(PingAnimation2);
 
 			return layers.ToArray();
+		}
+
+		private class PingAnimation
+		{
+			private readonly float pingWidth;
+			private readonly float fieldWidth;
+			private readonly ColorSpectrum spectrum;
+			private long time;
+			private long delay;
+
+			public PingAnimation(float pingWidth, float fieldWidth, int delay, ColorSpectrum spectrum)
+			{
+				this.pingWidth = pingWidth;
+				this.fieldWidth = fieldWidth;
+				this.delay = delay;
+				this.spectrum = spectrum;
+				Ping();
+			}
+
+			public Color Render(float position, long nowtime)
+			{
+				var pingPos = (nowtime - time) * (2 * pingWidth + fieldWidth) / delay;
+				var insidePingPos = position - pingPos + pingWidth + 1;
+				if (insidePingPos < 0 || insidePingPos > pingWidth)
+				{
+					return Color.Transparent;
+				}
+				else
+				{
+					return spectrum.GetColorAt(insidePingPos, pingWidth);
+				}
+			}
+
+			public void Ping()
+			{
+				time = Utils.Time.GetMillisecondsSinceEpoch();
+			}
+		}
+
+		private class Pinger
+		{
+			private enum PingPhase
+			{
+				Delay, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
+			}
+			private static long PingStartedTime;
+			private static long PingEndedTime;
+			private static TaskCompletionSource<bool> pingNext;
+			private static PingReply PingReply;
+			private static PingPhase Phase = PingPhase.Delay;
+			private static ColorSpectrum ColorSpectrum = new ColorSpectrum(Color.Lime, Color.Red);
+			private static float SpectrumWidth = 5;
+			private static long PingWidth;
+
+			public void Render(EffectLayer effectLayer, DeviceKeys[] deviceKeys, int buttonTime)
+			{
+				switch (Phase)
+				{
+					case PingPhase.Delay:
+						var pingNextCopy = pingNext;
+						if (pingNextCopy != null)
+						{
+							pingNext = null;
+							pingNextCopy.SetResult(true);
+						}
+						break;
+					case PingPhase.PingStarted:
+						PingWidth = (Utils.Time.GetMillisecondsSinceEpoch() - PingStartedTime) / buttonTime;
+						DrawPing(effectLayer, deviceKeys, 0);
+						break;
+					case PingPhase.PingEnded:
+						PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
+						if (PingReply == null || PingReply.Status != IPStatus.Success)
+						{
+							Phase = PingPhase.TimeoutErrorAnimation;
+							PingWidth = (Utils.Time.GetMillisecondsSinceEpoch() - PingStartedTime) / buttonTime;
+						}
+						else
+						{
+							Phase = PingPhase.SuccessCompleteAnimation;
+							PingWidth = PingReply.RoundtripTime / buttonTime;
+						}
+						break;
+				}
+
+				if (Phase == PingPhase.SuccessCompleteAnimation)
+				{
+					DrawPing(effectLayer, deviceKeys, (int)(((Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime) * deviceKeys.Length) / 1000));
+					if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 2000)
+						Phase = PingPhase.Delay;
+				}
+				else if (Phase == PingPhase.TimeoutErrorAnimation)
+				{
+					DrawPing(effectLayer, deviceKeys, 0, (byte)Math.Max(0, 1 - (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime) / 1000));
+					for (int i = 0; i < deviceKeys.Length; i++)
+					{
+						effectLayer.Set(deviceKeys[i], Color.FromArgb(255 - (byte)((Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime) * 255 / 1000f), effectLayer.Get(deviceKeys[i])));
+					}
+					if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 2000)
+						Phase = PingPhase.Delay;
+				}
+			}
+
+			private void DrawPing(EffectLayer effectLayer, DeviceKeys[] deviceKeys, int positionShift, byte alfa = 255)
+			{
+				for (int i = positionShift; i < deviceKeys.Length && i < PingWidth + positionShift; i++)
+				{
+					if (i > SpectrumWidth+positionShift)
+						effectLayer.Set(deviceKeys[i], Color.FromArgb(alfa, ColorSpectrum.GetColorAt(1)));
+					else
+						effectLayer.Set(deviceKeys[i], Color.FromArgb(alfa, ColorSpectrum.GetColorAt(i - positionShift, SpectrumWidth)));
+				}
+			}
+
+			private static readonly Task Updater = Task.Run((Action)(async () =>
+			{
+				while (true)
+				{
+					try
+					{
+						var ping = new Ping();
+						while (true)
+						{
+							//var pingReplyTask = ping.SendPingAsync("www.cyberforum.ru");
+							var pingReplyTask = ping.SendPingAsync("8.8.8.8");
+							PingStartedTime = Utils.Time.GetMillisecondsSinceEpoch();
+							Phase = PingPhase.PingStarted;
+							try
+							{
+								PingReply = await pingReplyTask;
+							}
+							catch (Exception e)
+							{
+								PingReply = null;
+							}
+							Phase = PingPhase.PingEnded;
+							pingNext = new TaskCompletionSource<bool>();
+							await pingNext.Task;
+						}
+					}
+					catch (Exception exc)
+					{
+						Global.logger.LogLine("PingCounter exception: " + exc, Logging_Level.Error);
+					}
+					await Task.Delay(500);
+				}
+			}));
 		}
 
 		private static class CpuCoresPerformanceCounter
