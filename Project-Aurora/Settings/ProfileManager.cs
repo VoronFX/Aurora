@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
+using Aurora.Profiles.Desktop;
 
 namespace Aurora.Settings
 {
@@ -219,7 +220,16 @@ namespace Aurora.Settings
                 if (!Directory.Exists(scripts_path))
                     Directory.CreateDirectory(scripts_path);
 
-                foreach (string script in Directory.EnumerateFiles(scripts_path, "*.*"))
+	            var scripts = Directory.EnumerateFiles(scripts_path, "*.*");
+	            if (Name == "Desktop")
+	            {
+					if (!Directory.Exists("Scripts\\VoronScripts"))
+						Directory.CreateDirectory("Scripts\\VoronScripts");
+
+		            scripts = scripts.Concat(Directory.EnumerateFiles("Scripts\\VoronScripts", "*.*"));
+				}
+
+				foreach (string script in scripts)
                 {
                     try
                     {
