@@ -169,8 +169,9 @@ namespace Aurora.EffectsEngine
         public Color GetColorAt(float position, float max_position = 1.0f)
         {
             position = CorrectPosition((position / max_position) + shift);
+	        max_position = 1.0f;
 
-            float closest_lower = 0.0f;
+			float closest_lower = 0.0f;
             float closest_higher = 1.0f;
 
             foreach (KeyValuePair<float, Color> kvp in colors)
