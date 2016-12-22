@@ -959,33 +959,43 @@ namespace Aurora.EffectsEngine
         /// <param name="color">The color to be used</param>
         public void DrawFreeForm(Settings.FreeFormObject freeform, Color color)
         {
-            using (Graphics g = Graphics.FromImage(colormap))
-            {
-                float x_pos = (float)Math.Round((freeform.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width);
-                float y_pos = (float)Math.Round((freeform.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height);
-                float width = (float)Math.Round(freeform.Width * Effects.editor_to_canvas_width);
-                float height = (float)Math.Round(freeform.Height * Effects.editor_to_canvas_height);
-
-                if (width < 3) width = 3;
-                if (height < 3) height = 3;
-
-                Rectangle rect = new Rectangle((int)x_pos, (int)y_pos, (int)width, (int)height);
-
-                PointF rotatePoint = new PointF(x_pos + (width / 2.0f), y_pos + (height / 2.0f));
-
-                Matrix myMatrix = new Matrix();
-                myMatrix.RotateAt(freeform.Angle, rotatePoint, MatrixOrder.Append);
-
-                g.Transform = myMatrix;
-                g.FillRectangle(new SolidBrush(color), rect);
-            }
+			DrawFreeForm(freeform, new SolidBrush(color));
         }
 
-        /// <summary>
-        /// Draws ColorZones on the layer bitmap.
-        /// </summary>
-        /// <param name="colorzones">An array of ColorZones</param>
-        public void DrawColorZones(ColorZone[] colorzones)
+		/// <summary>
+		/// Draws a FreeFormObject on the layer bitmap using a specified color.
+		/// </summary>
+		/// <param name="freeform">The FreeFormObject that will be filled using a brush</param>
+		/// <param name="brush">The brush to be used</param>
+		public void DrawFreeForm(Settings.FreeFormObject freeform, Brush brush)
+		{
+			using (Graphics g = Graphics.FromImage(colormap))
+			{
+				float x_pos = (float)Math.Round((freeform.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width);
+				float y_pos = (float)Math.Round((freeform.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height);
+				float width = (float)Math.Round(freeform.Width * Effects.editor_to_canvas_width);
+				float height = (float)Math.Round(freeform.Height * Effects.editor_to_canvas_height);
+
+				if (width < 3) width = 3;
+				if (height < 3) height = 3;
+
+				Rectangle rect = new Rectangle((int)x_pos, (int)y_pos, (int)width, (int)height);
+
+				PointF rotatePoint = new PointF(x_pos + (width / 2.0f), y_pos + (height / 2.0f));
+
+				Matrix myMatrix = new Matrix();
+				myMatrix.RotateAt(freeform.Angle, rotatePoint, MatrixOrder.Append);
+
+				g.Transform = myMatrix;
+				g.FillRectangle(brush, rect);
+			}
+		}
+
+		/// <summary>
+		/// Draws ColorZones on the layer bitmap.
+		/// </summary>
+		/// <param name="colorzones">An array of ColorZones</param>
+		public void DrawColorZones(ColorZone[] colorzones)
         {
             foreach (ColorZone cz in colorzones.Reverse())
             {
