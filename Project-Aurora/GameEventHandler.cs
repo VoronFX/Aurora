@@ -215,7 +215,7 @@ namespace Aurora
                 else
                 {
                     //UPDATE at 30 ticks per second for rest.
-                    update_timer.Interval = 33;
+                    update_timer.Interval = 10;
                 }
 
                 if (!(Global.Configuration.time_based_dimming_enabled && Global.Configuration.time_based_dimming_affect_games &&
