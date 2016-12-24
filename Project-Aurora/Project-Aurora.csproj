@@ -408,6 +408,9 @@
     <Compile Include="Scripts\VoronScripts\CpuCoresUsage.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Scripts\VoronScripts\PingPulser.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Settings\ColorZone.cs" />
     <Compile Include="Settings\Configuration.cs" />
     <Compile Include="Devices\DeviceManager.cs" />
