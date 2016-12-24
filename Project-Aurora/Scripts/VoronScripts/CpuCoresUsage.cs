@@ -20,7 +20,7 @@ namespace Aurora.Scripts.VoronScripts
 
 		public KeySequence DefaultKeys = new KeySequence();
 
-		static readonly ColorSpectrum loadGradient = new ColorSpectrum(Color.FromArgb(0, Color.Lime), Color.Lime, Color.Yellow, Color.Red);
+		static readonly ColorSpectrum loadGradient = new ColorSpectrum(Color.FromArgb(0, Color.Lime), Color.Lime, Color.Orange, Color.Red);
 		static readonly ColorSpectrum blinking = new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
 		static readonly DeviceKeys[] RainbowCircleKeys = {
 			DeviceKeys.NUM_ONE, DeviceKeys.NUM_FOUR, DeviceKeys.NUM_SEVEN, DeviceKeys.NUM_EIGHT,
@@ -35,6 +35,7 @@ namespace Aurora.Scripts.VoronScripts
 
 		private static readonly PingAnimation2 PingAnimation2Test = new PingAnimation2();
 		private static readonly PingAnimation3 PingAnimation3Test = new PingAnimation3(new Rectangle(60, -3, 495, 35), 500);
+		private static readonly PingAnimation4 PingAnimation4Test = new PingAnimation4(new Rectangle(60, -3, 495, 35), 500);
 
 
 		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
@@ -121,7 +122,7 @@ namespace Aurora.Scripts.VoronScripts
 				//PingAnimation.Set(PingKeys[i], Color.Blue);
 			}
 
-			PingAnimation3Test.Render(PingAnimation2, time);
+			PingAnimation4Test.Render(PingAnimation2, time);
 			//PingAnimation2Test.Render(PingAnimation2, PingKeys, 10);
 
 			layers.Enqueue(CPULayer);
@@ -133,6 +134,159 @@ namespace Aurora.Scripts.VoronScripts
 			return layers.ToArray();
 		}
 
+
+		private class PingAnimation4 : PingAnimation3
+		{
+
+			public PingAnimation4(RectangleF region, int maxPing) : base(region, maxPing) { }
+			protected static PingReply OldReply;
+			protected long finalAnimationTime;
+
+			public override void Render(EffectLayer effectLayer, long currentTime)
+			{
+
+				// layers							|											|
+				// 0.OldReplyPingBar				|==========>								|
+				// 1.PingShadowAnimation			|     >=-
+				// 2.NewBar							|====>
+				// 3.SignalAnimation				|  -=>
+
+				float pingSignalWidth = Region.Width / 12 * 3;
+				float pingShadowWidth = Region.Width / 12 * 3;
+				long finalSuccessAnimationSpeed = 200;
+				long finalFailAnimationSpeed = 1000;
+				long pingAdvance = 200;
+				var barSpectrum = new ColorSpectrum(Color.Lime, Color.Orange, Color.Red);
+				var finalErrorSpectrum = new ColorSpectrum(Color.FromArgb(0, Color.Red), Color.Red,
+					Color.Black, Color.Red, Color.Black);
+
+				float pingPos = -pingShadowWidth;
+				float pingOldBarWidth = 0;
+				float pingNewBarWidth = 0;
+
+				if (OldReply != null && OldReply.Status == IPStatus.Success)
+				{
+					pingOldBarWidth = Region.Width * OldReply.RoundtripTime / MaxPing;
+					//(float)(Region.Width * (Math.Ceiling(OldReply.RoundtripTime * 12d / MaxPing) - 0.2) / 12);
+				}
+
+				if (Phase == PingPhase.Delay)
+				{
+					var pingNextCopy = pingNext;
+					if (pingNextCopy != null && (currentTime - finalAnimationTime > 1500))
+					{
+						pingNext = null;
+						pingNextCopy.SetResult(true);
+					}
+				}
+				else
+				{
+					pingPos =
+							Math.Max(0, currentTime - PingStartedTime - pingAdvance)
+							* (Region.Width + (pingSignalWidth + pingShadowWidth)) / (MaxPing + pingAdvance)
+							- pingShadowWidth;
+					pingNewBarWidth = pingPos;
+				}
+
+				if (Phase == PingPhase.PingEnded)
+				{
+					if (Reply != null && Reply.Status == IPStatus.Success && pingPos >= Region.Width * Reply.RoundtripTime / MaxPing)
+					{
+						finalAnimationTime = currentTime;
+						Phase = PingPhase.SuccessCompleteAnimation;
+					}
+					else if (pingPos >= Region.Width + pingSignalWidth)
+					{
+						finalAnimationTime = currentTime;
+						Phase = PingPhase.TimeoutErrorAnimation;
+					}
+				}
+
+				if (Phase == PingPhase.SuccessCompleteAnimation
+					|| Phase == PingPhase.TimeoutErrorAnimation)
+				{
+					if (currentTime - finalAnimationTime >=
+						(Phase == PingPhase.SuccessCompleteAnimation ?
+						finalSuccessAnimationSpeed : finalFailAnimationSpeed))
+					{
+						OldReply = Reply;
+						Reply = null;
+						Phase = PingPhase.Delay;
+						Render(effectLayer, currentTime);
+						return;
+					}
+
+					if (Phase == PingPhase.SuccessCompleteAnimation)
+					{
+						float pingNewBarFullWidth = Region.Width * Reply.RoundtripTime / MaxPing;
+
+						pingPos =
+							(currentTime - finalAnimationTime) *
+							(Region.Width - pingNewBarFullWidth + pingSignalWidth) / (finalSuccessAnimationSpeed)
+							+ pingNewBarFullWidth;
+
+						pingNewBarWidth = Math.Min(pingPos, pingNewBarFullWidth);
+					}
+				}
+
+				var oldPingBarRect = RectangleF.FromLTRB(
+					Region.Left + pingPos, Region.Top,
+					Region.Left + pingOldBarWidth, Region.Bottom);
+
+				oldPingBarRect.Intersect(Region);
+
+				var newPingBarRect = RectangleF.FromLTRB(
+					Region.Left, Region.Top,
+					Region.Left + Math.Min(pingNewBarWidth, pingPos), Region.Bottom);
+
+				newPingBarRect.Intersect(Region);
+
+				var pingSignalRect = RectangleF.FromLTRB(
+					Region.Left + pingPos - pingSignalWidth, Region.Top,
+					Region.Left + pingPos, Region.Bottom);
+
+				var pingShadowRect = RectangleF.FromLTRB(
+					Region.Left + pingPos, Region.Top,
+					Region.Left + pingPos + pingShadowWidth, Region.Bottom);
+
+				var shadowBrush = new LinearGradientBrush(pingShadowRect,
+					Color.Black, Color.FromArgb(0, Color.Black), LinearGradientMode.Horizontal);
+
+				var signalBrush = new LinearGradientBrush(pingSignalRect,
+					 Color.FromArgb(0, barSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width))),
+					 barSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width)), LinearGradientMode.Horizontal);
+
+				pingShadowRect.Intersect(Region);
+				pingSignalRect.Intersect(Region);
+
+				var pingBarBrush = barSpectrum.ToLinearGradient(Region.Width, Region.Height, Region.Left, Region.Top);
+
+				shadowBrush.WrapMode = WrapMode.TileFlipX;
+				signalBrush.WrapMode = WrapMode.TileFlipX;
+				pingBarBrush.WrapMode = WrapMode.TileFlipX;
+
+				using (var g = effectLayer.GetGraphics())
+				{
+
+					if (oldPingBarRect.Width > 0)
+						g.FillRectangle(pingBarBrush, oldPingBarRect);
+
+					if (pingShadowRect.Width > 0)
+						g.FillRectangle(shadowBrush, pingShadowRect);
+
+					if (newPingBarRect.Width > 0)
+						g.FillRectangle(pingBarBrush, newPingBarRect);
+
+					if (pingSignalRect.Width > 0)
+						g.FillRectangle(signalBrush, pingSignalRect);
+
+					if (Phase == PingPhase.TimeoutErrorAnimation)
+						g.FillRectangle(new SolidBrush(finalErrorSpectrum.GetColorAt(
+							Math.Min(1, (currentTime - finalAnimationTime) / (float)finalFailAnimationSpeed))), Region);
+
+				}
+			}
+		}
 
 		private class PingAnimation3 : Pinger
 		{
@@ -160,29 +314,31 @@ namespace Aurora.Scripts.VoronScripts
 				}
 			}
 
-			private int MaxPing { get; }
+			protected int MaxPing { get; }
 
-			public void Render(EffectLayer effectLayer, long currentTime)
+			public virtual void Render(EffectLayer effectLayer, long currentTime)
 			{
-				if (Phase != PingPhase.Delay && Reply == null)
-					return;
-				
 				switch (Phase)
 				{
 					case PingPhase.Delay:
 						var pingNextCopy = pingNext;
-						if (pingNextCopy != null)
+						if (pingNextCopy != null &&
+						 (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 2000)
+							)
 						{
 							pingNext = null;
 							pingNextCopy.SetResult(true);
 						}
+
+						if (Reply != null)
+							DrawBar(effectLayer, Math.Min(1, Reply.RoundtripTime / (float)MaxPing), 500, 0);
 						break;
 					case PingPhase.PingStarted:
-						DrawBar(effectLayer,  Math.Min(1, (currentTime - PingStartedTime) / (float)MaxPing), currentTime - PingStartedTime, 0);
+						DrawBar(effectLayer, Math.Min(1, Reply.RoundtripTime / (float)MaxPing), currentTime - PingStartedTime, 0);
 						break;
 					case PingPhase.PingEnded:
 						PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
-						DrawBar(effectLayer, Math.Min(1, (PingEndedTime - PingStartedTime) / (float)MaxPing), currentTime - PingStartedTime, 0);
+						DrawBar(effectLayer, Math.Min(1, Reply.RoundtripTime / (float)MaxPing), currentTime - PingStartedTime, 0);
 
 						if (Reply == null || Reply.Status != IPStatus.Success)
 						{
@@ -195,12 +351,12 @@ namespace Aurora.Scripts.VoronScripts
 						break;
 					case PingPhase.SuccessCompleteAnimation:
 
-						DrawBar(effectLayer,  Math.Min(1, Reply.RoundtripTime / (float)MaxPing), currentTime - PingStartedTime, Math.Max(0,currentTime - PingEndedTime));
-						if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 2000)
+						DrawBar(effectLayer, Math.Min(1, Reply.RoundtripTime / (float)MaxPing), currentTime - PingStartedTime, Math.Max(0, currentTime - PingEndedTime));
+						if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 1500)
 							Phase = PingPhase.Delay;
 						break;
 					case PingPhase.TimeoutErrorAnimation:
-						if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 2000)
+						if (Utils.Time.GetMillisecondsSinceEpoch() - PingEndedTime > 1500)
 							Phase = PingPhase.Delay;
 						break;
 
@@ -257,7 +413,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			private void DrawBar(EffectLayer effectLayer, float pingNormalized, long phase1Time, long phase2Time)
 			{
-				float pingPos = (float)(Region.Width * (Math.Ceiling(pingNormalized * 12d)-0.2) / 12 );
+				float pingPos = (float)(Region.Width * (Math.Ceiling(pingNormalized * 12d) - 0.2) / 12);
 				using (var g = effectLayer.GetGraphics())
 				{
 					var pingRect = new RectangleF(Region.Left, Region.Top, pingPos, Region.Height);
@@ -375,7 +531,7 @@ namespace Aurora.Scripts.VoronScripts
 						while (true)
 						{
 							string host;
-							switch (DateTime.Now.Millisecond % 3)
+							switch (DateTime.Now.Millisecond % 4)
 							{
 								case 0:
 									host = "yandex.ru";
@@ -386,12 +542,23 @@ namespace Aurora.Scripts.VoronScripts
 								case 2:
 									host = "www.cyberforum.ru";
 									break;
-								default:
-									host = "google.com";
+								case 3:
+									host = "8.2.6.4";
+									break;
+								case 4:
+									host = "1.2.5.4";
+									break;
+								case 5:
+									host = "44.56.1.48";
+									break;
 
-									//host = "ncsoft.kr";
+								default:
+									//host = "google.com";
+
+									host = "ncsoft.kr";
 									break;
 							}
+							//host = "yandex.ru";
 
 							var pingReplyTask = ping.SendPingAsync(host);
 							PingStartedTime = Utils.Time.GetMillisecondsSinceEpoch();
@@ -404,6 +571,7 @@ namespace Aurora.Scripts.VoronScripts
 							{
 								Reply = null;
 							}
+							PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
 							Phase = PingPhase.PingEnded;
 							pingNext = new TaskCompletionSource<bool>();
 							await pingNext.Task;
@@ -554,7 +722,7 @@ namespace Aurora.Scripts.VoronScripts
 						   //newTargetValues = true;
 
 						   newCpuCoresLoad = new[]
-							  {counters[0].NextValue(), counters[1].NextValue(), counters[2].NextValue(), counters[3].NextValue()};
+								  {counters[0].NextValue(), counters[1].NextValue(), counters[2].NextValue(), counters[3].NextValue()};
 
 						   await Task.Delay(1000);
 					   }
