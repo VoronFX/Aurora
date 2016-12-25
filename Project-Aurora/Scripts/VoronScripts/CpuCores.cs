@@ -39,6 +39,8 @@ namespace Aurora.Scripts.VoronScripts
 		static readonly ColorSpectrum BlinkingSpectrum =
 			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
 
+		private static float BlinkingSpeed = 1000;
+
 		// Each key displays load of one core
 		private static readonly DeviceKeys[] CpuCoresKeys =
 			{ DeviceKeys.G6, DeviceKeys.G7, DeviceKeys.G8, DeviceKeys.G9 };
@@ -61,11 +63,11 @@ namespace Aurora.Scripts.VoronScripts
 			EffectLayer CPULayerBlink = new EffectLayer(ID + " - CPULayerBlink");
 			EffectLayer CPULayerRainbowCircle = new EffectLayer(ID + " - CPULayerRainbowCircle");
 
-			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % 1000) / 1000.0f);
+			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / BlinkingSpeed);
 
 			for (int i = 0; i < CpuCoresKeys.Length; i++)
 			{
-				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(cpuLoad[i + 1], 100f));
+				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(cpuLoad[i + 1] / 100f));
 				CPULayerBlink.Set(CpuCoresKeys[i], Color.FromArgb((byte)(blinkColor.A * Math.Max(0, Math.Min(1,
 					(cpuLoad[i + 1] - 95) / 5))), blinkColor));
 			}
@@ -77,7 +79,7 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				CPULayerRainbowCircle.Set(RainbowCircleKeys[i],
 					Color.FromArgb((byte)(255 * cpuLoad[0] / 100f),
-					RainbowLoop.GetColorAt(i, RainbowCircleKeys.Length)));
+					RainbowLoop.GetColorAt(i / (float)RainbowCircleKeys.Length)));
 			}
 
 			layers.Enqueue(CPULayer);

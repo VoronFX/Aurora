@@ -23,12 +23,14 @@ namespace Aurora.Profiles.Voron
 
 		static readonly CpuCores CpuCores = new CpuCores();
 		static readonly GpuLoad GpuLoad = new GpuLoad();
+		static readonly PingPulser PingPulser = new PingPulser();
 
 		public override void UpdateLights(EffectFrame frame)
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 			frame.AddLayers(CpuCores.UpdateLights(null));
 			frame.AddLayers(GpuLoad.UpdateLights(null));
+			frame.AddLayers(PingPulser.UpdateLights(null));
 			frame.AddLayers(layers.ToArray());
 		}
 

@@ -10,6 +10,7 @@ using Aurora.Devices;
 using Aurora.EffectsEngine;
 using Aurora.Profiles;
 using Aurora.Settings;
+using Corale.Colore.Razer.Keyboard;
 
 namespace Aurora.Scripts.VoronScripts
 {
@@ -23,14 +24,23 @@ namespace Aurora.Scripts.VoronScripts
 		private static readonly PingAnimation PingAnimation1 = new PingAnimation()
 		{
 			Host = "google.com",
+
+			// Use Keys or Region to set area. 
+			// Keys do much more fluid transitions than Region.
+			Keys = new DeviceKeys[]
+			{
+				DeviceKeys.F1, DeviceKeys.F2, DeviceKeys.F3, DeviceKeys.F4, DeviceKeys.F5,  DeviceKeys.F6,
+				DeviceKeys.F7,  DeviceKeys.F8,  DeviceKeys.F9,  DeviceKeys.F10, DeviceKeys.F11, DeviceKeys.F12
+			},
 			Region = new Rectangle(60, -3, 495, 35), // This is for F1-12 on Logitech G910
+
 			MaxPing = 400, // End of region will be considered as MaxPing
 			SuccessDuration = 500,
 			FailDuration = 1000,
 			TimeBetweenPings = 1500,
 
-			PingSignalWidth = 495 / 12 * 2,
-			PingShadowWidth = 495 / 12 * 2,
+			PingSignalWidth = 2f / 12,
+			PingShadowWidth = 2f / 12,
 			PingAdvance = 200, // A reserve time between real ping request and it's animation (ms)
 			BarSpectrum = new ColorSpectrum(Color.Lime, Color.Orange, Color.Red),
 			ErrorSpectrum = new ColorSpectrum(Color.FromArgb(0, Color.Red),
@@ -83,6 +93,8 @@ namespace Aurora.Scripts.VoronScripts
 				set { region = value; }
 			}
 
+			public DeviceKeys[] Keys { get; set; }
+
 			protected static PingReply OldReply;
 			protected long FinalAnimationTime;
 
@@ -97,8 +109,8 @@ namespace Aurora.Scripts.VoronScripts
 				FailDuration = 1000;
 				TimeBetweenPings = 1500;
 
-				PingSignalWidth = Region.Width / 12 * 2;
-				PingShadowWidth = Region.Width / 12 * 2;
+				PingSignalWidth = 2f / 12;
+				PingShadowWidth = 2f / 12;
 				PingAdvance = 200; // A reserve time between real ping request and it's animation (ms)
 				BarSpectrum = new ColorSpectrum(Color.Lime, Color.Orange, Color.Red);
 				ErrorSpectrum = new ColorSpectrum(Color.FromArgb(0, Color.Red),
@@ -119,7 +131,7 @@ namespace Aurora.Scripts.VoronScripts
 
 				if (OldReply != null && OldReply.Status == IPStatus.Success)
 				{
-					pingOldBarWidth = Region.Width * OldReply.RoundtripTime / MaxPing;
+					pingOldBarWidth = OldReply.RoundtripTime / (float)MaxPing;
 					//(float)(Region.Width * (Math.Ceiling(OldReply.RoundtripTime * 12d / MaxPing) - 0.2) / 12);
 				}
 
@@ -135,19 +147,19 @@ namespace Aurora.Scripts.VoronScripts
 				else
 				{
 					pingPos = Math.Max(0, currentTime - PingStartedTime - PingAdvance)
-							* (Region.Width + (PingSignalWidth + PingShadowWidth)) / (MaxPing + PingAdvance)
+							* (1f + (PingSignalWidth + PingShadowWidth)) / (MaxPing + PingAdvance)
 							- PingShadowWidth;
 					pingNewBarWidth = pingPos;
 				}
 
 				if (Phase == PingPhase.PingEnded)
 				{
-					if (Reply != null && Reply.Status == IPStatus.Success && pingPos >= Region.Width * Reply.RoundtripTime / MaxPing)
+					if (Reply != null && Reply.Status == IPStatus.Success && pingPos >= Reply.RoundtripTime / (float)MaxPing)
 					{
 						FinalAnimationTime = currentTime;
 						Phase = PingPhase.SuccessCompleteAnimation;
 					}
-					else if (pingPos >= Region.Width + PingSignalWidth)
+					else if (pingPos >= 1 + PingSignalWidth)
 					{
 						FinalAnimationTime = currentTime;
 						Phase = PingPhase.TimeoutErrorAnimation;
@@ -170,72 +182,119 @@ namespace Aurora.Scripts.VoronScripts
 
 					if (Phase == PingPhase.SuccessCompleteAnimation)
 					{
-						float pingNewBarFullWidth = Region.Width * Reply.RoundtripTime / MaxPing;
+						float pingNewBarFullWidth = Reply.RoundtripTime / (float)MaxPing;
 
 						pingPos =
 							(currentTime - FinalAnimationTime) *
-							(Region.Width - pingNewBarFullWidth + PingSignalWidth) / (SuccessDuration)
+							(1 - pingNewBarFullWidth + PingSignalWidth) / (SuccessDuration)
 							+ pingNewBarFullWidth;
 
 						pingNewBarWidth = Math.Min(pingPos, pingNewBarFullWidth);
 					}
 				}
 
-				var oldPingBarRect = RectangleF.FromLTRB(
-					Region.Left + pingPos, Region.Top,
-					Region.Left + pingOldBarWidth, Region.Bottom);
-
-				oldPingBarRect.Intersect(Region);
-
-				var newPingBarRect = RectangleF.FromLTRB(
-					Region.Left, Region.Top,
-					Region.Left + Math.Min(pingNewBarWidth, pingPos), Region.Bottom);
-
-				newPingBarRect.Intersect(Region);
-
-				var pingSignalRect = RectangleF.FromLTRB(
-					Region.Left + pingPos - PingSignalWidth, Region.Top,
-					Region.Left + pingPos, Region.Bottom);
-
-				var pingShadowRect = RectangleF.FromLTRB(
-					Region.Left + pingPos, Region.Top,
-					Region.Left + pingPos + PingShadowWidth, Region.Bottom);
-
-				var shadowBrush = new LinearGradientBrush(pingShadowRect,
-					Color.Black, Color.FromArgb(0, Color.Black), LinearGradientMode.Horizontal);
-
-				var signalBrush = new LinearGradientBrush(pingSignalRect,
-					 Color.FromArgb(0, BarSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width))),
-					 BarSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width)), LinearGradientMode.Horizontal);
-
-				pingShadowRect.Intersect(Region);
-				pingSignalRect.Intersect(Region);
-
-				var pingBarBrush = BarSpectrum.ToLinearGradient(Region.Width, Region.Height, Region.Left, Region.Top);
-
-				shadowBrush.WrapMode = WrapMode.TileFlipX;
-				signalBrush.WrapMode = WrapMode.TileFlipX;
-				pingBarBrush.WrapMode = WrapMode.TileFlipX;
-
-				using (var g = effectLayer.GetGraphics())
+				if (Keys != null)
 				{
+					// Animating by keys. Prefferable. 
 
-					if (oldPingBarRect.Width > 0)
-						g.FillRectangle(pingBarBrush, oldPingBarRect);
+					Func<float, float, float, float> getBlend2 = (l, pos, r) =>
+					{
+						var leftEdgePercent = (1 + pos) / Keys.Length - l;
+						var rightEdgePercent = r - (pos / Keys.Length);
+						leftEdgePercent /= 1f / Keys.Length;
+						rightEdgePercent /= 1f / Keys.Length;
+						leftEdgePercent = 1 - Math.Max(0, Math.Min(1, leftEdgePercent));
+						rightEdgePercent = 1 - Math.Max(0, Math.Min(1, rightEdgePercent));
+						return 1 - leftEdgePercent - rightEdgePercent;
+					};
 
-					if (pingShadowRect.Width > 0)
-						g.FillRectangle(shadowBrush, pingShadowRect);
+					for (int i = 0; i < Keys.Length; i++)
+					{
+						var keyColor = new EffectColor(Color.Black);
+						float kL = i / (Keys.Length - 1f);
 
-					if (newPingBarRect.Width > 0)
-						g.FillRectangle(pingBarBrush, newPingBarRect);
 
-					if (pingSignalRect.Width > 0)
-						g.FillRectangle(signalBrush, pingSignalRect);
+						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(kL)), getBlend2(pingPos, i, pingOldBarWidth));
+						keyColor.BlendColors(new EffectColor(Color.Black), 
+							getBlend2(pingPos, i, pingPos + PingShadowWidth) 
+							* (1 - ((i / (float)Keys.Length - pingPos) / PingShadowWidth)));
+						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(kL)),
+							getBlend2(0, i, Math.Min(pingPos, pingNewBarWidth)));
+						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(pingNewBarWidth)),
+							getBlend2(pingPos - PingSignalWidth, i, pingPos) 
+							* (((i+1) / (float)Keys.Length - (pingPos - PingSignalWidth)) / PingSignalWidth));
+						
+						if (Phase == PingPhase.TimeoutErrorAnimation)
+							keyColor += new EffectColor(ErrorSpectrum.GetColorAt(
+								Math.Min(1, (currentTime - FinalAnimationTime) / (float) FailDuration)));
 
-					if (Phase == PingPhase.TimeoutErrorAnimation)
-						g.FillRectangle(new SolidBrush(ErrorSpectrum.GetColorAt(
-							Math.Min(1, (currentTime - FinalAnimationTime) / (float)FailDuration))), Region);
+						effectLayer.Set(Keys[i], (Color)keyColor);
+					}
 
+				}
+				else
+				{
+					// Animating by rectangle.
+					pingPos *= Region.Width;
+					pingOldBarWidth *= Region.Width;
+					pingNewBarWidth *= Region.Width;
+
+					var oldPingBarRect = RectangleF.FromLTRB(
+						Region.Left + pingPos, Region.Top,
+						Region.Left + pingOldBarWidth, Region.Bottom);
+
+					oldPingBarRect.Intersect(Region);
+
+					var newPingBarRect = RectangleF.FromLTRB(
+						Region.Left, Region.Top,
+						Region.Left + Math.Min(pingNewBarWidth, pingPos), Region.Bottom);
+
+					newPingBarRect.Intersect(Region);
+
+					var pingSignalRect = RectangleF.FromLTRB(
+						Region.Left + pingPos - (PingSignalWidth * Region.Width), Region.Top,
+						Region.Left + pingPos, Region.Bottom);
+
+					var pingShadowRect = RectangleF.FromLTRB(
+						Region.Left + pingPos, Region.Top,
+						Region.Left + pingPos + (PingShadowWidth * Region.Width), Region.Bottom);
+
+					var shadowBrush = new LinearGradientBrush(pingShadowRect,
+						Color.Black, Color.FromArgb(0, Color.Black), LinearGradientMode.Horizontal);
+
+					var signalBrush = new LinearGradientBrush(pingSignalRect,
+						 Color.FromArgb(0, BarSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width))),
+						 BarSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width)), LinearGradientMode.Horizontal);
+
+					pingShadowRect.Intersect(Region);
+					pingSignalRect.Intersect(Region);
+
+					var pingBarBrush = BarSpectrum.ToLinearGradient(Region.Width, Region.Height, Region.Left, Region.Top);
+
+					shadowBrush.WrapMode = WrapMode.TileFlipX;
+					signalBrush.WrapMode = WrapMode.TileFlipX;
+					pingBarBrush.WrapMode = WrapMode.TileFlipX;
+
+					using (var g = effectLayer.GetGraphics())
+					{
+
+						if (oldPingBarRect.Width > 0)
+							g.FillRectangle(pingBarBrush, oldPingBarRect);
+
+						if (pingShadowRect.Width > 0)
+							g.FillRectangle(shadowBrush, pingShadowRect);
+
+						if (newPingBarRect.Width > 0)
+							g.FillRectangle(pingBarBrush, newPingBarRect);
+
+						if (pingSignalRect.Width > 0)
+							g.FillRectangle(signalBrush, pingSignalRect);
+
+						if (Phase == PingPhase.TimeoutErrorAnimation)
+							g.FillRectangle(new SolidBrush(ErrorSpectrum.GetColorAt(
+								Math.Min(1, (currentTime - FinalAnimationTime) / (float)FailDuration))), Region);
+
+					}
 				}
 			}
 		}

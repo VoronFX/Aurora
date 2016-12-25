@@ -61,7 +61,8 @@ namespace Aurora.Scripts.VoronScripts
 			EffectLayer GPUBlinkingLayer = new EffectLayer(ID + " - GpuBlinkingLoad");
 			EffectLayer GPURainbowLayer = new EffectLayer(ID + " - GpuRainbowLoad");
 
-			var gpuLoad = 100f;//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f;//GpuLoadCounter.EasedGpuLoad[0];
+			var gpuLoad = GpuLoadCounter.EasedGpuLoad[0];
+			//100f;//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f;
 
 			var gpuOverload = (gpuLoad - 95) / 5f;
 			gpuOverload = Math.Max(0, Math.Min(1, gpuOverload));
@@ -125,7 +126,7 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				GPURainbowLayer.Set(GpuRainbowKeys[i],
 					Color.FromArgb((byte)(255 * gpuLoad / 100f),
-					RainbowLoop.GetColorAt(i, GpuRainbowKeys.Length)));
+					RainbowLoop.GetColorAt(i, GpuRainbowKeys.Length*3)));
 			}
 
 			layers.Enqueue(GPULayer);

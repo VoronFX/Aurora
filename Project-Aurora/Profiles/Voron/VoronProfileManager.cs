@@ -12,7 +12,7 @@ namespace Aurora.Profiles.Voron
 	public class VoronProfileManager : ProfileManager
 	{
 		public VoronProfileManager()
-			: base("Voron", "Voron", "aurora.exe", new VoronSettings(), new Event_Voron())
+			: base("Voron", "Voron", "auroratest.exe", new VoronSettings(), new Event_Voron())
 		{
 		}
 
