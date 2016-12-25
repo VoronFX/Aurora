@@ -15,11 +15,23 @@ using Aurora.Settings;
 namespace Aurora.Scripts.VoronScripts
 {
 
-	public class CpuCoresUsage
+	public class CpuCores
 	{
-		public string ID = "CpuCoresUsage";
+		public string ID = "CpuCores";
 
 		public KeySequence DefaultKeys = new KeySequence();
+
+		// Independant RainbowLoop
+		public static ColorSpectrum RainbowLoop = new ColorSpectrum(
+			Color.FromArgb(255, 0, 0),
+			Color.FromArgb(255, 127, 0),
+			Color.FromArgb(255, 255, 0),
+			Color.FromArgb(0, 255, 0),
+			Color.FromArgb(0, 0, 255),
+			Color.FromArgb(75, 0, 130),
+			Color.FromArgb(139, 0, 255),
+			Color.FromArgb(255, 0, 0)
+			);
 
 		static readonly ColorSpectrum LoadGradient =
 			new ColorSpectrum(Color.FromArgb(0, Color.Lime), Color.Lime, Color.Orange, Color.Red);
@@ -41,7 +53,8 @@ namespace Aurora.Scripts.VoronScripts
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
-			var cpuOverload = (CpuCoresPerformanceCounter.EasedCpuCoresLoad[0] - 95) / 5f;
+			var cpuLoad = CpuCoresPerformanceCounter.EasedCpuCoresLoad;
+			var cpuOverload = (cpuLoad[0] - 95) / 5f;
 			cpuOverload = Math.Max(0, Math.Min(1, cpuOverload));
 
 			EffectLayer CPULayer = new EffectLayer(ID + " - CPULayer", Color.FromArgb((byte)(255 * cpuOverload), Color.Black));
@@ -52,19 +65,19 @@ namespace Aurora.Scripts.VoronScripts
 
 			for (int i = 0; i < CpuCoresKeys.Length; i++)
 			{
-				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(CpuCoresPerformanceCounter.EasedCpuCoresLoad[i + 1], 100f));
+				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(cpuLoad[i + 1], 100f));
 				CPULayerBlink.Set(CpuCoresKeys[i], Color.FromArgb((byte)(blinkColor.A * Math.Max(0, Math.Min(1,
-					(CpuCoresPerformanceCounter.EasedCpuCoresLoad[i + 1] - 95) / 5))), blinkColor));
+					(cpuLoad[i + 1] - 95) / 5))), blinkColor));
 			}
 
-			ColorSpectrum.RainbowLoop.Shift((float)(-0.005 + -0.02 *
-				CpuCoresPerformanceCounter.EasedCpuCoresLoad[0] / 100f));
+			RainbowLoop.Shift((float)(-0.005 + -0.02 *
+				cpuLoad[0] / 100f));
 
 			for (int i = 0; i < RainbowCircleKeys.Length; i++)
 			{
 				CPULayerRainbowCircle.Set(RainbowCircleKeys[i],
-					Color.FromArgb((byte)(255 * CpuCoresPerformanceCounter.EasedCpuCoresLoad[0] / 100f),
-					ColorSpectrum.RainbowLoop.GetColorAt(i, RainbowCircleKeys.Length)));
+					Color.FromArgb((byte)(255 * cpuLoad[0] / 100f),
+					RainbowLoop.GetColorAt(i, RainbowCircleKeys.Length)));
 			}
 
 			layers.Enqueue(CPULayer);
@@ -85,7 +98,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			private static long updateTime = Utils.Time.GetMillisecondsSinceEpoch();
 
-			private static int usage = 5;
+			private static int usage = 1;
 			private static TaskCompletionSource<bool> sleeping;
 
 			static CpuCoresPerformanceCounter()
@@ -134,7 +147,7 @@ namespace Aurora.Scripts.VoronScripts
 			}));
 
 			/// <summary>
-			/// Returns eased load for each logical core. 0 is total load;
+			/// Returns eased load for each logical core. 0 is total load.
 			/// </summary>
 			public static float[] EasedCpuCoresLoad
 			{

@@ -405,7 +405,10 @@
     <Compile Include="Scripting.evaluator.cs" />
     <Compile Include="Scripting.Extensions.cs" />
     <Compile Include="Scripting.native.cs" />
-    <Compile Include="Scripts\VoronScripts\CpuCoresUsage.cs">
+    <Compile Include="Scripts\VoronScripts\CpuCores.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\VoronScripts\GpuLoad.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Scripts\VoronScripts\PingPulser.cs">

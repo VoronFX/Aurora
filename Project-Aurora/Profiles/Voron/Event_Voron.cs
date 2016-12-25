@@ -21,12 +21,14 @@ namespace Aurora.Profiles.Voron
 
 		}
 
-		static readonly CpuCoresUsage cpuCoresUsage = new CpuCoresUsage();
+		static readonly CpuCores CpuCores = new CpuCores();
+		static readonly GpuLoad GpuLoad = new GpuLoad();
 
 		public override void UpdateLights(EffectFrame frame)
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
-			frame.AddLayers(cpuCoresUsage.UpdateLights(null));
+			frame.AddLayers(CpuCores.UpdateLights(null));
+			frame.AddLayers(GpuLoad.UpdateLights(null));
 			frame.AddLayers(layers.ToArray());
 		}
 
