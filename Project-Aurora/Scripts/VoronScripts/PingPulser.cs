@@ -11,7 +11,6 @@ using Aurora.Devices;
 using Aurora.EffectsEngine;
 using Aurora.Profiles;
 using Aurora.Settings;
-using Corale.Colore.Razer.Keyboard;
 
 namespace Aurora.Scripts.VoronScripts
 {
@@ -28,7 +27,7 @@ namespace Aurora.Scripts.VoronScripts
 			HostsPerApplication = new[]
 			{
 				new KeyValuePair<string[], string>(
-					new [] { "League of Legends", "league_of_legends", "league of legends.exe", "LolClient.exe","LoLLauncher.exe", "lolpatcherux.exe" }, "185.40.64.69"),
+					new [] { "League of Legends", "league_of_legends", "league of legends.exe", "LolClient.exe","LoLLauncher.exe", "lolpatcherux.exe" }, "185.40.64.69")
 			},
 
 			// Use Keys or Region to set area. 
