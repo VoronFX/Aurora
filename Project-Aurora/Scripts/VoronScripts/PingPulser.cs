@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +24,12 @@ namespace Aurora.Scripts.VoronScripts
 
 		private static readonly PingAnimation PingAnimation1 = new PingAnimation()
 		{
-			Host = "google.com",
+			DefaultHost = "google.com",
+			HostsPerApplication = new[]
+			{
+				new KeyValuePair<string[], string>(
+					new [] { "League of Legends", "league_of_legends", "league of legends.exe", "LolClient.exe","LoLLauncher.exe", "lolpatcherux.exe" }, "185.40.64.69"),
+			},
 
 			// Use Keys or Region to set area. 
 			// Keys do much more fluid transitions than Region.
@@ -102,7 +108,7 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				// Default settings
 
-				Host = "google.com";
+				DefaultHost = "google.com";
 				Region = new Rectangle(60, -3, 495, 35); // Region 
 				MaxPing = 400; // End of region will be considered as MaxPing
 				SuccessDuration = 500;
@@ -215,18 +221,18 @@ namespace Aurora.Scripts.VoronScripts
 
 
 						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(kL)), getBlend2(pingPos, i, pingOldBarWidth));
-						keyColor.BlendColors(new EffectColor(Color.Black), 
-							getBlend2(pingPos, i, pingPos + PingShadowWidth) 
+						keyColor.BlendColors(new EffectColor(Color.Black),
+							getBlend2(pingPos, i, pingPos + PingShadowWidth)
 							* (1 - ((i / (float)Keys.Length - pingPos) / PingShadowWidth)));
 						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(kL)),
 							getBlend2(0, i, Math.Min(pingPos, pingNewBarWidth)));
 						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(pingNewBarWidth)),
-							getBlend2(pingPos - PingSignalWidth, i, pingPos) 
-							* (((i+1) / (float)Keys.Length - (pingPos - PingSignalWidth)) / PingSignalWidth));
-						
+							getBlend2(pingPos - PingSignalWidth, i, pingPos)
+							* (((i + 1) / (float)Keys.Length - (pingPos - PingSignalWidth)) / PingSignalWidth));
+
 						if (Phase == PingPhase.TimeoutErrorAnimation)
 							keyColor += new EffectColor(ErrorSpectrum.GetColorAt(
-								Math.Min(1, (currentTime - FinalAnimationTime) / (float) FailDuration)));
+								Math.Min(1, (currentTime - FinalAnimationTime) / (float)FailDuration)));
 
 						effectLayer.Set(Keys[i], (Color)keyColor);
 					}
@@ -307,7 +313,8 @@ namespace Aurora.Scripts.VoronScripts
 			protected PingReply Reply;
 			protected PingPhase Phase = PingPhase.Delay;
 
-			public string Host { get; set; }
+			public KeyValuePair<string[], string>[] HostsPerApplication { get; set; }
+			public string DefaultHost { get; set; }
 
 			private readonly Task updater;
 
@@ -322,7 +329,24 @@ namespace Aurora.Scripts.VoronScripts
 							var ping = new Ping();
 							while (true)
 							{
-								var pingReplyTask = ping.SendPingAsync(Host);
+								var host = DefaultHost;
+								var currentApp = GetActiveWindowsProcessname();
+								if (!String.IsNullOrWhiteSpace(currentApp))
+									currentApp = System.IO.Path.GetFileName(currentApp).ToLowerInvariant();
+
+								if (!String.IsNullOrWhiteSpace(currentApp) && HostsPerApplication != null)
+								{
+									foreach (var hostPerApplication in HostsPerApplication)
+									{
+										if (hostPerApplication.Key.Select(x => x.ToLowerInvariant()).Contains(currentApp))
+										{
+											host = hostPerApplication.Value;
+										}
+									}
+								}
+								//Global.logger.LogLine("PingCounter exception: " + currentApp, Logging_Level.Error);
+
+								var pingReplyTask = ping.SendPingAsync(host);
 								PingStartedTime = Utils.Time.GetMillisecondsSinceEpoch();
 								Phase = PingPhase.PingStarted;
 								try
@@ -352,6 +376,37 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				Delay, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
 			}
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			static extern IntPtr GetForegroundWindow();
+
+			[System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+			static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+			private string GetActiveWindowsProcessname()
+			{
+				try
+				{
+					IntPtr handle = IntPtr.Zero;
+					handle = GetForegroundWindow();
+
+					uint processId;
+					if (GetWindowThreadProcessId(handle, out processId) > 0)
+					{
+						return Process.GetProcessById((int)processId).MainModule.FileName;
+					}
+					else
+					{
+						return "";
+					}
+				}
+				catch (Exception exc)
+				{
+					//Console.WriteLine(exc);
+					return "";
+				}
+			}
+
 		}
 
 	}
