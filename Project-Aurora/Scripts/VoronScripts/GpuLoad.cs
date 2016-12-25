@@ -36,14 +36,22 @@ namespace Aurora.Scripts.VoronScripts
 			Color.FromArgb(255, 0, 0)
 			);
 
-		static readonly ColorSpectrum LoadGradient =
-			new ColorSpectrum(Color.FromArgb(0, Color.Lime), Color.Lime, Color.Orange, Color.Red);
+		static readonly ColorSpectrum LoadGradient = new ColorSpectrum(Color.Red, Color.Orange, Color.Lime);
 
 		static readonly ColorSpectrum BlinkingSpectrum =
 			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
 
+		// Use GpuLoadKeys or GpuLoadRectangle to set area. 
+		// GpuLoadKeys do much more fluid transitions than GpuLoadRectangle.
+		private static readonly DeviceKeys[] GpuLoadKeys =
+			{ DeviceKeys.G5, DeviceKeys.G4, DeviceKeys.G3, DeviceKeys.G2, DeviceKeys.G1 };
+
+		private static readonly Rectangle GpuLoadRectangle = new Rectangle(-45, 35, 35, 181); // G5-G1 buttons
+
 		private static readonly DeviceKeys[] GpuRainbowKeys =
 			{ DeviceKeys.PRINT_SCREEN, DeviceKeys.SCROLL_LOCK, DeviceKeys.PAUSE_BREAK };
+
+		private int blinkingSpeed = 1000;
 
 		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
 		{
@@ -53,45 +61,63 @@ namespace Aurora.Scripts.VoronScripts
 			EffectLayer GPUBlinkingLayer = new EffectLayer(ID + " - GpuBlinkingLoad");
 			EffectLayer GPURainbowLayer = new EffectLayer(ID + " - GpuRainbowLoad");
 
-			// G5-G1 buttons
-			var freeFormRect = new Rectangle(-45, 35, 35, 181);
-
-			var rectangle = new RectangleF(
-						(float)Math.Round((freeFormRect.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width),
-						(float)Math.Round((freeFormRect.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height),
-						(float)Math.Round(freeFormRect.Width * Effects.editor_to_canvas_width),
-						(float)Math.Round(freeFormRect.Height * Effects.editor_to_canvas_height));
-
-			var gpuLoad = GpuLoadCounter.EasedGpuLoad[0];
+			var gpuLoad = 100f;//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f;//GpuLoadCounter.EasedGpuLoad[0];
 
 			var gpuOverload = (gpuLoad - 95) / 5f;
 			gpuOverload = Math.Max(0, Math.Min(1, gpuOverload));
 
-			var loadGradient = new ColorSpectrum(Color.Red, Color.Orange, Color.Lime)
-				.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
-
-			loadGradient.WrapMode = WrapMode.TileFlipXY;
-
-			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % 1000) / 1000.0f);
-
-			var barheight = rectangle.Height * gpuLoad / 100;
-
-			using (var g = GPULayer.GetGraphics())
+			if (GpuLoadKeys != null)
 			{
-				g.FillRectangle(loadGradient,
-					new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
+				// Animating by keys. Prefferable.
+
+				for (int i = 0; i < GpuLoadKeys.Length; i++)
+				{
+					var blendLevel = Math.Min(1, Math.Max(0,
+						((gpuLoad / 100f) - (i / (float)GpuLoadKeys.Length)) / (1 / (float)GpuLoadKeys.Length)));
+
+					GPULayer.Set(GpuLoadKeys[i], Color.FromArgb((byte)(blendLevel * 255), 
+						LoadGradient.GetColorAt(1 - (i / (GpuLoadKeys.Length - 1f)))));
+
+					GPUBlinkingLayer.Set(GpuLoadKeys[i], Color.FromArgb(
+						(byte)(255 * blendLevel * i / (GpuLoadKeys.Length - 1f) * gpuOverload *
+						Math.Sin(Math.PI * (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (float)blinkingSpeed)
+						), Color.Black));
+				}
 			}
-
-			var blinkGradient = new ColorSpectrum(Color.FromArgb((byte)(blinkColor.A * gpuOverload), blinkColor), Color.FromArgb(0, Color.Black))
-				.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
-			blinkGradient.WrapMode = WrapMode.TileFlipXY;
-
-			using (var g = GPUBlinkingLayer.GetGraphics())
+			else
 			{
-				g.FillRectangle(blinkGradient,
-					new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
-			}
+				// Animating by rectangle.
 
+				var rectangle = new RectangleF(
+							(float)Math.Round((GpuLoadRectangle.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width),
+							(float)Math.Round((GpuLoadRectangle.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height),
+							(float)Math.Round(GpuLoadRectangle.Width * Effects.editor_to_canvas_width),
+							(float)Math.Round(GpuLoadRectangle.Height * Effects.editor_to_canvas_height));
+
+				var loadGradient = LoadGradient
+					.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
+				loadGradient.WrapMode = WrapMode.TileFlipXY;
+
+				var barheight = rectangle.Height * gpuLoad / 100f;
+
+				using (var g = GPULayer.GetGraphics())
+				{
+					g.FillRectangle(loadGradient,
+						new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
+				}
+
+				var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (float)blinkingSpeed);
+
+				var blinkGradient = new ColorSpectrum(Color.FromArgb((byte)(blinkColor.A * gpuOverload), blinkColor), Color.FromArgb(0, Color.Black))
+					.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
+				blinkGradient.WrapMode = WrapMode.TileFlipXY;
+
+				using (var g = GPUBlinkingLayer.GetGraphics())
+				{
+					g.FillRectangle(blinkGradient,
+						new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
+				}
+			}
 
 			RainbowLoop.Shift((float)(-0.003 + -0.01 * gpuLoad / 100f));
 
