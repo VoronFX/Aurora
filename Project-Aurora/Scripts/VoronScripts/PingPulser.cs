@@ -165,10 +165,13 @@ namespace Aurora.Scripts.VoronScripts
 
 				if (Phase == PingPhase.PingEnded)
 				{
-					if (Reply != null && Reply.Status == IPStatus.Success && pingPos >= Reply.RoundtripTime / (float)MaxPing)
+					if (Reply != null && Reply.Status == IPStatus.Success)
 					{
-						FinalAnimationTime = currentTime;
-						Phase = PingPhase.SuccessCompleteAnimation;
+						if (pingPos >= Reply.RoundtripTime / (float)MaxPing)
+						{
+							FinalAnimationTime = currentTime;
+							Phase = PingPhase.SuccessCompleteAnimation;
+						}
 					}
 					else if (pingPos >= 1 + PingSignalWidth)
 					{
