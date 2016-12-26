@@ -11,7 +11,7 @@ You can even ask me to implement something on keyboard, if you can't. And if I w
 Right now my profile consists of 3 scripts:
 
 ##CpuCores
-z
+
 * Displays load of of each cpu load on separate button.I have quad-core cpu and those four G6-G9 buttons perfectly matches it.
 * As core load reaches 95% it begin to blinks.
 * When total load becomes 95% or higher the whole keyboard fades out.
