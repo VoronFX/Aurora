@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Voron Scripts - GpuLoad
+// v1.0-beta.0
+// https://github.com/VoronFX/Aurora
+// Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
+// 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;

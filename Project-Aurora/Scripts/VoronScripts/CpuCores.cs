@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Voron Scripts - CpuCores
+// v1.0-beta.0
+// https://github.com/VoronFX/Aurora
+// Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
+// 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -39,7 +45,7 @@ namespace Aurora.Scripts.VoronScripts
 		static readonly ColorSpectrum BlinkingSpectrum =
 			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
 
-		private static float BlinkingSpeed = 1000;
+		private static int BlinkingSpeed = 1000;
 
 		// Each key displays load of one core
 		private static readonly DeviceKeys[] CpuCoresKeys =
@@ -63,7 +69,7 @@ namespace Aurora.Scripts.VoronScripts
 			EffectLayer CPULayerBlink = new EffectLayer(ID + " - CPULayerBlink");
 			EffectLayer CPULayerRainbowCircle = new EffectLayer(ID + " - CPULayerRainbowCircle");
 
-			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / BlinkingSpeed);
+			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / (float)BlinkingSpeed);
 
 			for (int i = 0; i < CpuCoresKeys.Length; i++)
 			{
