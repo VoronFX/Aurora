@@ -1,5 +1,7 @@
 # Voron Scripts for Aurora
-![Preview](https://github.com/VoronFX/Aurora/raw/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/VideoPreview.jpg)
+
+## Checkout video demonstration
+[![Video Demo](https://github.com/VoronFX/Aurora/raw/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/VideoPreview.jpg)](https://www.youtube.com/watch?v=6Ub-lh2kmKg)
 
 The goal of this fork is to help me debug my scripts for Aurora and probably make some personal fixes. 
 The actual Aurora project you can find here: [Link to Aurora project](https://github.com/antonpup/Aurora)
