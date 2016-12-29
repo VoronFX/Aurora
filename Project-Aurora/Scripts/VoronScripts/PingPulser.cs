@@ -234,7 +234,7 @@ namespace Aurora.Scripts.VoronScripts
 							* (1 - ((i / (float)Keys.Length - pingPos) / PingShadowWidth)));
 						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(kL)),
 							getBlend2(0, i, Math.Min(pingPos, pingNewBarWidth)));
-						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(pingNewBarWidth)),
+						keyColor.BlendColors(new EffectColor(BarSpectrum.GetColorAt(Math.Min(1, pingNewBarWidth))),
 							getBlend2(pingPos - PingSignalWidth, i, pingPos)
 							* (((i + 1) / (float)Keys.Length - (pingPos - PingSignalWidth)) / PingSignalWidth));
 
