@@ -251,6 +251,9 @@
     <Compile Include="Controls\LogicCheckEdit.xaml.cs">
       <DependentUpon>LogicCheckEdit.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Profiles\PerformanceCounters\PerformanceCountersDebug.xaml.cs">
+      <DependentUpon>PerformanceCountersDebug.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Devices\AtmoOrb\AtmoOrbDevice.cs" />
     <Compile Include="Devices\Clevo\ClevoSetKBLED.cs" />
     <Compile Include="Devices\Clevo\ClevoDevice.cs" />
@@ -292,6 +295,11 @@
       <DependentUpon>Control_BLight.xaml</DependentUpon>
     </Compile>
     <Compile Include="Profiles\Blacklight\GameEvent_BLight.cs" />
+    <Compile Include="Profiles\PerformanceCounters\OpenHardwareMonitor\ADL.cs" />
+    <Compile Include="Profiles\PerformanceCounters\OpenHardwareMonitor\NVAPI.cs" />
+    <Compile Include="Profiles\PerformanceCounters\OpenHardwareMonitor\Pair.cs" />
+    <Compile Include="Profiles\PerformanceCounters\OpenHardwareMonitor\PInvokeDelegateFactory.cs" />
+    <Compile Include="Profiles\PerformanceCounters\PerformanceCounters.cs" />
     <Compile Include="Profiles\CSGO\CSGOProfileManager.cs" />
     <Compile Include="Profiles\CSGO\Layers\Control_CSGOTypingIndicatorLayer.xaml.cs">
       <DependentUpon>Control_CSGOTypingIndicatorLayer.xaml</DependentUpon>
@@ -328,6 +336,7 @@
     <Compile Include="Profiles\Dota 2\Layers\Control_Dota2AbilityLayer.xaml.cs">
       <DependentUpon>Control_Dota2AbilityLayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Profiles\PerformanceCounters\EasedPerformanceCounter.cs" />
     <Compile Include="Profiles\GTA5\Layers\Control_GTA5PoliceSirenLayer.xaml.cs">
       <DependentUpon>Control_GTA5PoliceSirenLayer.xaml</DependentUpon>
     </Compile>
@@ -864,6 +873,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LogicCheckEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Profiles\PerformanceCounters\PerformanceCountersDebug.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
