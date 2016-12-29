@@ -41,13 +41,13 @@ namespace Aurora.Profiles.PerformanceCounters
 		public int UpdateInterval { get; set; } = 1000;
 		public int IdleTimeout { get; set; } = 3;
 
-		protected struct CounterFrame<T>
+		protected struct CounterFrame<T2>
 		{
-			public readonly T PreviousValue;
-			public readonly T CurrentValue;
+			public readonly T2 PreviousValue;
+			public readonly T2 CurrentValue;
 			public readonly long Timestamp;
 
-			public CounterFrame(T previousValue, T currentValue)
+			public CounterFrame(T2 previousValue, T2 currentValue)
 			{
 				PreviousValue = previousValue;
 				CurrentValue = currentValue;
