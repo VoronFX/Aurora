@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - CpuCores
-// v1.0-beta.0
+// v1.0-beta.3
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -97,7 +97,7 @@ namespace Aurora.Scripts.VoronScripts
 
 		private static readonly CpuPerCoreCounter Cpu = new CpuPerCoreCounter();
 
-		public class CpuPerCoreCounter : EasedPerformanceCounter<float[]>
+		internal class CpuPerCoreCounter : EasedPerformanceCounter<float[]>
 		{
 			private PerformanceCounter[] counters;
 			private readonly float[] defaultValues = new float[Environment.ProcessorCount + 1];
@@ -122,7 +122,7 @@ namespace Aurora.Scripts.VoronScripts
 			}
 		}
 
-		public abstract class EasedPerformanceCounter<T>
+		internal abstract class EasedPerformanceCounter<T>
 		{
 			public int UpdateInterval { get; set; }
 			public int IdleTimeout { get; set; }

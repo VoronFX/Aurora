@@ -1,6 +1,6 @@
 ﻿// 
 // Voron Scripts - PingPulser
-// v1.0-beta.0
+// v1.0-beta.3
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -309,7 +309,7 @@ namespace Aurora.Scripts.VoronScripts
 			}
 		}
 
-		private class Pinger
+		internal class Pinger
 		{
 			protected long PingStartedTime;
 			protected long PingEndedTime;
@@ -365,7 +365,7 @@ namespace Aurora.Scripts.VoronScripts
 			}
 
 			private TaskCompletionSource<bool> pingNext;
-			private Task pingNextTask;
+			private Task pingNextTask = Task.FromResult(true);
 
 			public void AllowNextPing()
 			{
