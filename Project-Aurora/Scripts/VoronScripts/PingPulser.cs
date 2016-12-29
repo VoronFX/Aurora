@@ -33,7 +33,7 @@ namespace Aurora.Scripts.VoronScripts
 			HostsPerApplication = new[]
 			{
 				new KeyValuePair<string[], string>(
-					new [] { "League of Legends", "league_of_legends", "league of legends.exe", "LolClient.exe","LoLLauncher.exe", "lolpatcherux.exe" }, "185.40.64.69")
+					new [] { "League of Legends", "league_of_legends", "league of legends.exe", "LolClient.exe", "LoLLauncher.exe", "lolpatcherux.exe" }, "185.40.64.69")
 			},
 
 			// Use Keys or Region to set area. 
@@ -148,12 +148,8 @@ namespace Aurora.Scripts.VoronScripts
 
 				if (Phase == PingPhase.Delay)
 				{
-					var pingNextCopy = PingNext;
-					if (pingNextCopy != null && (currentTime - PingStartedTime > TimeBetweenPings))
-					{
-						PingNext = null;
-						pingNextCopy.SetResult(true);
-					}
+					if (currentTime - PingStartedTime > TimeBetweenPings)
+						AllowNextPing();
 				}
 				else
 				{
@@ -317,12 +313,16 @@ namespace Aurora.Scripts.VoronScripts
 		{
 			protected long PingStartedTime;
 			protected long PingEndedTime;
-			protected TaskCompletionSource<bool> PingNext;
 			protected PingReply Reply;
 			protected PingPhase Phase = PingPhase.Delay;
 
 			public KeyValuePair<string[], string>[] HostsPerApplication { get; set; }
 			public string DefaultHost { get; set; }
+
+			protected enum PingPhase
+			{
+				Delay, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
+			}
 
 			private readonly Task updater;
 
@@ -337,24 +337,7 @@ namespace Aurora.Scripts.VoronScripts
 							var ping = new Ping();
 							while (true)
 							{
-								var host = DefaultHost;
-								var currentApp = GetActiveWindowsProcessname();
-								if (!String.IsNullOrWhiteSpace(currentApp))
-									currentApp = System.IO.Path.GetFileName(currentApp).ToLowerInvariant();
-
-								if (!String.IsNullOrWhiteSpace(currentApp) && HostsPerApplication != null)
-								{
-									foreach (var hostPerApplication in HostsPerApplication)
-									{
-										if (hostPerApplication.Key.Select(x => x.ToLowerInvariant()).Contains(currentApp))
-										{
-											host = hostPerApplication.Value;
-										}
-									}
-								}
-								//Global.logger.LogLine("PingCounter exception: " + currentApp, Logging_Level.Error);
-
-								var pingReplyTask = ping.SendPingAsync(host);
+								var pingReplyTask = ping.SendPingAsync(ChooseHost());
 								PingStartedTime = Utils.Time.GetMillisecondsSinceEpoch();
 								Phase = PingPhase.PingStarted;
 								try
@@ -367,8 +350,9 @@ namespace Aurora.Scripts.VoronScripts
 								}
 								PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
 								Phase = PingPhase.PingEnded;
-								PingNext = new TaskCompletionSource<bool>();
-								await PingNext.Task;
+								pingNext = new TaskCompletionSource<bool>();
+								pingNextTask = pingNext.Task;
+								await pingNextTask;
 							}
 						}
 						catch (Exception exc)
@@ -380,37 +364,54 @@ namespace Aurora.Scripts.VoronScripts
 				}));
 			}
 
-			protected enum PingPhase
+			private TaskCompletionSource<bool> pingNext;
+			private Task pingNextTask;
+
+			public void AllowNextPing()
 			{
-				Delay, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
+				if (pingNextTask.Status == TaskStatus.WaitingForActivation)
+					Task.Run(() => pingNext.TrySetResult(true));
+			}
+
+			private string ChooseHost()
+			{
+				var host = DefaultHost;
+				var currentApp = GetActiveWindowsProcessname();
+				if (!string.IsNullOrWhiteSpace(currentApp))
+					currentApp = System.IO.Path.GetFileName(currentApp).ToLowerInvariant();
+
+				if (!string.IsNullOrWhiteSpace(currentApp) && HostsPerApplication != null)
+				{
+					foreach (var hostPerApplication in HostsPerApplication)
+					{
+						if (hostPerApplication.Key.Select(x => x.ToLowerInvariant()).Contains(currentApp))
+						{
+							host = hostPerApplication.Value;
+						}
+					}
+				}
+				return host;
 			}
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
-			static extern IntPtr GetForegroundWindow();
+			private static extern IntPtr GetForegroundWindow();
 
 			[System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-			static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+			private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-			private string GetActiveWindowsProcessname()
+			private static string GetActiveWindowsProcessname()
 			{
 				try
 				{
-					IntPtr handle = IntPtr.Zero;
-					handle = GetForegroundWindow();
+					IntPtr handle = GetForegroundWindow();
 
 					uint processId;
-					if (GetWindowThreadProcessId(handle, out processId) > 0)
-					{
-						return Process.GetProcessById((int)processId).MainModule.FileName;
-					}
-					else
-					{
-						return "";
-					}
+					return GetWindowThreadProcessId(handle, out processId) > 0 ?
+						Process.GetProcessById((int)processId).MainModule.FileName : "";
 				}
-				catch (Exception exc)
+				catch (Exception exception)
 				{
-					//Console.WriteLine(exc);
+					Global.logger.LogLine(exception.ToString(), Logging_Level.Error);
 					return "";
 				}
 			}

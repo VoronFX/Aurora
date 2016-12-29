@@ -46,6 +46,7 @@ namespace Aurora.Scripts.VoronScripts
 			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
 
 		private static int BlinkingSpeed = 1000;
+		private static float BlinkingThreshold = 95;
 
 		// Each key displays load of one core
 		private static readonly DeviceKeys[] CpuCoresKeys =
@@ -61,8 +62,8 @@ namespace Aurora.Scripts.VoronScripts
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
-			var cpuLoad = CpuCoresPerformanceCounter.EasedCpuCoresLoad;
-			var cpuOverload = (cpuLoad[0] - 95) / 5f;
+			var cpuLoad = Cpu.GetValue();
+			var cpuOverload = (cpuLoad[0] - BlinkingThreshold) / 5f;
 			cpuOverload = Math.Max(0, Math.Min(1, cpuOverload));
 
 			EffectLayer CPULayer = new EffectLayer(ID + " - CPULayer", Color.FromArgb((byte)(255 * cpuOverload), Color.Black));
@@ -75,11 +76,10 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(cpuLoad[i + 1] / 100f));
 				CPULayerBlink.Set(CpuCoresKeys[i], Color.FromArgb((byte)(blinkColor.A * Math.Max(0, Math.Min(1,
-					(cpuLoad[i + 1] - 95) / 5))), blinkColor));
+					(cpuLoad[i + 1] - BlinkingThreshold) / 5))), blinkColor));
 			}
 
-			RainbowLoop.Shift((float)(-0.005 + -0.02 *
-				cpuLoad[0] / 100f));
+			RainbowLoop.Shift((float)(-0.005 + -0.02 * cpuLoad[0] / 100f));
 
 			for (int i = 0; i < RainbowCircleKeys.Length; i++)
 			{
@@ -95,95 +95,110 @@ namespace Aurora.Scripts.VoronScripts
 			return layers.ToArray();
 		}
 
-		private static class CpuCoresPerformanceCounter
+		private static readonly CpuPerCoreCounter Cpu = new CpuPerCoreCounter();
+
+		public class CpuPerCoreCounter : EasedPerformanceCounter<float[]>
 		{
-			public static int UpdateEvery { get; set; }
+			private PerformanceCounter[] counters;
+			private readonly float[] defaultValues = new float[Environment.ProcessorCount + 1];
 
-			private static float[] prevCpuCoresLoad;
-			private static float[] easedCpuCoresLoad;
-			private static float[] targetCpuCoresLoad;
-			private static float[] newCpuCoresLoad;
-
-			private static long updateTime = Utils.Time.GetMillisecondsSinceEpoch();
-
-			private static int usage = 1;
-			private static TaskCompletionSource<bool> sleeping;
-
-			static CpuCoresPerformanceCounter()
+			protected override float[] GetEasedValue(CounterFrame<float[]> currentFrame)
 			{
-				UpdateEvery = 1000;
-				prevCpuCoresLoad = new float[Environment.ProcessorCount + 1];
-				easedCpuCoresLoad = new float[Environment.ProcessorCount + 1];
-				targetCpuCoresLoad = new float[Environment.ProcessorCount + 1];
+				var prev = currentFrame.PreviousValue ?? defaultValues;
+				var curr = currentFrame.CurrentValue ?? defaultValues;
+
+				return prev.Select((x, i) => x + (curr[i] - x) * Math.Min(Utils.Time.GetMillisecondsSinceEpoch()
+					- currentFrame.Timestamp, UpdateInterval) / UpdateInterval).ToArray();
 			}
 
-
-			private static readonly Task Updater = Task.Run((Action)(async () =>
+			protected override float[] UpdateValue()
 			{
-				while (true)
-				{
-					try
-					{
-						var counters = new PerformanceCounter[Environment.ProcessorCount + 1];
-						counters[0] = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-						for (int i = 0; i < counters.Length - 1; i++)
-						{
-							counters[i + 1] = new PerformanceCounter("Processor", "% Processor Time", i.ToString());
-						}
+				if (counters == null)
+					counters = new PerformanceCounter[Environment.ProcessorCount + 1]
+						.Select((x, i) =>
+						new PerformanceCounter("Processor", "% Processor Time", i == 0 ? "_Total" : (i - 1).ToString())).ToArray();
 
-						while (true)
-						{
-							usage--;
-							if (usage <= 0)
-							{
-								sleeping = new TaskCompletionSource<bool>();
-								await sleeping.Task;
-								sleeping = null;
-							}
+				return counters.Select(x => x.NextValue()).ToArray();
+			}
+		}
 
-							newCpuCoresLoad = counters.Select(x => x.NextValue()).ToArray();
+		public abstract class EasedPerformanceCounter<T>
+		{
+			public int UpdateInterval { get; set; }
+			public int IdleTimeout { get; set; }
 
-							await Task.Delay(UpdateEvery);
-						}
-					}
-					catch (Exception exc)
-					{
-						Global.logger.LogLine("PerformanceCounter exception: " + exc, Logging_Level.Error);
-					}
-					await Task.Delay(500);
-				}
-			}));
-
-			/// <summary>
-			/// Returns eased load for each logical core. 0 is total load.
-			/// </summary>
-			public static float[] EasedCpuCoresLoad
+			protected struct CounterFrame<T2>
 			{
-				get
+				public readonly T2 PreviousValue;
+				public readonly T2 CurrentValue;
+				public readonly long Timestamp;
+
+				public CounterFrame(T2 previousValue, T2 currentValue)
 				{
-					usage = 5;
-
-					var sleepingcopy = sleeping;
-					if (sleepingcopy != null)
-						sleepingcopy.SetResult(true);
-
-					if (newCpuCoresLoad != null)
-					{
-						prevCpuCoresLoad = (float[])easedCpuCoresLoad.Clone();
-						targetCpuCoresLoad = newCpuCoresLoad;
-						newCpuCoresLoad = null;
-						updateTime = Utils.Time.GetMillisecondsSinceEpoch();
-					}
-
-					for (int i = 0; i < easedCpuCoresLoad.Length; i++)
-					{
-						easedCpuCoresLoad[i] = prevCpuCoresLoad[i] + (targetCpuCoresLoad[i] - prevCpuCoresLoad[i]) *
-							Math.Min((Utils.Time.GetMillisecondsSinceEpoch() - updateTime) / (float)UpdateEvery, 1f);
-					}
-					return easedCpuCoresLoad;
+					PreviousValue = previousValue;
+					CurrentValue = currentValue;
+					Timestamp = Utils.Time.GetMillisecondsSinceEpoch();
 				}
+			}
+
+			private CounterFrame<T> frame;
+			private T lastEasedValue;
+
+			private int counterUsage;
+			private Task sleepingAwaiter = Task.FromResult(true);
+			private TaskCompletionSource<bool> sleeping;
+
+			protected abstract T GetEasedValue(CounterFrame<T> currentFrame);
+			protected abstract T UpdateValue();
+
+			public T GetValue(bool easing = true)
+			{
+				counterUsage = IdleTimeout;
+				if (sleepingAwaiter.Status == TaskStatus.WaitingForActivation)
+					Task.Run(() => sleeping.TrySetResult(true));
+				if (easing)
+				{
+					lastEasedValue = GetEasedValue(frame);
+					return lastEasedValue;
+				}
+				return frame.CurrentValue;
+			}
+
+			protected EasedPerformanceCounter()
+			{
+				UpdateInterval = 1000;
+				IdleTimeout = 3;
+				Task.Run((Action)(async () =>
+			  {
+				  while (true)
+				  {
+					  try
+					  {
+						  while (true)
+						  {
+							  counterUsage--;
+							  if (counterUsage <= 0)
+							  {
+								  sleeping = new TaskCompletionSource<bool>();
+								  sleepingAwaiter = sleeping.Task;
+								  await sleepingAwaiter;
+							  }
+
+							  frame = new CounterFrame<T>(lastEasedValue, UpdateValue());
+
+							  await Task.Delay(UpdateInterval);
+						  }
+					  }
+					  catch (Exception exc)
+					  {
+						  Global.logger.LogLine("EasedPerformanceCounter exception: " + exc, Logging_Level.Error);
+					  }
+					  await Task.Delay(UpdateInterval);
+				  }
+			  }));
 			}
 		}
 
 	}
+
 }
