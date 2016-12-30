@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aurora.Profiles.PerformanceCounters
@@ -57,9 +58,10 @@ namespace Aurora.Profiles.PerformanceCounters
 		private CounterFrame<T> frame;
 		private T lastEasedValue;
 
+		private readonly Timer timer;
 		private int counterUsage;
-		private Task sleepingAwaiter = Task.FromResult(true);
-		private TaskCompletionSource<bool> sleeping;
+		private bool sleeping = true;
+		private int awakening;
 
 		protected abstract T GetEasedValue(CounterFrame<T> currentFrame);
 		protected abstract T UpdateValue();
@@ -67,8 +69,15 @@ namespace Aurora.Profiles.PerformanceCounters
 		public T GetValue(bool easing = true)
 		{
 			counterUsage = IdleTimeout;
-			if (sleepingAwaiter.Status == TaskStatus.WaitingForActivation)
-				Task.Run(() => sleeping.TrySetResult(true));
+			if (sleeping)
+			{
+				if (Interlocked.CompareExchange(ref awakening, 1, 0) == 1)
+				{
+					sleeping = false;
+					timer.Change(0, Timeout.Infinite);
+				}
+			}
+
 			if (easing)
 			{
 				lastEasedValue = GetEasedValue(frame);
@@ -79,34 +88,32 @@ namespace Aurora.Profiles.PerformanceCounters
 
 		protected EasedPerformanceCounter()
 		{
-			Task.Run((Action)(async () =>
-		   {
-			   while (true)
-			   {
-					try
-					{
-						while (true)
-					   {
-						   counterUsage--;
-						   if (counterUsage <= 0)
-						   {
-							   sleeping = new TaskCompletionSource<bool>();
-							   sleepingAwaiter = sleeping.Task;
-							   await sleepingAwaiter;
-						   }
+			timer = new Timer(UpdateTick, null, Timeout.Infinite, Timeout.Infinite);
+		}
 
-						   frame = new CounterFrame<T>(lastEasedValue, UpdateValue());
-
-						   await Task.Delay(UpdateInterval);
-					   }
-				   }
-				   catch (Exception exc)
-				   {
-					   Global.logger.LogLine("EasedPerformanceCounter exception: " + exc, Logging_Level.Error);
-				   }
-				   await Task.Delay(UpdateInterval);
-			   }
-		   }));
+		private void UpdateTick(object state)
+		{
+			try
+			{
+				frame = new CounterFrame<T>(lastEasedValue, UpdateValue());
+			}
+			catch (Exception exc)
+			{
+				Global.logger.LogLine("EasedPerformanceCounter exception: " + exc, Logging_Level.Error);
+			}
+			finally
+			{
+				counterUsage--;
+				if (counterUsage <= 0)
+				{
+					awakening = 0;
+					sleeping = true;
+				}
+				else
+				{
+					timer.Change(UpdateInterval, Timeout.Infinite);
+				}
+			}
 		}
 	}
 }
