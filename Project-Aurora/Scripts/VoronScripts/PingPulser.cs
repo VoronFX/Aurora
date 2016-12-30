@@ -146,12 +146,12 @@ namespace Aurora.Scripts.VoronScripts
 					//(float)(Region.Width * (Math.Ceiling(OldReply.RoundtripTime * 12d / MaxPing) - 0.2) / 12);
 				}
 
-				if (Phase == PingPhase.Delay)
+				if (Phase == PingPhase.WaitingForActivation)
 				{
 					if (currentTime - PingStartedTime > TimeBetweenPings)
 						AllowNextPing();
 				}
-				else
+				else if (Phase != PingPhase.Activated)
 				{
 					pingPos = Math.Max(0, currentTime - PingStartedTime - PingAdvance)
 							* (1f + (PingSignalWidth + PingShadowWidth)) / (MaxPing + PingAdvance)
@@ -185,7 +185,7 @@ namespace Aurora.Scripts.VoronScripts
 					{
 						OldReply = Reply;
 						Reply = null;
-						Phase = PingPhase.Delay;
+						Phase = PingPhase.WaitingForActivation;
 						Render(effectLayer, currentTime);
 						return;
 					}
@@ -314,14 +314,14 @@ namespace Aurora.Scripts.VoronScripts
 			protected long PingStartedTime;
 			protected long PingEndedTime;
 			protected PingReply Reply;
-			protected PingPhase Phase = PingPhase.Delay;
+			protected PingPhase Phase = PingPhase.WaitingForActivation;
 
 			public KeyValuePair<string[], string>[] HostsPerApplication { get; set; }
 			public string DefaultHost { get; set; }
 
 			protected enum PingPhase
 			{
-				Delay, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
+				WaitingForActivation, Activated, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
 			}
 
 			private readonly Task updater;
@@ -350,9 +350,9 @@ namespace Aurora.Scripts.VoronScripts
 								}
 								PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
 								Phase = PingPhase.PingEnded;
-								pingNext = new TaskCompletionSource<bool>();
-								pingNextTask = pingNext.Task;
-								await pingNextTask;
+								var newActivator = new TaskCompletionSource<bool>();
+								pingActivator = newActivator;
+								await newActivator.Task;
 							}
 						}
 						catch (Exception exc)
@@ -364,13 +364,19 @@ namespace Aurora.Scripts.VoronScripts
 				}));
 			}
 
-			private TaskCompletionSource<bool> pingNext;
-			private Task pingNextTask = Task.FromResult(true);
+
+			private TaskCompletionSource<bool> pingActivator;
 
 			public void AllowNextPing()
 			{
-				if (pingNextTask.Status == TaskStatus.WaitingForActivation)
-					Task.Run(() => pingNext.TrySetResult(true));
+				var pingActivatorCopy = pingActivator;
+				if (pingActivatorCopy != null)
+				{
+					if (Interlocked.CompareExchange(ref pingActivator, null, pingActivatorCopy) == pingActivatorCopy)
+					{
+						Task.Run(() => pingActivatorCopy.TrySetResult(true));
+					}
+				}
 			}
 
 			private string ChooseHost()
