@@ -1,7 +1,7 @@
 ﻿// 
 // Voron Scripts - PingPulser
 // v1.0-beta.4
-// for Aurora v0.5.1d
+// for Aurora v0.6.0
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -59,7 +59,7 @@ namespace Aurora.Scripts.VoronScripts
 					Color.Red, Color.Black, Color.Red, Color.Black)
 		};
 
-		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
+		public EffectLayer[] UpdateLights(ScriptSettings settings, IGameState state = null)
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
