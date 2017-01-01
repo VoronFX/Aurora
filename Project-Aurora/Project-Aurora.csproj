@@ -436,6 +436,12 @@
     </Compile>
     <Compile Include="Profiles\RocketLeague\Layers\RocketLeagueBackgroundLayerHandler.cs" />
     <Compile Include="Profiles\StringProperty.cs" />
+    <Compile Include="Profiles\Voron\Event_Voron.cs" />
+    <Compile Include="Profiles\Voron\VoronControl.xaml.cs">
+      <DependentUpon>VoronControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Voron\VoronProfileManager.cs" />
+    <Compile Include="Profiles\Voron\VoronSettings.cs" />
     <Compile Include="Profiles\Worms_WMD\Control_WormsWMD.xaml.cs">
       <DependentUpon>Control_WormsWMD.xaml</DependentUpon>
     </Compile>
@@ -630,6 +636,18 @@
     <Compile Include="Scripting.evaluator.cs" />
     <Compile Include="Scripting.Extensions.cs" />
     <Compile Include="Scripting.native.cs" />
+    <Compile Include="Scripts\VoronScripts\CpuCores.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\VoronScripts\GpuLoad.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\VoronScripts\PerformanceBars.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\VoronScripts\PingPulser.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Settings\ColorZone.cs" />
     <Compile Include="Settings\Configuration.cs" />
     <Compile Include="Devices\DeviceManager.cs" />
@@ -1010,6 +1028,10 @@
     <Page Include="Profiles\RocketLeague\Layers\Control_RocketLeagueBackgroundLayer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Profiles\Voron\VoronControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Profiles\Worms_WMD\Control_WormsWMD.xaml">
       <Generator>MSBuild:Compile</Generator>
