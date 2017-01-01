@@ -1,6 +1,7 @@
 ﻿//
 // Voron Scripts - GpuLoad
 // v1.0-beta.4
+// for Aurora v0.5.1d
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
