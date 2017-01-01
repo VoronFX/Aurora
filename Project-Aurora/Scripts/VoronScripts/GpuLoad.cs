@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - GpuLoad
-// v1.0-beta.3
+// v1.0-beta.4
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -34,10 +34,11 @@ namespace Aurora.Scripts.VoronScripts
 	{
 		public string ID = "GpuLoad";
 
-		public KeySequence DefaultKeys = new KeySequence();
+		public KeySequence DefaultKeys = new KeySequence(
+			new[] { DeviceKeys.G5, DeviceKeys.G4, DeviceKeys.G3, DeviceKeys.G2, DeviceKeys.G1 });
 
 		// Independant RainbowLoop
-		public static ColorSpectrum RainbowLoop = new ColorSpectrum(
+		private readonly ColorSpectrum rainbowLoop = new ColorSpectrum(
 			Color.FromArgb(255, 0, 0),
 			Color.FromArgb(255, 127, 0),
 			Color.FromArgb(255, 255, 0),
@@ -48,21 +49,12 @@ namespace Aurora.Scripts.VoronScripts
 			Color.FromArgb(255, 0, 0)
 			);
 
-		static readonly ColorSpectrum LoadGradient = new ColorSpectrum(Color.Red, Color.Orange, Color.Lime);
+		private readonly ColorSpectrum loadGradient = new ColorSpectrum(Color.Lime, Color.Orange, Color.Red);
 
-		static readonly ColorSpectrum BlinkingSpectrum =
-			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
-
-		// Use GpuLoadKeys or GpuLoadRectangle to set area. 
-		// GpuLoadKeys do much more fluid transitions than GpuLoadRectangle.
-		private static readonly DeviceKeys[] GpuLoadKeys =
-			{ DeviceKeys.G5, DeviceKeys.G4, DeviceKeys.G3, DeviceKeys.G2, DeviceKeys.G1 };
-
-		private static readonly Rectangle GpuLoadRectangle = new Rectangle(-45, 35, 35, 181); // G5-G1 buttons
-
-		private static readonly DeviceKeys[] GpuRainbowKeys =
+		private readonly DeviceKeys[] gpuRainbowKeys =
 			{ DeviceKeys.PRINT_SCREEN, DeviceKeys.SCROLL_LOCK, DeviceKeys.PAUSE_BREAK };
 
+		private float blinkingThreshold = 0.95f;
 		private int blinkingSpeed = 1000;
 
 		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
@@ -70,79 +62,57 @@ namespace Aurora.Scripts.VoronScripts
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
 			EffectLayer GPULayer = new EffectLayer(ID + " - GpuLoad");
-			EffectLayer GPUBlinkingLayer = new EffectLayer(ID + " - GpuBlinkingLoad");
 			EffectLayer GPURainbowLayer = new EffectLayer(ID + " - GpuRainbowLoad");
 
-			var gpuLoad = Gpu.GetValue();
-			//100f;//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f;
+			var value = Gpu.GetValue() / 100f;
+			//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f / 100f;
 
-			var gpuOverload = (gpuLoad - 95) / 5f;
-			gpuOverload = Math.Max(0, Math.Min(1, gpuOverload));
+			var blinkingLevel = (value - blinkingThreshold) / (1 - blinkingThreshold);
 
-			if (GpuLoadKeys != null)
+			blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
+				* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (blinkingSpeed / 2f));
+
+			if (DefaultKeys.type == KeySequenceType.Sequence)
 			{
-				// Animating by keys. Prefferable.
+				// Animating by key sequence manually cause of bug in PercentEffect in Aurora v0.5.1d
 
-				for (int i = 0; i < GpuLoadKeys.Length; i++)
+				for (int i = 0; i < DefaultKeys.keys.Count; i++)
 				{
 					var blendLevel = Math.Min(1, Math.Max(0,
-						((gpuLoad / 100f) - (i / (float)GpuLoadKeys.Length)) / (1 / (float)GpuLoadKeys.Length)));
+						(value - (i / (float)DefaultKeys.keys.Count)) / (1f / DefaultKeys.keys.Count)));
 
-					GPULayer.Set(GpuLoadKeys[i], Color.FromArgb((byte)(blendLevel * 255),
-						LoadGradient.GetColorAt(1 - (i / (GpuLoadKeys.Length - 1f)))));
+					GPULayer.Set(DefaultKeys.keys[i], Color.FromArgb((byte)(blendLevel * 255),
+						loadGradient.GetColorAt(i / (DefaultKeys.keys.Count - 1f))));
 
-					GPUBlinkingLayer.Set(GpuLoadKeys[i], Color.FromArgb(
-						(byte)(255 * blendLevel * i / (GpuLoadKeys.Length - 1f) * gpuOverload *
-						Math.Sin(Math.PI * (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (float)blinkingSpeed)
-						), Color.Black));
+					if (blinkingThreshold <= 1)
+					{
+						GPULayer.Set(DefaultKeys.keys[i], (Color)EffectColor.BlendColors(
+							new EffectColor(GPULayer.Get(DefaultKeys.keys[i])),
+							new EffectColor(Color.Black),
+								blendLevel * i / (DefaultKeys.keys.Count - 1f) * blinkingLevel));
+					}
 				}
 			}
 			else
 			{
-				// Animating by rectangle.
-
-				var rectangle = new RectangleF(
-							(float)Math.Round((GpuLoadRectangle.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width),
-							(float)Math.Round((GpuLoadRectangle.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height),
-							(float)Math.Round(GpuLoadRectangle.Width * Effects.editor_to_canvas_width),
-							(float)Math.Round(GpuLoadRectangle.Height * Effects.editor_to_canvas_height));
-
-				var loadGradient = LoadGradient
-					.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
-				loadGradient.WrapMode = WrapMode.TileFlipXY;
-
-				var barheight = rectangle.Height * gpuLoad / 100f;
-
-				using (var g = GPULayer.GetGraphics())
-				{
-					g.FillRectangle(loadGradient,
-						new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
-				}
-
-				var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (float)blinkingSpeed);
-
-				var blinkGradient = new ColorSpectrum(Color.FromArgb((byte)(blinkColor.A * gpuOverload), blinkColor), Color.FromArgb(0, Color.Black))
-					.ToLinearGradient(rectangle.Width, rectangle.Height, rectangle.X, rectangle.Y);
-				blinkGradient.WrapMode = WrapMode.TileFlipXY;
-
-				using (var g = GPUBlinkingLayer.GetGraphics())
-				{
-					g.FillRectangle(blinkGradient,
-						new RectangleF(rectangle.Left, rectangle.Top + rectangle.Height - barheight, rectangle.Width, barheight));
-				}
+				GPULayer.PercentEffect(loadGradient, DefaultKeys, value, 1, PercentEffectType.Progressive_Gradual);
+				GPULayer.PercentEffect(
+					new ColorSpectrum(
+						Color.FromArgb(0, Color.Black),
+						Color.FromArgb((byte)(255 * blinkingLevel), Color.Black)),
+					DefaultKeys, value, 1, PercentEffectType.Progressive_Gradual);
 			}
 
-			RainbowLoop.Shift((float)(-0.003 + -0.01 * gpuLoad / 100f));
+			rainbowLoop.Shift((float)(-0.003 + -0.01 * value));
 
-			for (int i = 0; i < GpuRainbowKeys.Length; i++)
+			for (int i = 0; i < gpuRainbowKeys.Length; i++)
 			{
-				GPURainbowLayer.Set(GpuRainbowKeys[i],
-					Color.FromArgb((byte)(255 * gpuLoad / 100f),
-					RainbowLoop.GetColorAt(i, GpuRainbowKeys.Length * 3)));
+				GPURainbowLayer.Set(gpuRainbowKeys[i],
+					Color.FromArgb((byte)(255 * value),
+					rainbowLoop.GetColorAt(i, gpuRainbowKeys.Length * 3)));
 			}
 
 			layers.Enqueue(GPULayer);
-			layers.Enqueue(GPUBlinkingLayer);
 			layers.Enqueue(GPURainbowLayer);
 
 			return layers.ToArray();
@@ -252,11 +222,11 @@ namespace Aurora.Scripts.VoronScripts
 									Global.logger.LogLine("AdapterName:" + adapterInfo[i].AdapterName);
 									Global.logger.LogLine("UDID:" + adapterInfo[i].UDID);
 									Global.logger.LogLine("Present:" + adapterInfo[i].Present);
-									Global.logger.LogLine("VendorID: 0x" +adapterInfo[i].VendorID);
+									Global.logger.LogLine("VendorID: 0x" + adapterInfo[i].VendorID);
 									Global.logger.LogLine("BusNumber:" + adapterInfo[i].BusNumber);
 									Global.logger.LogLine("DeviceNumber:" + adapterInfo[i].DeviceNumber);
 									Global.logger.LogLine("FunctionNumber:" + adapterInfo[i].FunctionNumber);
-									Global.logger.LogLine("AdapterID: 0x"+adapterID);
+									Global.logger.LogLine("AdapterID: 0x" + adapterID);
 
 									if (!string.IsNullOrEmpty(adapterInfo[i].UDID) &&
 										adapterInfo[i].VendorID == ADL.ATI_VENDOR_ID)
@@ -281,7 +251,7 @@ namespace Aurora.Scripts.VoronScripts
 				catch (DllNotFoundException) { }
 				catch (EntryPointNotFoundException e)
 				{
-					Global.logger.LogLine("Error: "+e, Logging_Level.Error);
+					Global.logger.LogLine("Error: " + e, Logging_Level.Error);
 				}
 				return agpus.Select(x => x.AdapterIndex).ToArray();
 			}
@@ -348,7 +318,7 @@ namespace Aurora.Scripts.VoronScripts
 						}
 					}
 
-					Global.logger.LogLine("Number of GPUs: "+count);
+					Global.logger.LogLine("Number of GPUs: " + count);
 
 					for (int i = 0; i < count; i++)
 					{

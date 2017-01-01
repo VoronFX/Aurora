@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - CpuCores
-// v1.0-beta.3
+// v1.0-beta.4
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -28,7 +28,7 @@ namespace Aurora.Scripts.VoronScripts
 		public KeySequence DefaultKeys = new KeySequence();
 
 		// Independant RainbowLoop
-		public static ColorSpectrum RainbowLoop = new ColorSpectrum(
+		private readonly ColorSpectrum rainbowLoop = new ColorSpectrum(
 			Color.FromArgb(255, 0, 0),
 			Color.FromArgb(255, 127, 0),
 			Color.FromArgb(255, 255, 0),
@@ -39,21 +39,18 @@ namespace Aurora.Scripts.VoronScripts
 			Color.FromArgb(255, 0, 0)
 			);
 
-		static readonly ColorSpectrum LoadGradient =
+		private readonly ColorSpectrum loadGradient =
 			new ColorSpectrum(Color.FromArgb(0, Color.Lime), Color.Lime, Color.Orange, Color.Red);
 
-		static readonly ColorSpectrum BlinkingSpectrum =
-			new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black), Color.Black);
-
-		private static int BlinkingSpeed = 1000;
-		private static float BlinkingThreshold = 95;
+		private float blinkingThreshold = 0.95f;
+		private int blinkingSpeed = 1000;
 
 		// Each key displays load of one core
-		private static readonly DeviceKeys[] CpuCoresKeys =
+		private readonly DeviceKeys[] cpuCoresKeys =
 			{ DeviceKeys.G6, DeviceKeys.G7, DeviceKeys.G8, DeviceKeys.G9 };
 
 		// Keys for rainbow that represents processor usage by speed
-		static readonly DeviceKeys[] RainbowCircleKeys = {
+		private readonly DeviceKeys[] rainbowCircleKeys = {
 			DeviceKeys.NUM_ONE, DeviceKeys.NUM_FOUR, DeviceKeys.NUM_SEVEN, DeviceKeys.NUM_EIGHT,
 			DeviceKeys.NUM_NINE, DeviceKeys.NUM_SIX, DeviceKeys.NUM_THREE, DeviceKeys.NUM_TWO
 		};
@@ -63,29 +60,36 @@ namespace Aurora.Scripts.VoronScripts
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
 			var cpuLoad = Cpu.GetValue();
-			var cpuOverload = (cpuLoad[0] - BlinkingThreshold) / 5f;
-			cpuOverload = Math.Max(0, Math.Min(1, cpuOverload));
 
-			EffectLayer CPULayer = new EffectLayer(ID + " - CPULayer", Color.FromArgb((byte)(255 * cpuOverload), Color.Black));
+			var blinkingLevel = (cpuLoad[0] - blinkingThreshold) / (1 - blinkingThreshold);
+			blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
+				* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (blinkingSpeed / 2f));
+
+			EffectLayer CPULayer = new EffectLayer(ID + " - CPULayer", Color.FromArgb((byte)(255 * blinkingLevel), Color.Black));
 			EffectLayer CPULayerBlink = new EffectLayer(ID + " - CPULayerBlink");
 			EffectLayer CPULayerRainbowCircle = new EffectLayer(ID + " - CPULayerRainbowCircle");
 
-			var blinkColor = BlinkingSpectrum.GetColorAt((Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / (float)BlinkingSpeed);
 
-			for (int i = 0; i < CpuCoresKeys.Length; i++)
+			for (int i = 0; i < cpuCoresKeys.Length; i++)
 			{
-				CPULayer.Set(CpuCoresKeys[i], LoadGradient.GetColorAt(cpuLoad[i + 1] / 100f));
-				CPULayerBlink.Set(CpuCoresKeys[i], Color.FromArgb((byte)(blinkColor.A * Math.Max(0, Math.Min(1,
-					(cpuLoad[i + 1] - BlinkingThreshold) / 5))), blinkColor));
+				CPULayer.Set(cpuCoresKeys[i], loadGradient.GetColorAt(cpuLoad[i + 1]));
+
+				blinkingLevel = (cpuLoad[i + 1] - blinkingThreshold) / (1 - blinkingThreshold);
+				blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
+					* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (blinkingSpeed / 2f));
+				
+				CPULayer.Set(cpuCoresKeys[i], (Color)EffectColor.BlendColors(
+					new EffectColor(CPULayer.Get(cpuCoresKeys[i])),
+					new EffectColor(Color.Black), blinkingLevel));
 			}
 
-			RainbowLoop.Shift((float)(-0.005 + -0.02 * cpuLoad[0] / 100f));
+			rainbowLoop.Shift((float)(-0.005 + -0.02 * cpuLoad[0]));
 
-			for (int i = 0; i < RainbowCircleKeys.Length; i++)
+			for (int i = 0; i < rainbowCircleKeys.Length; i++)
 			{
-				CPULayerRainbowCircle.Set(RainbowCircleKeys[i],
-					Color.FromArgb((byte)(255 * cpuLoad[0] / 100f),
-					RainbowLoop.GetColorAt(i / (float)RainbowCircleKeys.Length)));
+				CPULayerRainbowCircle.Set(rainbowCircleKeys[i],
+					Color.FromArgb((byte)(255 * cpuLoad[0]),
+					rainbowLoop.GetColorAt(i / (float)rainbowCircleKeys.Length)));
 			}
 
 			layers.Enqueue(CPULayer);
@@ -118,7 +122,7 @@ namespace Aurora.Scripts.VoronScripts
 						.Select((x, i) =>
 						new PerformanceCounter("Processor", "% Processor Time", i == 0 ? "_Total" : (i - 1).ToString())).ToArray();
 
-				return counters.Select(x => x.NextValue()).ToArray();
+				return counters.Select(x => x.NextValue() / 100f).ToArray();
 			}
 		}
 

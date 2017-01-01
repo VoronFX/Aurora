@@ -1,6 +1,6 @@
 ﻿// 
 // Voron Scripts - PingPulser
-// v1.0-beta.3
+// v1.0-beta.4
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -38,7 +38,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			// Use Keys or Region to set area. 
 			// Keys do much more fluid transitions than Region.
-			Keys = new DeviceKeys[]
+			Keys = new []
 			{
 				DeviceKeys.F1, DeviceKeys.F2, DeviceKeys.F3, DeviceKeys.F4, DeviceKeys.F5,  DeviceKeys.F6,
 				DeviceKeys.F7,  DeviceKeys.F8,  DeviceKeys.F9,  DeviceKeys.F10, DeviceKeys.F11, DeviceKeys.F12

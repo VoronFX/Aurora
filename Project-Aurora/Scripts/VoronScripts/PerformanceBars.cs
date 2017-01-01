@@ -164,21 +164,21 @@ namespace Aurora.Scripts.VoronScripts
 				),
 
 			// Load of all disks using FreeForm 
-			new PerformanceBar(
-				valueProvider: new EasedPerformanceCounter(
-					performanceCounter: new PerformanceCounter(
-						categoryName: "LogicalDisk",
-						counterName: "% Disk Time",
-						instanceName: "_Total"),
-					minValue: 0f,
-					maxValue: 100f,
-					updateInterval: 1000,
-					easing: true),
-				 deviceKeys: new KeySequence(new FreeFormObject(0, 0, 300, 200, 90)),
-				 colorSpectrum: new ColorSpectrum(Color.Lime, Color.Orange, Color.Red),
-				 blinkingThreshold: 0.95f,
-				 blinkingSpeed: 1000
-				),
+			//new PerformanceBar(
+			//	valueProvider: new EasedPerformanceCounter(
+			//		performanceCounter: new PerformanceCounter(
+			//			categoryName: "LogicalDisk",
+			//			counterName: "% Disk Time",
+			//			instanceName: "_Total"),
+			//		minValue: 0f,
+			//		maxValue: 100f,
+			//		updateInterval: 1000,
+			//		easing: true),
+			//	 deviceKeys: new KeySequence(new FreeFormObject(0, 0, 300, 200, 90)),
+			//	 colorSpectrum: new ColorSpectrum(Color.Lime, Color.Orange, Color.Red),
+			//	 blinkingThreshold: 0.95f,
+			//	 blinkingSpeed: 1000
+			//	),
 			
 			// Network Load on Num2-Num8
 			// You need to specify right name for your network adapter and your theoretical max speed
@@ -235,7 +235,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			public void Render(EffectLayer effectLayer, long currentTime)
 			{
-				var value = 1f; valueProvider.GetValue();
+				var value = valueProvider.GetValue();
 				//(currentTime % 3000) / 30.0f / 100f;
 
 				var blinkingLevel = (value - blinkingThreshold) / (1 - blinkingThreshold);
