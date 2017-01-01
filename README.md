@@ -10,7 +10,18 @@ The actual Aurora project you can find here: [Link to Aurora project](https://gi
 As you understand I did some scripts for my Logitech G910 Orion Spark.
 All scripts were designed for my own use and by my own taste, but if you like them feel free to use and modify them.
 You can even ask me to implement something on keyboard, if you can't. And if I will have time I will help you.
-Right now, my profile consists of 3 scripts:
+Right now, my profile consists of 4 scripts:
+
+##PerformanceBars NEW!
+
+* Allow to display value from any valid PerformanceCounter in system as bar.
+* Has optional blinking effect when value reaches certain treshold.
+* Highly customizible: you can have several bars with different setting (update interval, smoothing, blinking threshold, blinking speed, colors of the bar...) for any performance counter.
+* You can use KeySequence or FreeForm(even with angle) for chosing area. But KeySequence animathion is smoother.
+* Examples of use: Bars for each cpu core and/or total (like on the gif). Bars for disk load (Total or by letter). Bar for network usage, memory usage, anything you can find in Computer Managment->Performance->Monitoring Tools->Performance Monitor and consider as usefull.
+* Samples included, look into script itself.
+
+![PerformanceBars](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/bars.gif)
 
 ##CpuCores
 
@@ -23,6 +34,7 @@ Right now, my profile consists of 3 scripts:
 
 ##GpuLoad
 
+* UPDATE!: Experimental support for ATI gpus.
 * Displays utilization of graphic card on desired buttons or region. I use G5-G1 buttons on the left. 
 * When graphic card utilization becomes 95% or higher bar begins to blink.
 * Now supports only NVidia graphic cards.
@@ -53,7 +65,7 @@ For example, you can set script to show ping to game server while that game is a
 
 # Requirements
 * Aurora itself [Link to Aurora project](https://github.com/antonpup/Aurora)
-* Tested and developed for 0.5.1d but should work on other versions too.
+* Tested and developed for 0.5.1d and 0.6.0
 
 # Credit
 * [Aurora](https://github.com/antonpup/Aurora) - The program that made it possible
