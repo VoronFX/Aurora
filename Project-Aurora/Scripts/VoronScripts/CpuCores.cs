@@ -87,7 +87,7 @@ namespace Aurora.Scripts.VoronScripts
 			{
 				CPULayerRainbowCircle.Set(rainbowCircleKeys[i],
 					Color.FromArgb((byte)(255 * cpuLoad[0]),
-					rainbowLoop.GetColorAt(i / (float)rainbowCircleKeys.Length)));
+					rainbowLoop.GetColorAt(i / ((float)rainbowCircleKeys.Length-1))));
 			}
 
 			layers.Enqueue(CPULayer);
