@@ -35,6 +35,9 @@ namespace Aurora.Scripts.VoronScripts
 
 		internal PerformanceBar[] Bars = new[]
 		{
+			// You can find guide to this by this link 
+			// https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/PerformanceBarsGuide.jpg
+			//
 			// You can create as many bars as you like with different parameters.
 			// You can use any valid performance counter in system.
 			// List of them you can find in Computer Managment->Performance->Monitoring Tools->Performance Monitor
@@ -115,7 +118,7 @@ namespace Aurora.Scripts.VoronScripts
 				 deviceKeys: new KeySequence(new []
 				 {
 					 DeviceKeys.A, DeviceKeys.S, DeviceKeys.D, DeviceKeys.F, DeviceKeys.G,
-					 DeviceKeys.H, DeviceKeys.J, DeviceKeys.K, DeviceKeys.L, DeviceKeys.PERIOD, DeviceKeys.SEMICOLON
+					 DeviceKeys.H, DeviceKeys.J, DeviceKeys.K, DeviceKeys.L, DeviceKeys.SEMICOLON
 				 }),
 				 colorSpectrum: new ColorSpectrum(Color.Lime, Color.Orange, Color.Red),
 				 blinkingThreshold: 0.95f,
@@ -136,7 +139,7 @@ namespace Aurora.Scripts.VoronScripts
 				 deviceKeys: new KeySequence(new []
 				 {
 					 DeviceKeys.Z, DeviceKeys.X, DeviceKeys.C, DeviceKeys.V, DeviceKeys.B,
-					 DeviceKeys.N, DeviceKeys.M, DeviceKeys.COMMA, DeviceKeys.FORWARD_SLASH
+					 DeviceKeys.N, DeviceKeys.M, DeviceKeys.COMMA, DeviceKeys.PERIOD, DeviceKeys.FORWARD_SLASH
 				 }),
 				 colorSpectrum: new ColorSpectrum(Color.Lime, Color.Orange, Color.Red),
 				 blinkingThreshold: 0.95f,
