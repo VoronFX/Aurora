@@ -7,246 +7,244 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Aurora.Profiles.PerformanceCounters;
 using Newtonsoft.Json.Linq;
 
 namespace Aurora.Profiles
 {
-    public class GameStateIgnoreAttribute : Attribute
-    { }
+	public class GameStateIgnoreAttribute : Attribute
+	{ }
 
-    public class RangeAttribute : Attribute
-    {
-        public int Start { get; set; }
+	public class RangeAttribute : Attribute
+	{
+		public int Start { get; set; }
 
-        public int End { get; set; }
+		public int End { get; set; }
 
-        public RangeAttribute(int start, int end)
-        {
-            Start = start;
-            End = end;
-        }
-    }
+		public RangeAttribute(int start, int end)
+		{
+			Start = start;
+			End = end;
+		}
+	}
 
-    /// <summary>
-    /// A class representing various information retaining to the game.
-    /// </summary>
-    public interface IGameState
-    {
-        /// <summary>
-        /// Information about the local system
-        /// </summary>
-        //LocalPCInformation LocalPCInfo { get; }
+	/// <summary>
+	/// A class representing various information retaining to the game.
+	/// </summary>
+	public interface IGameState
+	{
+		/// <summary>
+		/// Information about the local system
+		/// </summary>
+		//LocalPCInformation LocalPCInfo { get; }
 
-        Newtonsoft.Json.Linq.JObject _ParsedData { get; set; }
-        string json { get; set; }
+		JObject _ParsedData { get; set; }
+		string json { get; set; }
 
-        String GetNode(string name);
-    }
+		String GetNode(string name);
+	}
 
-    public class GameState<T> : StringProperty<T>, IGameState where T : GameState<T>
-    {
-        private static LocalPCInformation _localpcinfo;
+	public class GameState<T> : StringProperty<T>, IGameState where T : GameState<T>
+	{
+		private static LocalPCInformation _localpcinfo;
 
-        /// <summary>
-        /// Information about the local system
-        /// </summary>
-        public LocalPCInformation LocalPCInfo
-        {
-            get
-            {
-                if (_localpcinfo == null)
-                    _localpcinfo = new LocalPCInformation();
+		/// <summary>
+		/// Information about the local system
+		/// </summary>
+		public LocalPCInformation LocalPCInfo
+		{
+			get
+			{
+				if (_localpcinfo == null)
+					_localpcinfo = new LocalPCInformation();
 
-                return _localpcinfo;
-            }
-        }
+				return _localpcinfo;
+			}
+		}
 
-        public JObject _ParsedData { get; set; }
-        public string json { get; set; }
+		public JObject _ParsedData { get; set; }
+		public string json { get; set; }
 
-        /// <summary>
-        /// Creates a default GameState instance.
-        /// </summary>
-        public GameState() : base()
-        {
-            json = "{}";
-            _ParsedData = Newtonsoft.Json.Linq.JObject.Parse(json);
-        }
+		/// <summary>
+		/// Creates a default GameState instance.
+		/// </summary>
+		public GameState() : base()
+		{
+			json = "{}";
+			_ParsedData = JObject.Parse(json);
+		}
 
-        /// <summary>
-        /// Creates a GameState instance based on the passed json data.
-        /// </summary>
-        /// <param name="json_data">The passed json data</param>
-        public GameState(string json_data) : base()
-        {
-            if (String.IsNullOrWhiteSpace(json_data))
-                json_data = "{}";
+		/// <summary>
+		/// Creates a GameState instance based on the passed json data.
+		/// </summary>
+		/// <param name="json_data">The passed json data</param>
+		public GameState(string json_data) : base()
+		{
+			if (String.IsNullOrWhiteSpace(json_data))
+				json_data = "{}";
 
-            json = json_data;
-            _ParsedData = Newtonsoft.Json.Linq.JObject.Parse(json_data);
-        }
+			json = json_data;
+			_ParsedData = JObject.Parse(json_data);
+		}
 
-        /// <summary>
-        /// A copy constructor, creates a GameState instance based on the data from the passed GameState instance.
-        /// </summary>
-        /// <param name="other_state">The passed GameState</param>
-        public GameState(IGameState other_state) : base()
-        {
-            _ParsedData = other_state._ParsedData;
-            json = other_state.json;
-        }
+		/// <summary>
+		/// A copy constructor, creates a GameState instance based on the data from the passed GameState instance.
+		/// </summary>
+		/// <param name="other_state">The passed GameState</param>
+		public GameState(IGameState other_state) : base()
+		{
+			_ParsedData = other_state._ParsedData;
+			json = other_state.json;
+		}
 
-        public String GetNode(string name)
-        {
-            Newtonsoft.Json.Linq.JToken value;
+		public String GetNode(string name)
+		{
+			JToken value;
 
-            if (_ParsedData.TryGetValue(name, out value))
-                return value.ToString();
-            else
-                return "";
-        }
+			if (_ParsedData.TryGetValue(name, out value))
+				return value.ToString();
+			else
+				return "";
+		}
 
-        /// <summary>
-        /// Displays the JSON, representative of the GameState data
-        /// </summary>
-        /// <returns>JSON String</returns>
-        public override string ToString()
-        {
-            return json;
-        }
-    }
+		/// <summary>
+		/// Displays the JSON, representative of the GameState data
+		/// </summary>
+		/// <returns>JSON String</returns>
+		public override string ToString()
+		{
+			return json;
+		}
+	}
 
-    public class GameState : GameState<GameState>
-    {
-        public GameState() : base() { }
-        public GameState(IGameState gs) : base(gs) { }
-        public GameState(string json) : base(json) { }
-    }
+	public class GameState : GameState<GameState>
+	{
+		public GameState() : base() { }
+		public GameState(IGameState gs) : base(gs) { }
+		public GameState(string json) : base(json) { }
+	}
 
-    static class PerformanceInfo
-    {
-        [DllImport("psapi.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetPerformanceInfo([Out] out PerformanceInformation PerformanceInformation, [In] int Size);
+	/// <summary>
+	/// Class representing local computer information
+	/// </summary>
+	public class LocalPCInformation : Node<LocalPCInformation>
+	{
+		private static readonly CpuTotal CpuTotal = new CpuTotal();
+		private static readonly CpuPerCore CpuPerCore = new CpuPerCore();
+		private static readonly Memory Memory = new Memory();
+		private static readonly GpuPerformance GpuPerformance = new GpuPerformance();
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct PerformanceInformation
-        {
-            public int Size;
-            public IntPtr CommitTotal;
-            public IntPtr CommitLimit;
-            public IntPtr CommitPeak;
-            public IntPtr PhysicalTotal;
-            public IntPtr PhysicalAvailable;
-            public IntPtr SystemCache;
-            public IntPtr KernelTotal;
-            public IntPtr KernelPaged;
-            public IntPtr KernelNonPaged;
-            public IntPtr PageSize;
-            public int HandlesCount;
-            public int ProcessCount;
-            public int ThreadCount;
-        }
+		/// <summary>
+		/// The current hour
+		/// </summary>
+		public int CurrentHour => Utils.Time.GetHours();
 
-        public static Int64 GetPhysicalAvailableMemoryInMiB()
-        {
-            ulong availableMemory = new ComputerInfo().AvailablePhysicalMemory;
-            return Convert.ToInt64(availableMemory / 1048576);
-        }
+		/// <summary>
+		/// The current minute
+		/// </summary>
+		public int CurrentMinute => Utils.Time.GetMinutes();
 
-        public static Int64 GetTotalMemoryInMiB()
-        {
-            ulong availableMemory = new ComputerInfo().TotalPhysicalMemory;
-            return Convert.ToInt64(availableMemory / 1048576);
+		/// <summary>
+		/// The current second
+		/// </summary>
+		public int CurrentSecond => Utils.Time.GetSeconds();
 
-        }
-    }
+		/// <summary>
+		/// The current millisecond
+		/// </summary>
+		public int CurrentMillisecond => Utils.Time.GetMilliSeconds();
 
-    /// <summary>
-    /// Class representing local computer information
-    /// </summary>
-    public class LocalPCInformation : Node<LocalPCInformation>
-    {
-        /// <summary>
-        /// The current hour
-        /// </summary>
-        public int CurrentHour { get { return Utils.Time.GetHours(); } }
+		/// <summary>
+		/// Used RAM
+		/// </summary>
+		public long MemoryUsed => Memory.GetTotalMemoryInMiB() - Memory.GetPhysicalAvailableMemoryInMiB();
 
-        /// <summary>
-        /// The current minute
-        /// </summary>
-        public int CurrentMinute { get { return Utils.Time.GetMinutes(); } }
+		/// <summary>
+		/// Available RAM
+		/// </summary>
+		public long MemoryFree => Memory.GetPhysicalAvailableMemoryInMiB();
 
-        /// <summary>
-        /// The current second
-        /// </summary>
-        public int CurrentSecond { get { return Utils.Time.GetSeconds(); } }
+		/// <summary>
+		/// Total RAM
+		/// </summary>
+		public long MemoryTotal => Memory.GetTotalMemoryInMiB();
 
-        /// <summary>
-        /// The current millisecond
-        /// </summary>
-        public int CurrentMillisecond { get { return Utils.Time.GetMilliSeconds(); } }
+		/// <summary>
+		/// Current CPU Usage
+		/// </summary>
+		public float CPUUsage => CpuTotal.GetValue();
 
-        /// <summary>
-        /// Used RAM
-        /// </summary>
-        public long MemoryUsed { get { return PerformanceInfo.GetTotalMemoryInMiB() - PerformanceInfo.GetPhysicalAvailableMemoryInMiB(); } }
+		/// <summary>
+		/// Current CPU Usage per core
+		/// </summary>
+		public float[] CpuCoresUsage => CpuPerCore.GetValue();
 
-        /// <summary>
-        /// Available RAM
-        /// </summary>
-        public long MemoryFree { get { return PerformanceInfo.GetPhysicalAvailableMemoryInMiB(); } }
+		/// <summary>
+		/// Current GPU Fan speed in rpm
+		/// </summary>
+		public float GpuFanRpm => GpuPerformance.FanRpm();
 
-        /// <summary>
-        /// Total RAM
-        /// </summary>
-        public long MemoryTotal { get { return PerformanceInfo.GetTotalMemoryInMiB(); } }
+		/// <summary>
+		/// Current GPU Fan speed in percents
+		/// </summary>
+		public float GpuFanUsage => GpuPerformance.FanUsage();
 
-        private static PerformanceCounter _CPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+		/// <summary>
+		/// Current GPU Core clock
+		/// </summary>
+		public float GpuCoreClock => GpuPerformance.CoreClock();
 
-        private static float _CPUUsage = 0.0f;
-        private static float _SmoothCPUUsage = 0.0f;
+		/// <summary>
+		/// Current GPU Memory clock
+		/// </summary>
+		public float GpuMemoryClock => GpuPerformance.MemoryClock();
 
-        private static System.Timers.Timer cpuCounterTimer;
+		/// <summary>
+		/// Current GPU Shader clock. NVidia only.
+		/// </summary>
+		public float GpuShaderClock => GpuPerformance.ShaderClock();
 
-        /// <summary>
-        /// Current CPU Usage
-        /// </summary>
-        public float CPUUsage
-        {
-            get
-            {
-                //Global.logger.LogLine($"_CPUUsage = {_CPUUsage}\t\t_SmoothCPUUsage = {_SmoothCPUUsage}");
+		/// <summary>
+		/// Current GPU Core voltage. ATI only.
+		/// </summary>
+		public float GpuCoreVoltage => GpuPerformance.CoreVoltage();
 
-                if (_SmoothCPUUsage < _CPUUsage)
-                    _SmoothCPUUsage += (_CPUUsage - _SmoothCPUUsage) / 10.0f;
-                else if (_SmoothCPUUsage > _CPUUsage)
-                    _SmoothCPUUsage -= (_SmoothCPUUsage - _CPUUsage) / 10.0f;
+		/// <summary>
+		/// Current GPU Core usage
+		/// </summary>
+		public float GpuCoreUsage => GpuPerformance.CoreUsage();
 
-                return _SmoothCPUUsage;
-            }
-        }
+		/// <summary>
+		/// Current GPU Memory Controller usage. NVidia only.
+		/// </summary>
+		public float GpuMemoryControllerUsage => GpuPerformance.MemoryControllerUsage();
 
-        internal LocalPCInformation() : base()
-        {
-            if (cpuCounterTimer == null)
-            {
-                cpuCounterTimer = new System.Timers.Timer(1000);
-                cpuCounterTimer.Elapsed += CpuCounterTimer_Elapsed;
-                cpuCounterTimer.Start();
-            }
-        }
+		/// <summary>
+		/// Current GPU Video Engine usage. NVidia only.
+		/// </summary>
+		public float GpuVideoEngineUsage => GpuPerformance.VideoEngineUsage();
 
-        private void CpuCounterTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            try
-            {
-                _CPUUsage = (_CPUUsage + _CPUCounter.NextValue()) / 2.0f;
-            }
-            catch (Exception exc)
-            {
-                Global.logger.LogLine("PerformanceCounter exception: " + exc, Logging_Level.Error);
-            }
-        }
-    }
+		/// <summary>
+		/// Current GPU Memory usage in percents. NVidia only.
+		/// </summary>
+		public float GpuMemoryUsage => GpuPerformance.MemoryUsage();
+
+		/// <summary>
+		/// Current GPU Free memory. NVidia only.
+		/// </summary>
+		public float GpuMemoryFree => GpuPerformance.MemoryFree();
+
+		/// <summary>
+		/// Current GPU Used memory. NVidia only.
+		/// </summary>
+		public float GpuMemoryUsed => GpuPerformance.MemoryUsed();
+
+		/// <summary>
+		/// Current GPU Total memory. NVidia only.
+		/// </summary>
+		public float GpuMemoryTotal => GpuPerformance.MemoryTotal();
+
+	}
+
+
 }
