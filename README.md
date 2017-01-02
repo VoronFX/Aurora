@@ -20,6 +20,7 @@ Right now, my profile consists of 4 scripts:
 * You can use KeySequence or FreeForm(even with angle) for chosing area. But KeySequence animathion is smoother.
 * Examples of use: Bars for each cpu core and/or total (like on the gif). Bars for disk load (Total or by letter). Bar for network usage, memory usage, anything you can find in Computer Managment->Performance->Monitoring Tools->Performance Monitor and consider as usefull.
 * Samples included, look into script itself.
+* [Here](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/PerformanceBarsGuide.jpg) is guide for this script 
 
 ![PerformanceBars](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/bars.gif)
 
