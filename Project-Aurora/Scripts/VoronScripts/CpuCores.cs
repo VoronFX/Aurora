@@ -1,7 +1,6 @@
 ﻿//
 // Voron Scripts - CpuCores
-// v1.0-beta.4
-// for Aurora v0.5.1d
+// v1.0-beta.5
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -56,20 +55,18 @@ namespace Aurora.Scripts.VoronScripts
 			DeviceKeys.NUM_NINE, DeviceKeys.NUM_SIX, DeviceKeys.NUM_THREE, DeviceKeys.NUM_TWO
 		};
 
-		public EffectLayer[] UpdateLights(ScriptSettings settings, GameState state = null)
+		public EffectLayer[] UpdateLights(ScriptSettings settings, object state = null)
 		{
 			Queue<EffectLayer> layers = new Queue<EffectLayer>();
 
 			var cpuLoad = Cpu.GetValue();
 
 			var blinkingLevel = (cpuLoad[0] - blinkingThreshold) / (1 - blinkingThreshold);
-			blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
-				* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (blinkingSpeed / 2f));
+			blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel));		
 
 			EffectLayer CPULayer = new EffectLayer(ID + " - CPULayer", Color.FromArgb((byte)(255 * blinkingLevel), Color.Black));
 			EffectLayer CPULayerBlink = new EffectLayer(ID + " - CPULayerBlink");
 			EffectLayer CPULayerRainbowCircle = new EffectLayer(ID + " - CPULayerRainbowCircle");
-
 
 			for (int i = 0; i < cpuCoresKeys.Length; i++)
 			{
@@ -211,5 +208,4 @@ namespace Aurora.Scripts.VoronScripts
 		}
 
 	}
-
 }
