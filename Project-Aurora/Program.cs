@@ -207,15 +207,16 @@ namespace Aurora
             Global.logger.LogLine("Listening for game integration calls...", Logging_Level.None);
 
             Global.logger.LogLine("Loading WinApp...", Logging_Level.None);
-            WinApp = new System.Windows.Application();
+            WinApp = new App();
             Global.logger.LogLine("Loaded WinApp", Logging_Level.None);
 
             Global.logger.LogLine("Loading ResourceDictionaries...", Logging_Level.None);
 
             WinApp.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("Themes/MetroDark/MetroDark.MSControls.Core.Implicit.xaml", UriKind.Relative) });
             WinApp.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("Themes/MetroDark/MetroDark.MSControls.Toolkit.Implicit.xaml", UriKind.Relative) });
+			WinApp.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("Controls/Layout/LayoutDictionary.xaml", UriKind.Relative) });
 
-            Global.logger.LogLine("Loaded ResourceDictionaries", Logging_Level.None);
+			Global.logger.LogLine("Loaded ResourceDictionaries", Logging_Level.None);
 
             WinApp.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 

@@ -72,7 +72,7 @@ namespace Aurora.Settings.Layers
                 }
             }
 
-            percent_layer.PercentEffect(Properties.Gradient.GetColorSpectrum(), Properties.Sequence, value, maxvalue, Properties.PercentType, Properties.BlinkThreshold, Properties.BlinkDirection);
+            percent_layer.PercentEffect(Properties.Gradient.GetColorSpectrum(), Properties.Sequence, value, maxvalue, Properties.PercentType, Properties.BlinkThresholdStart, Properties.BlinkThresholdMaximum);
 
             return percent_layer;
         }

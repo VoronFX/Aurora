@@ -55,7 +55,7 @@ namespace Aurora.Profiles.RocketLeague
                             Devices.DeviceKeys.F11, Devices.DeviceKeys.F12
                         }),
                         _Gradient = new EffectsEngine.EffectBrush(new ColorSpectrum(Color.Yellow, Color.Red).SetColorAt(0.75f, Color.OrangeRed)),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "Player/BoostAmount",
                         _MaxVariablePath = "1.0",
@@ -68,7 +68,7 @@ namespace Aurora.Profiles.RocketLeague
                         _PercentType = PercentEffectType.AllAtOnce,
                         _Sequence = new KeySequence(new Devices.DeviceKeys[] { Devices.DeviceKeys.Peripheral } ),
                         _Gradient = new EffectsEngine.EffectBrush(new ColorSpectrum(Color.Yellow, Color.Red).SetColorAt(0.75f, Color.OrangeRed)),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "Player/BoostAmount",
                         _MaxVariablePath = "1.0"

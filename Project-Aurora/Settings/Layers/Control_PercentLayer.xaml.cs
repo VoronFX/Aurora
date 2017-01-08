@@ -33,23 +33,40 @@ namespace Aurora.Settings.Layers
             InitializeComponent();
 
             this.DataContext = datacontext;
-        }
+		}
 
-        public void SetSettings()
-        {
-            if (this.DataContext is PercentLayerHandler && !settingsset)
+	    public PercentLayerHandler CurrentDataContext => DataContext as PercentLayerHandler;
+	    public string Current { get; set; }
+
+		public void SetSettings()
+		{
+			var percentLayerHandler = DataContext as PercentLayerHandler;
+			if (percentLayerHandler != null && !settingsset)
             {
-                this.ComboBox_variable.Text = (this.DataContext as PercentLayerHandler).Properties._VariablePath;
-                this.ComboBox_max_variable.Text = (this.DataContext as PercentLayerHandler).Properties._MaxVariablePath;
-                this.ColorPicker_progressColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor((this.DataContext as PercentLayerHandler).Properties._PrimaryColor ?? System.Drawing.Color.Empty);
-                this.ColorPicker_backgroundColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor((this.DataContext as PercentLayerHandler).Properties._SecondaryColor ?? System.Drawing.Color.Empty);
-                this.ComboBox_effect_type.SelectedIndex = (int)(this.DataContext as PercentLayerHandler).Properties._PercentType;
-                this.updown_blink_value.Value = (int)((this.DataContext as PercentLayerHandler).Properties._BlinkThreshold * 100);
-                this.CheckBox_threshold_reverse.IsChecked = (this.DataContext as PercentLayerHandler).Properties._BlinkDirection;
-                this.KeySequence_keys.Sequence = (this.DataContext as PercentLayerHandler).Properties._Sequence;
+               // this.ComboBoxVariable.Text = percentLayerHandler.Properties._VariablePath;
+                this.ComboBoxMaxVariable.Text = percentLayerHandler.Properties._MaxVariablePath;
+                this.ColorPicker_progressColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor(percentLayerHandler.Properties._PrimaryColor ?? System.Drawing.Color.Empty);
+                this.ColorPicker_backgroundColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor(percentLayerHandler.Properties._SecondaryColor ?? System.Drawing.Color.Empty);
+                this.ComboBox_effect_type.SelectedIndex = (int)percentLayerHandler.Properties._PercentType;
+               // this.updown_blink_value.Value = (int)(percentLayerHandler.Properties._BlinkThresholdStart * 100);
+                this.CheckBoxThresholdReverse.IsChecked = percentLayerHandler.Properties._BlinkDirection;
+                this.KeySequence_keys.Sequence = percentLayerHandler.Properties._Sequence;
                 settingsset = true;
             }
-        }
+
+			//if (this.DataContext is PercentLayerHandler && !settingsset)
+			//{
+			//	//this.ComboBoxVariable.Text = (this.DataContext as PercentLayerHandler).Properties._VariablePath;
+			//	this.ComboBoxMaxVariable.Text = (this.DataContext as PercentLayerHandler).Properties._MaxVariablePath;
+			//	this.ColorPicker_progressColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor((this.DataContext as PercentLayerHandler).Properties._PrimaryColor ?? System.Drawing.Color.Empty);
+			//	this.ColorPicker_backgroundColor.SelectedColor = Utils.ColorUtils.DrawingColorToMediaColor((this.DataContext as PercentLayerHandler).Properties._SecondaryColor ?? System.Drawing.Color.Empty);
+			//	this.ComboBox_effect_type.SelectedIndex = (int)(this.DataContext as PercentLayerHandler).Properties._PercentType;
+			//	// this.updown_blink_value.Value = (int)((this.DataContext as PercentLayerHandler).Properties._BlinkThresholdStart * 100);
+			//	this.CheckBoxThresholdReverse.IsChecked = (this.DataContext as PercentLayerHandler).Properties._BlinkDirection;
+			//	this.KeySequence_keys.Sequence = (this.DataContext as PercentLayerHandler).Properties._Sequence;
+			//	settingsset = true;
+			//}
+		}
 
         internal void SetProfile(ProfileManager profile)
         {
@@ -57,13 +74,13 @@ namespace Aurora.Settings.Layers
             {
                 var var_types_numerical = profile.ParameterLookup?.Where(kvp => Utils.TypeUtils.IsNumericType(kvp.Value.Item1));
 
-                this.ComboBox_variable.Items.Clear();
+                this.ComboBoxVariable.Items.Clear();
                 foreach (var item in var_types_numerical)
-                    this.ComboBox_variable.Items.Add(item.Key);
+                    this.ComboBoxVariable.Items.Add(item.Key);
 
-                this.ComboBox_max_variable.Items.Clear();
+                this.ComboBoxMaxVariable.Items.Clear();
                 foreach (var item in var_types_numerical)
-                    this.ComboBox_max_variable.Items.Add(item.Key);
+                    this.ComboBoxMaxVariable.Items.Add(item.Key);
 
                 profileset = true;
             }
@@ -86,11 +103,17 @@ namespace Aurora.Settings.Layers
 
         private void ComboBox_variable_TextChanged(object sender, RoutedEventArgs e)
         {
-            if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is ComboBox)
-                (this.DataContext as PercentLayerHandler).Properties._VariablePath = (sender as ComboBox).Text;
+            //if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is ComboBox)
+            //    (this.DataContext as PercentLayerHandler).Properties._VariablePath = (sender as ComboBox).Text;
         }
 
-        private void ComboBox_max_variable_TextChanged(object sender, RoutedEventArgs e)
+		private void ComboBox_min_variable_TextChanged(object sender, RoutedEventArgs e)
+		{
+			if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is ComboBox)
+				(this.DataContext as PercentLayerHandler).Properties._MinVariablePath = (sender as ComboBox).Text;
+		}
+
+		private void ComboBox_max_variable_TextChanged(object sender, RoutedEventArgs e)
         {
             if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is ComboBox)
                 (this.DataContext as PercentLayerHandler).Properties._MaxVariablePath = (sender as ComboBox).Text;
@@ -108,13 +131,25 @@ namespace Aurora.Settings.Layers
                 (this.DataContext as PercentLayerHandler).Properties._SecondaryColor = Utils.ColorUtils.MediaColorToDrawingColor((sender as Xceed.Wpf.Toolkit.ColorPicker).SelectedColor.Value);
         }
 
-        private void updown_blink_value_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void updown_blink_start_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is Xceed.Wpf.Toolkit.IntegerUpDown && (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.HasValue)
-                (this.DataContext as PercentLayerHandler).Properties._BlinkThreshold = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value / 100.0D;
+                (this.DataContext as PercentLayerHandler).Properties._BlinkThresholdStart = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value / 100.0D;
         }
 
-        private void ComboBox_effect_type_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void updown_blink_max_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+			if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is Xceed.Wpf.Toolkit.IntegerUpDown && (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.HasValue)
+				(this.DataContext as PercentLayerHandler).Properties._BlinkThresholdMaximum = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value / 100.0D;
+		}
+
+		private void updown_blink_speed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+			if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is Xceed.Wpf.Toolkit.IntegerUpDown && (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.HasValue)
+				(this.DataContext as PercentLayerHandler).Properties._BlinkSpeed = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value;
+		}
+
+		private void ComboBox_effect_type_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (IsLoaded && settingsset && this.DataContext is PercentLayerHandler && sender is ComboBox)
             {
@@ -129,5 +164,10 @@ namespace Aurora.Settings.Layers
                 (this.DataContext as PercentLayerHandler).Properties._BlinkDirection = (sender as CheckBox).IsChecked.Value;
             }
         }
+
+	    private void BlinkThreshold_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+	    {
+		  //throw new NotImplementedException();
+	    }
     }
 }

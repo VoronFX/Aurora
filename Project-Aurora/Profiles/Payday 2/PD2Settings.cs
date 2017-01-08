@@ -69,7 +69,7 @@ namespace Aurora.Profiles.Payday_2
                             Devices.DeviceKeys.F5, Devices.DeviceKeys.F6, Devices.DeviceKeys.F7, Devices.DeviceKeys.F8,
                             Devices.DeviceKeys.F9, Devices.DeviceKeys.F10, Devices.DeviceKeys.F11, Devices.DeviceKeys.F12
                         }),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "LocalPlayer/Health/Current",
                         _MaxVariablePath = "LocalPlayer/Health/Max"
@@ -87,7 +87,7 @@ namespace Aurora.Profiles.Payday_2
                             Devices.DeviceKeys.FIVE, Devices.DeviceKeys.SIX, Devices.DeviceKeys.SEVEN, Devices.DeviceKeys.EIGHT,
                             Devices.DeviceKeys.NINE, Devices.DeviceKeys.ZERO, Devices.DeviceKeys.MINUS, Devices.DeviceKeys.EQUALS
                         }),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "LocalPlayer/Weapons/SelectedWeapon/Current_Clip",
                         _MaxVariablePath = "LocalPlayer/Weapons/SelectedWeapon/Max_Clip"

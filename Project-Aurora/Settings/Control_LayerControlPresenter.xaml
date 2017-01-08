@@ -7,6 +7,7 @@
              xmlns:EnumValueConverters="clr-namespace:Aurora.Utils"
              xmlns:System="clr-namespace:System;assembly=mscorlib" 
              xmlns:local="clr-namespace:Aurora.Settings"
+             xmlns:layout="clr-namespace:Aurora.Controls.Layout"
              mc:Ignorable="d" d:DesignWidth="398" d:DesignHeight="201.525">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,11 +24,22 @@
     </UserControl.Resources>
     <Grid>
         <Border Background="#A5000000" CornerRadius="8" />
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Layer name:" VerticalAlignment="Top" Margin="10,10,0,0"/>
-        <TextBox x:Name="txtLayerName" HorizontalAlignment="Left" Height="23" Margin="78,9,0,0" TextWrapping="Wrap" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="200"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,38,0,0" TextWrapping="Wrap" Text="Layer type:" VerticalAlignment="Top"/>
-        <ComboBox x:Name="cmbLayerType" HorizontalAlignment="Left" Margin="72,37,0,0" VerticalAlignment="Top" Width="206" SelectionChanged="cmbLayerType_SelectionChanged" ItemTemplate="{Binding Source={StaticResource LayerTypeTemplate}}"/>
-        <UserControl x:Name="ctrlLayerTypeConfig" Margin="10,64,10,10"/>
-        <Button x:Name="btnLogic" Content="View Layer Logic" HorizontalAlignment="Left" Margin="283,10,0,0" VerticalAlignment="Top" Click="btnLogic_Click" Visibility="Hidden"/>
+        <DockPanel Margin="5">
+            <StackPanel DockPanel.Dock="Top">
+                <StackPanel Orientation="Horizontal" Margin="5,5,5,0">
+                    <layout:ColumnProperty PropertyHeader="Layer name:" MinWidth="300" Margin="0,0,5,0">
+                        <TextBox x:Name="txtLayerName" TextWrapping="Wrap" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                    </layout:ColumnProperty>
+                    <layout:ColumnProperty PropertyHeader="Layer type:" MinWidth="300">
+                        <ComboBox x:Name="cmbLayerType" SelectionChanged="cmbLayerType_SelectionChanged" ItemTemplate="{Binding Source={StaticResource LayerTypeTemplate}}"/>
+                    </layout:ColumnProperty>
+                    <Button x:Name="btnLogic" Content="View Layer Logic" Click="btnLogic_Click" Visibility="Hidden"/>
+                </StackPanel>
+                <layout:HeaderedSeparator Header="Layer settings"/>
+            </StackPanel>
+            <Border Margin="5">
+                <UserControl x:Name="ctrlLayerTypeConfig"/>
+            </Border>
+        </DockPanel>
     </Grid>
 </UserControl>

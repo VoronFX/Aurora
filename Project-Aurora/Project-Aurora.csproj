@@ -194,6 +194,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="QuickConverter, Version=1.2.3.0, Culture=neutral, PublicKeyToken=9c892aa7bc2af2cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickConverter.1.2.3.0\lib\net40\QuickConverter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Roccat-Talk, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Roccat-Talk.1.0.0.0\lib\net45\Roccat-Talk.dll</HintPath>
       <Private>True</Private>
@@ -230,6 +234,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConfigUI.xaml.cs">
       <DependentUpon>ConfigUI.xaml</DependentUpon>
     </Compile>
@@ -248,6 +255,14 @@
     <Compile Include="Controls\LayerEditor.xaml.cs">
       <DependentUpon>LayerEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Layout\ColumnProperty3.xaml.cs">
+      <DependentUpon>ColumnProperty3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Layout\ColumnWrapPanel.cs" />
+    <Compile Include="Controls\Layout\HeaderedSeparator.cs" />
+    <Compile Include="Controls\Layout\ColumnProperty.cs" />
+    <Compile Include="Controls\Layout\Converters.cs" />
+    <Compile Include="Controls\Layout\DependencyPropertyExtension.cs" />
     <Compile Include="Controls\LogicCheckEdit.xaml.cs">
       <DependentUpon>LogicCheckEdit.xaml</DependentUpon>
     </Compile>
@@ -826,7 +841,9 @@
     <Resource Include="Profiles\Payday 2\GSI\PD2_GSI.zip" />
     <Resource Include="Profiles\Dota 2\GSI\gamestate_integration_aurora.cfg" />
     <Resource Include="Profiles\CSGO\GSI\gamestate_integration_aurora.cfg" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Pointers\RocketLeague.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -836,6 +853,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ConfigUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -871,6 +892,14 @@
     <Page Include="Controls\LayerEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Layout\ColumnProperty3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Layout\LayoutDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\LogicCheckEdit.xaml">
       <SubType>Designer</SubType>

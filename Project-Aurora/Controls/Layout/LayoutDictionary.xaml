@@ -1,0 +1,57 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:layout="clr-namespace:Aurora.Controls.Layout"
+                    xmlns:qc="http://QuickConverter.CodePlex.com/">
+    <Style TargetType="{x:Type layout:HeaderedSeparator}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type layout:HeaderedSeparator}">
+                    <Grid Height="{TemplateBinding Height}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Separator Grid.Column="0" />
+                        <TextBlock Grid.Column="1" 
+                        VerticalAlignment="Center" Margin="5 0" 
+                        Text="{TemplateBinding Header}"/>
+                        <Separator Grid.Column="2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="layout:ColumnProperty">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="layout:ColumnProperty">
+                    <DockPanel Margin="0,0,5,5">
+
+                        <Label VerticalContentAlignment="Center" 
+                               MinHeight="24"
+                               Content="{TemplateBinding PropertyHeader}" 
+                               DockPanel.Dock="{TemplateBinding DualLine, Converter={qc:QuickConverter '$P ? Dock.Top : Dock.Left'}}" 
+                               VerticalAlignment="Center" 
+                               Padding="0,0,5,0" 
+                               Margin="0"
+                               Visibility="{Binding Content, Converter={qc:QuickConverter '$P == null ? Visibility.Collapsed : Visibility.Visible'}, Mode=OneWay}"/>
+
+                        <Label VerticalContentAlignment="Center" 
+                               MinHeight="24"
+                               Content="{TemplateBinding AfterText}" 
+                               VerticalAlignment="Center" 
+                               DockPanel.Dock="Right" 
+                               Padding="5,0,0,0"
+                               Margin="0"
+                               Visibility="{Binding Content, Converter={qc:QuickConverter '$P == null ? Visibility.Collapsed : Visibility.Visible'}, Mode=OneWay}"/>
+
+                        <ContentPresenter x:Name="ContentPresenter" MinHeight="24" Margin="0" 
+                                          Content="{TemplateBinding Content}"/>
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

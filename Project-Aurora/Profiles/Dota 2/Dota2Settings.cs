@@ -90,7 +90,7 @@ namespace Aurora.Profiles.Dota_2
                             Devices.DeviceKeys.F5, Devices.DeviceKeys.F6, Devices.DeviceKeys.F7, Devices.DeviceKeys.F8,
                             Devices.DeviceKeys.F9, Devices.DeviceKeys.F10, Devices.DeviceKeys.F11, Devices.DeviceKeys.F12
                         }),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "Hero/Health",
                         _MaxVariablePath = "Hero/MaxHealth"
@@ -113,7 +113,7 @@ namespace Aurora.Profiles.Dota_2
                             Devices.DeviceKeys.FIVE, Devices.DeviceKeys.SIX, Devices.DeviceKeys.SEVEN, Devices.DeviceKeys.EIGHT,
                             Devices.DeviceKeys.NINE, Devices.DeviceKeys.ZERO, Devices.DeviceKeys.MINUS, Devices.DeviceKeys.EQUALS
                         }),
-                        _BlinkThreshold = 0.0,
+                        _BlinkThresholdStart = 0.0,
                         _BlinkDirection = false,
                         _VariablePath = "Hero/Mana",
                         _MaxVariablePath = "Hero/MaxMana"

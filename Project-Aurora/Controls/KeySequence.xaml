@@ -19,13 +19,19 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
-        <TextBlock x:Name="key_sequence_title" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Title}" Margin="0,2,0,0"/>
-        <ListBox x:Name="keys_keysequence" Margin="0,23,80,22" ItemTemplate="{Binding Source={StaticResource DeviceKeys}}" MinWidth="150" MinHeight="76" SelectionMode="Multiple" SelectionChanged="keys_keysequence_SelectionChanged"/>
-        <Button x:Name="sequence_up" Content="Move Up" Margin="0,76,0,0" VerticalAlignment="Top" Click="sequence_up_keys_Click" HorizontalAlignment="Right" Width="75"/>
-        <Button x:Name="sequence_down" Content="Move Down" HorizontalAlignment="Right" Margin="0,101,0,0" VerticalAlignment="Top" Width="75" Click="sequence_down_keys_Click"/>
-        <Button x:Name="sequence_remove" Content="Remove" Margin="0,50,0,0" VerticalAlignment="Top" Click="sequence_remove_keys_Click" HorizontalAlignment="Right" Width="75"/>
-        <Button x:Name="sequence_record" Content="Assign Keys" Margin="0,23,0,0" VerticalAlignment="Top" Click="sequence_record_keys_Click" HorizontalAlignment="Right" Width="75"/>
-        <CheckBox x:Name="sequence_freestyle_checkbox" Content="Use Freestyle instead" HorizontalAlignment="Left" Checked="sequence_freestyle_checkbox_Checked" Unchecked="sequence_freestyle_checkbox_Checked" Margin="0,0,0,2" Height="15" VerticalAlignment="Bottom"/>
-    </Grid>
+    <DockPanel>
+        <TextBlock x:Name="key_sequence_title" DockPanel.Dock="Top" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Title}" Margin="0,0,5,5"/>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Right" Width="80">
+                <Button x:Name="sequence_up" Content="Move Up" Click="sequence_up_keys_Click" Margin="0,0,5,5" Height="24"/>
+                <Button x:Name="sequence_down" Content="Move Down" Click="sequence_down_keys_Click" Margin="0,0,5,5" Height="24"/>
+                <Button x:Name="sequence_remove" Content="Remove" Click="sequence_remove_keys_Click" Margin="0,0,5,5" Height="24"/>
+                <Button x:Name="sequence_record" Content="Assign Keys" Click="sequence_record_keys_Click" Margin="0,0,5,5" Height="24"/>
+            </StackPanel>
+            <DockPanel>
+                <CheckBox x:Name="sequence_freestyle_checkbox" DockPanel.Dock="Bottom" Margin="0,0,5,5" Content="Use Freestyle instead" Checked="sequence_freestyle_checkbox_Checked" Unchecked="sequence_freestyle_checkbox_Checked" />
+                <ListBox x:Name="keys_keysequence" Margin="0,0,5,5" ItemTemplate="{Binding Source={StaticResource DeviceKeys}}" SelectionMode="Multiple" SelectionChanged="keys_keysequence_SelectionChanged"/>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
 </UserControl>
