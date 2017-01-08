@@ -30,14 +30,14 @@ namespace Aurora.Controls.Layout
 			DependencyProperty<ColumnProperty>.Register(x => x.AfterText);
 
 
-		public bool DualLine
+		public bool ForceDualLine
 		{
-			get { return (bool) GetValue(DualLineProperty); }
-			set { SetValue(DualLineProperty, value); }
+			get { return (bool) GetValue(ForceDualLineProperty); }
+			set { SetValue(ForceDualLineProperty, value); }
 		}
 
-		public static readonly DependencyProperty DualLineProperty =
-			DependencyProperty<ColumnProperty>.Register(x => x.DualLine);
+		public static readonly DependencyProperty ForceDualLineProperty =
+			DependencyProperty<ColumnProperty>.Register(x => x.ForceDualLine);
 
 	}
 }

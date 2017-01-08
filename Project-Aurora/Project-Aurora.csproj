@@ -255,6 +255,7 @@
     <Compile Include="Controls\LayerEditor.xaml.cs">
       <DependentUpon>LayerEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Layout\AdaptiveWrapPanel.cs" />
     <Compile Include="Controls\Layout\ColumnProperty3.xaml.cs">
       <DependentUpon>ColumnProperty3.xaml</DependentUpon>
     </Compile>

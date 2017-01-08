@@ -32,7 +32,7 @@
                         <Label VerticalContentAlignment="Center" 
                                MinHeight="24"
                                Content="{TemplateBinding PropertyHeader}" 
-                               DockPanel.Dock="{TemplateBinding DualLine, Converter={qc:QuickConverter '$P ? Dock.Top : Dock.Left'}}" 
+                               DockPanel.Dock="{TemplateBinding ForceDualLine, Converter={qc:QuickConverter '$P ? Dock.Top : Dock.Left'}}" 
                                VerticalAlignment="Center" 
                                Padding="0,0,5,0" 
                                Margin="0"
