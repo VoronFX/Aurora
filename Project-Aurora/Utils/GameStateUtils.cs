@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,172 +11,266 @@ using System.Threading.Tasks;
 
 namespace Aurora.Utils
 {
-    public static class GameStateUtils
-    {
-        static Dictionary<Type, bool> AdditionalAllowedTypes = new Dictionary<Type, bool>
-        {
-            { typeof(string), true },
-        };
+	public static class GameStateUtils
+	{
+		static Dictionary<Type, bool> AdditionalAllowedTypes = new Dictionary<Type, bool>
+		{
+			{ typeof(string), true },
+		};
 
-        public static Dictionary<string, Tuple<Type, Type>> ReflectGameStateParameters(Type typ)
-        {
-            Dictionary<string, Tuple<Type, Type>> parameters = new Dictionary<string, Tuple<Type, Type>>();
+		public static Dictionary<string, Tuple<Type, Type>> ReflectGameStateParameters(Type typ)
+		{
+			Dictionary<string, Tuple<Type, Type>> parameters = new Dictionary<string, Tuple<Type, Type>>();
 
-            foreach (MemberInfo prop in typ.GetFields().Cast<MemberInfo>().Concat(typ.GetProperties().Cast<MemberInfo>()).Concat(typ.GetMethods().Where(m => !m.IsSpecialName).Cast<MemberInfo>()))
-            {
-                if (prop.GetCustomAttribute(typeof(GameStateIgnoreAttribute)) != null)
-                    continue;
+			if (typ.Name == nameof(ExpandoObject))
+				Console.WriteLine();
+			foreach (MemberInfo prop in typ.GetFields().Cast<MemberInfo>().Concat(typ.GetProperties().Cast<MemberInfo>()).Concat(typ.GetMethods().Where(m => !m.IsSpecialName).Cast<MemberInfo>()))
+			{
+				if (prop.GetCustomAttribute(typeof(GameStateIgnoreAttribute)) != null)
+					continue;
 
-                Type prop_type;
-                Type prop_param_type = null;
-                switch (prop.MemberType)
-                {
-                    case MemberTypes.Field:
-                        prop_type = ((FieldInfo)prop).FieldType;
-                        break;
-                    case MemberTypes.Property:
-                        prop_type = ((PropertyInfo)prop).PropertyType;
-                        break;
-                    case MemberTypes.Method:
-                        //if (((MethodInfo)prop).IsSpecialName)
-                            //continue;
+				ParameterInfo[] parameterInfo = null;
 
-                        prop_type = ((MethodInfo)prop).ReturnType;
+				Type prop_type;
+				Type prop_param_type = null;
+				switch (prop.MemberType)
+				{
+					case MemberTypes.Field:
+						prop_type = ((FieldInfo)prop).FieldType;
+						break;
+					case MemberTypes.Property:
+						prop_type = ((PropertyInfo)prop).PropertyType;
+						break;
+					case MemberTypes.Method:
+						//if (((MethodInfo)prop).IsSpecialName)
+						//continue;
 
-                        if (prop.Name.Equals("Equals") || prop.Name.Equals("GetType") || prop.Name.Equals("ToString") || prop.Name.Equals("GetHashCode"))
-                            continue;
+						prop_type = ((MethodInfo)prop).ReturnType;
 
-                        if (((MethodInfo)prop).GetParameters().Count() == 0)
-                            prop_param_type = null;
-                        else if (((MethodInfo)prop).GetParameters().Count() == 1)
-                            prop_param_type = ((MethodInfo)prop).GetParameters()[0].ParameterType;
-                        else
-                        {
-                            //Warning: More than 1 parameter!
-                            Console.WriteLine();
-                        }
+						if (prop.Name.Equals("Equals") || prop.Name.Equals("GetType") || prop.Name.Equals("ToString") || prop.Name.Equals("GetHashCode"))
+							continue;
 
-                        break;
-                    default:
-                        continue;
-                }
+						parameterInfo = ((MethodInfo)prop).GetParameters();
 
-                if(prop.Name.Equals("Abilities"))
-                    Console.WriteLine();
+						if (parameterInfo.Count() == 0)
+							prop_param_type = null;
+						else if (parameterInfo.Count() == 1)
+							prop_param_type = parameterInfo[0].ParameterType;
+						else
+						{
+							//Warning: More than 1 parameter!
+							Console.WriteLine();
+						}
 
-                Type temp = null;
+						break;
+					default:
+						continue;
+				}
 
-                if (prop_type.IsPrimitive || AdditionalAllowedTypes.ContainsKey(prop_type))
-                {
-                    parameters.Add(prop.Name, new Tuple<Type, Type>(prop_type, prop_param_type));
-                }
-                else if (prop_type.IsArray || prop_type.GetInterfaces().Any(t =>
-                {
-                    return t == typeof(IEnumerable) || t == typeof(IList) || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>) && (temp = t.GenericTypeArguments[0]) != null);
-                }))
-                {
-                    RangeAttribute attribute;
-                    if ((attribute = prop.GetCustomAttribute(typeof(RangeAttribute)) as RangeAttribute) != null)
-                    {
-                        var sub_params = ReflectGameStateParameters(temp ?? prop_type.GetElementType());
+				if (prop.Name.Equals("Abilities"))
+					Console.WriteLine();
 
-                        for (int i = attribute.Start; i <= attribute.End; i++)
-                        {
-                            foreach (var sub_param in sub_params)
-                                parameters.Add(prop.Name + "/" + i + "/" + sub_param.Key, sub_param.Value);
-                        }
-                    }
-                    else
-                    {
-                        //warning
-                        Console.WriteLine();
-                    }
-                }
-                else if (prop_type.IsClass)
-                {
-                    if (prop.MemberType == MemberTypes.Method)
-                    {
-                        parameters.Add(prop.Name, new Tuple<Type, Type>(prop_type, prop_param_type));
-                    }
-                    else
-                    {
-                        Dictionary<string, Tuple<Type, Type>> sub_params;
+				Type temp = null;
 
-                        if (prop_type == typ)
-                            sub_params = new Dictionary<string, Tuple<Type, Type>>(parameters);
-                        else
-                            sub_params = ReflectGameStateParameters(prop_type);
+				if (prop_type.IsPrimitive || AdditionalAllowedTypes.ContainsKey(prop_type))
+				{
+					if (parameterInfo?.Length > 0)
+					{
+						parameters.Add(prop.Name + "&" + string.Join("/", parameterInfo.Select(p => "$" + p.Name)), new Tuple<Type, Type>(prop_type, prop_param_type));
+					}
+					else
+					{
+						parameters.Add(prop.Name, new Tuple<Type, Type>(prop_type, prop_param_type));
+					}
+				}
+				else if (prop_type.IsArray || prop_type.GetInterfaces().Any(t =>
+				{
+					return t == typeof(IEnumerable) || t == typeof(IList) || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>) && (temp = t.GenericTypeArguments[0]) != null);
+				}))
+				{
+					RangeAttribute attribute;
+					if ((attribute = prop.GetCustomAttribute(typeof(RangeAttribute)) as RangeAttribute) != null)
+					{
+						temp = temp ?? prop_type.GetElementType();
+						if (!temp.IsPrimitive)
+						{
+							var sub_params = ReflectGameStateParameters(temp);
 
-                        foreach (var sub_param in sub_params)
-                            parameters.Add(prop.Name + "/" + sub_param.Key, sub_param.Value);
-                    }
-                }
-            }
+							for (int i = attribute.Start; i <= attribute.End; i++)
+							{
+								foreach (var sub_param in sub_params)
+									parameters.Add(prop.Name + "/" + i + "/" + sub_param.Key, sub_param.Value);
+							}
+						}
+					}
+					else
+					{
+						//warning
+						Console.WriteLine();
+					}
+				}
+				else if (prop_type.IsClass)
+				{
+					if (prop.MemberType == MemberTypes.Method)
+					{
+						parameters.Add(prop.Name, new Tuple<Type, Type>(prop_type, prop_param_type));
+					}
+					else
+					{
+						Dictionary<string, Tuple<Type, Type>> sub_params;
 
-            return parameters;
-        }
+						if (prop_type == typ)
+							sub_params = new Dictionary<string, Tuple<Type, Type>>(parameters);
+						else
+							sub_params = ReflectGameStateParameters(prop_type);
 
-        
+						foreach (var sub_param in sub_params)
+							parameters.Add(prop.Name + "." + sub_param.Key, sub_param.Value);
+					}
+				}
+			}
 
-        public static object RetrieveGameStateParameter(IGameState state, string parameter_path, params object[] input_values)
-        {
-            try
-            {
-                string[] parameters = parameter_path.Split('/');
+			return parameters;
+		}
 
-                object val = null;
-                IStringProperty property_object = state as IStringProperty;
-                int index_pos = 0;
+		private static readonly HashSet<Type> ActionTypes = new HashSet<Type>
+		{
+			typeof(Action),
+			typeof(Action<>),
+			typeof(Action<,>),
+			typeof(Action<,,>),
+			typeof(Action<,,,>),
+			typeof(Action<,,,,>),
+			typeof(Action<,,,,,>),
+			typeof(Action<,,,,,,>),
+			typeof(Action<,,,,,,,>),
+			typeof(Action<,,,,,,,,>),
+			typeof(Action<,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,,,,,>),
+			typeof(Action<,,,,,,,,,,,,,,,>)
+		};
 
-                for (int x = 0; x < parameters.Count(); x++)
-                {
-                    if (property_object == null)
-                        return val;
+		private static readonly HashSet<Type> FunctionTypes = new HashSet<Type>
+		{
+			typeof(Func<>),
+			typeof(Func<,>),
+			typeof(Func<,,>),
+			typeof(Func<,,,>),
+			typeof(Func<,,,,>),
+			typeof(Func<,,,,,>),
+			typeof(Func<,,,,,,>),
+			typeof(Func<,,,,,,,>),
+			typeof(Func<,,,,,,,,>),
+			typeof(Func<,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,,,,,>),
+			typeof(Func<,,,,,,,,,,,,,,,,>)
+		};
 
-                    string param = parameters[x];
+		public static object RetrieveGameStateParameter(IGameState state, string parameter_path, params object[] input_values)
+		{
+			try
+			{
+				string[] parameters = parameter_path.Split('/');
 
-                    //Following needs validation
-                    //If next param is placeholder then take the appropriate input value from the input_values array
-                    val = property_object.GetValueFromString(param);
+				object val = null;
+				IStringProperty property_object = state as IStringProperty;
+				ExpandoObject expando_object = null;
 
-                    if (val == null)
-                        throw new ArgumentNullException($"Failed to get value {parameter_path}, failed at '{param}'");
+				int index_pos = 0;
+				int x = 0;
+				while (x < parameters.Count())
+				{
+					string param = parameters[x];
 
-                    Type property_type = property_object.GetType();
-                    Type temp = null;
-                    if (x < parameters.Length - 1 && (property_type.IsArray || property_type.GetInterfaces().Any(t =>
-                    {
-                        return t == typeof(IEnumerable) || t == typeof(IList) || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>) && (temp = t.GenericTypeArguments[0]) != null);
-                    })) && int.TryParse(parameters[x + 1], out index_pos))
-                    {
-                        x++;
-                        Type child_type = temp ?? property_type.GetElementType();
-                        IEnumerable<object> array = (IEnumerable<object>)property_object;
+					if (expando_object != null)
+					{
+						val = ((IDictionary<string, object>)expando_object)[param];
+						Type type = val.GetType();
+						Type generic = null;
 
-                        if (array.Count() > index_pos)
-                            val = array.ElementAt(index_pos);
-                        else
-                            val = Activator.CreateInstance(child_type);
+						if (type.IsGenericTypeDefinition) generic = type;
+						else if (type.IsGenericType) generic = type.GetGenericTypeDefinition();
+						if (generic != null)
+						{
+							if (ActionTypes.Contains(generic) || FunctionTypes.Contains(generic))
+							{
+								var del = (Delegate)val;
 
-                    }
-                    property_object = val as IStringProperty;
-                }
+								var partypes = del.Method.GetParameters();
+								val = del.DynamicInvoke(partypes.Select((p, i) =>
+									Convert.ChangeType(parameters[i + x + 1], p.ParameterType)).ToArray());
 
-                return val;
-            }
-            catch(Exception exc)
-            {
-                Global.logger.LogLine($"Exception: {exc}", Logging_Level.Error);
-                return null;
-            }
-        }
+								x += partypes.Length;
+							}
+						}
+
+					}
+					else if (property_object != null)
+					{
+
+						//Following needs validation
+						//If next param is placeholder then take the appropriate input value from the input_values array
+						val = property_object.GetValueFromString(param);
+
+						if (val == null)
+							throw new ArgumentNullException($"Failed to get value {parameter_path}, failed at '{param}'");
+
+						Type property_type = property_object.GetType();
+						Type temp = null;
+						if (x < parameters.Length - 1 && (property_type.IsArray || property_type.GetInterfaces().Any(t =>
+						{
+							return t == typeof(IEnumerable) || t == typeof(IList) ||
+								   (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+									(temp = t.GenericTypeArguments[0]) != null);
+
+						})) && int.TryParse(parameters[x + 1], out index_pos))
+						{
+							x++;
+							Type child_type = temp ?? property_type.GetElementType();
+							IEnumerable<object> array = (IEnumerable<object>)property_object;
+
+							if (array.Count() > index_pos)
+								val = array.ElementAt(index_pos);
+							else
+								val = Activator.CreateInstance(child_type);
+
+						}
+					}
+					else
+					{
+						return val;
+					}
+
+					property_object = val as IStringProperty;
+					expando_object = val as ExpandoObject;
+					x++;
+				}
+
+				return val;
+			}
+			catch (Exception exc)
+			{
+				Global.logger.LogLine($"Exception: {exc}", Logging_Level.Error);
+				return null;
+			}
+		}
 
 
-        /*public static object RetrieveGameStateParameter(GameState state, string parameter_path, Type type = null)
+		/*public static object RetrieveGameStateParameter(GameState state, string parameter_path, Type type = null)
         {
 
 
             return null;
         }*/
-    }
+	}
 }

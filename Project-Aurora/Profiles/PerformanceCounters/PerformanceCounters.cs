@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using Aurora.Devices;
 using Microsoft.VisualBasic.Devices;
 using OpenHardwareMonitor.Hardware.ATI;
 using OpenHardwareMonitor.Hardware.Nvidia;
@@ -66,7 +67,41 @@ namespace Aurora.Profiles.PerformanceCounters
 		{
 			return Convert.ToInt64(computerInfo.AvailablePhysicalMemory);
 		}
+
+		public static void Register()
+		{
+			var propNames = new[] { "AvailablePhysicalMemoryInMiB", "AvailableVirtualMemoryInMiB",
+				"% TotalPhysicalMemoryInMiB", "TotalVirtualMemoryInMiB", "% PhysicalMemoryUsed", "% VirtualMemoryUsed" };
+			for (var i = 0; i < propNames.Length; i++)
+			{
+				var indexCopy = i;
+
+				PerformanceCounterManager.RegisterInternal("Aurora Internal", nameof(ComputerInfo),
+					propNames[i], () =>
+					{
+						var computerInfo = new ComputerInfo();
+
+						switch (indexCopy)
+						{
+							case 0:
+								return computerInfo.AvailablePhysicalMemory / 1048576f;
+							case 1:
+								return computerInfo.AvailableVirtualMemory / 1048576f;
+							case 2:
+								return computerInfo.TotalPhysicalMemory / 1048576f;
+							case 3:
+								return computerInfo.TotalVirtualMemory / 1048576f;
+							case 4:
+								return (computerInfo.TotalPhysicalMemory - computerInfo.AvailablePhysicalMemory) / 1048576f;
+							case 5:
+								return (computerInfo.TotalVirtualMemory - computerInfo.AvailableVirtualMemory) / 1048576f;
+						}
+						return 0;
+					});
+			}
+		}
 	}
+
 
 	public class GpuPerformance
 	{
@@ -80,7 +115,7 @@ namespace Aurora.Profiles.PerformanceCounters
 			var log = new StringBuilder();
 			var stringWriter = new StringWriter(log);
 			var listener = new TextWriterTraceListener(stringWriter);
-			Debug.Listeners.Add(listener);;
+			Debug.Listeners.Add(listener); ;
 #endif
 
 			NvidiaGpus = GetNvidiaGpus();
@@ -92,6 +127,272 @@ namespace Aurora.Profiles.PerformanceCounters
 			stringWriter.Close();
 			InitLog = log.ToString();
 #endif
+
+			for (var i = 0; i < NvidiaGpus.Length; i++)
+			{
+				RegisterNvidiaFan("Aurora Internal", $"NvidiaGpu #{i}", NvidiaGpus[i].Key);
+				RegisterNvidiaTemperatures("Aurora Internal", $"NvidiaGpu #{i}", NvidiaGpus[i].Key);
+				RegisterNvidiaClocks("Aurora Internal", $"NvidiaGpu #{i}", NvidiaGpus[i].Key);
+				RegisterNvidiaUsages("Aurora Internal", $"NvidiaGpu #{i}", NvidiaGpus[i].Key);
+				RegisterNvidiaMemory("Aurora Internal", $"NvidiaGpu #{i}", NvidiaGpus[i].Value);
+			}
+
+			for (int i = 0; i < AtiGpus.Length; i++)
+			{
+				RegisterAtiFan("Aurora Internal", $"AtiGpu #{i}", AtiGpus[i]);
+				RegisterAtiTemperature("Aurora Internal", $"AtiGpu #{i}", AtiGpus[i]);
+				RegisterAtiActivity("Aurora Internal", $"AtiGpu #{i}", AtiGpus[i]);
+			}
+		}
+
+		private static void RegisterNvidiaFan(string categoryName, string counterName, NvPhysicalGpuHandle gpu)
+		{
+			PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+				"FanRpm", () =>
+				{
+					int value;
+					NVAPI.NvAPI_GPU_GetTachReading(gpu, out value);
+					return value;
+				});
+
+			PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+				"% FanUsage", () =>
+				{
+					NvGPUCoolerSettings settings = new NvGPUCoolerSettings
+					{
+						Version = NVAPI.GPU_COOLER_SETTINGS_VER,
+						Cooler = new NvCooler[NVAPI.MAX_COOLER_PER_GPU]
+					};
+					if (NVAPI.NvAPI_GPU_GetCoolerSettings != null &&
+							NVAPI.NvAPI_GPU_GetCoolerSettings(gpu, 0, ref settings) == NvStatus.OK)
+						return settings.Cooler[0].CurrentLevel;
+					return 0;
+				});
+		}
+
+		private static void RegisterNvidiaTemperatures(string categoryName, string counterName, NvPhysicalGpuHandle gpu)
+		{
+			foreach (var target in new[] { NvThermalTarget.BOARD, NvThermalTarget.GPU,
+					NvThermalTarget.MEMORY, NvThermalTarget.POWER_SUPPLY })
+			{
+
+				PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+					$"Temperature {Enum.GetName(typeof(NvThermalTarget), target)}", () =>
+					{
+						NvGPUThermalSettings settings = new NvGPUThermalSettings
+						{
+							Version = NVAPI.GPU_THERMAL_SETTINGS_VER,
+							Count = NVAPI.MAX_THERMAL_SENSORS_PER_GPU,
+							Sensor = new NvSensor[NVAPI.MAX_THERMAL_SENSORS_PER_GPU]
+						};
+						if (NVAPI.NvAPI_GPU_GetThermalSettings != null &&
+								  NVAPI.NvAPI_GPU_GetThermalSettings(gpu, (int)NvThermalTarget.ALL,
+									  ref settings) == NvStatus.OK)
+						{
+							return settings.Sensor.FirstOrDefault(s => s.Target == target).CurrentTemp;
+						}
+						return 0;
+					});
+			}
+		}
+
+		private static void RegisterNvidiaClocks(string categoryName, string counterName, NvPhysicalGpuHandle gpu)
+		{
+			var nvClocksNames = new[] { "Core", "Memory", "Shader" };
+			for (var i = 0; i < nvClocksNames.Length; i++)
+			{
+				var indexCopy = i;
+
+				PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+					$"Clock {nvClocksNames[i]}", () =>
+					{
+						NvClocks allClocks = new NvClocks
+						{
+							Version = NVAPI.GPU_CLOCKS_VER,
+							Clock = new uint[NVAPI.MAX_CLOCKS_PER_GPU]
+						};
+						if (NVAPI.NvAPI_GPU_GetAllClocks == null ||
+							NVAPI.NvAPI_GPU_GetAllClocks(gpu, ref allClocks) != NvStatus.OK)
+							return 0;
+
+						var values = allClocks.Clock;
+						var clocks = new float[3];
+						clocks[1] = 0.001f * values[8];
+						if (values[30] != 0)
+						{
+							clocks[0] = 0.0005f * values[30];
+							clocks[2] = 0.001f * values[30];
+						}
+						else
+						{
+							clocks[0] = 0.001f * values[0];
+							clocks[2] = 0.001f * values[14];
+						}
+						return clocks[indexCopy];
+					});
+			}
+		}
+
+		private static void RegisterNvidiaUsages(string categoryName, string counterName, NvPhysicalGpuHandle gpu)
+		{
+			var nvUsageNames = new[] { "Core", "Memory Controller", "Video Engine" };
+			for (var i = 0; i < nvUsageNames.Length; i++)
+			{
+				var indexCopy = i;
+
+				PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+					$"% Load {nvUsageNames[i]}", () =>
+					{
+						NvPStates states = new NvPStates
+						{
+							Version = NVAPI.GPU_PSTATES_VER,
+							PStates = new NvPState[NVAPI.MAX_PSTATES_PER_GPU]
+						};
+						if (NVAPI.NvAPI_GPU_GetPStates != null &&
+							NVAPI.NvAPI_GPU_GetPStates(gpu, ref states) == NvStatus.OK)
+						{
+							return states.PStates[indexCopy].Present ? (float)states.PStates[indexCopy].Percentage : 0;
+						}
+
+						NvUsages usages = new NvUsages
+						{
+							Version = NVAPI.GPU_USAGES_VER,
+							Usage = new uint[NVAPI.MAX_USAGES_PER_GPU]
+						};
+						if (NVAPI.NvAPI_GPU_GetUsages != null &&
+							NVAPI.NvAPI_GPU_GetUsages(gpu, ref usages) == NvStatus.OK)
+						{
+							switch (indexCopy)
+							{
+								case 0:
+									return usages.Usage[2];
+								case 1:
+									return usages.Usage[6];
+								case 2:
+									return usages.Usage[10];
+							}
+						}
+						return 0;
+					});
+			}
+		}
+
+		private static void RegisterNvidiaMemory(string categoryName, string counterName, NvDisplayHandle gpu)
+		{
+			var nvMemoryNames = new[] { "Memory Free", "Memory Used", "Memory Total", "% Memory Usage" };
+			for (var i = 0; i < nvMemoryNames.Length; i++)
+			{
+				var indexCopy = i;
+
+				PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+					nvMemoryNames[i], () =>
+					{
+						NvMemoryInfo memoryInfo = new NvMemoryInfo
+						{
+							Version = NVAPI.GPU_MEMORY_INFO_VER,
+							Values = new uint[NVAPI.MAX_MEMORY_VALUES_PER_GPU]
+						};
+						if (NVAPI.NvAPI_GPU_GetMemoryInfo != null &&
+						  NVAPI.NvAPI_GPU_GetMemoryInfo(NvidiaGpus[0].Value, ref memoryInfo) ==
+						  NvStatus.OK)
+						{
+							uint totalMemory = memoryInfo.Values[0];
+							uint freeMemory = memoryInfo.Values[4];
+							float usedMemory = Math.Max(totalMemory - freeMemory, 0);
+							switch (indexCopy)
+							{
+								case 0:
+									return freeMemory / 1024f;
+								case 1:
+									return usedMemory / 1024;
+								case 2:
+									return totalMemory / 1024f;
+								case 3:
+									return 100f * usedMemory / totalMemory;
+							}
+						}
+						return 0;
+					});
+			}
+		}
+
+		private static void RegisterAtiFan(string categoryName, string counterName, int gpu)
+		{
+			PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+				"FanRpm", () =>
+				{
+					ADLFanSpeedValue adlf = new ADLFanSpeedValue { SpeedType = ADL.ADL_DL_FANCTRL_SPEED_TYPE_RPM };
+					if (ADL.ADL_Overdrive5_FanSpeed_Get(gpu, 0, ref adlf)
+						== ADL.ADL_OK)
+					{
+						return adlf.FanSpeed;
+					}
+					return 0;
+				});
+
+			PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+				"% FanUsage", () =>
+				{
+					ADLFanSpeedValue adlf = new ADLFanSpeedValue { SpeedType = ADL.ADL_DL_FANCTRL_SPEED_TYPE_PERCENT };
+					if (ADL.ADL_Overdrive5_FanSpeed_Get(gpu, 0, ref adlf)
+						== ADL.ADL_OK)
+					{
+						return adlf.FanSpeed;
+					}
+					return 0;
+				});
+		}
+
+		private static void RegisterAtiTemperature(string categoryName, string counterName, int gpu)
+		{
+			PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+				"Temperature", () =>
+				{
+					ADLTemperature adlt = new ADLTemperature();
+					if (ADL.ADL_Overdrive5_Temperature_Get(AtiGpus[0], 0, ref adlt)
+					  == ADL.ADL_OK)
+					{
+						return 0.001f * adlt.Temperature;
+					}
+					return 0;
+				});
+		}
+
+		private static void RegisterAtiActivity(string categoryName, string counterName, int gpu)
+		{
+			var nvMemoryNames = new[] { "Core Clock", "Memory Clock", "Core Voltage", "% Load Core" };
+			for (var i = 0; i < nvMemoryNames.Length; i++)
+			{
+				var indexCopy = i;
+
+				PerformanceCounterManager.RegisterInternal(categoryName, counterName,
+					nvMemoryNames[i], () =>
+					{
+						ADLPMActivity adlp = new ADLPMActivity();
+						if (ADL.ADL_Overdrive5_CurrentActivity_Get(AtiGpus[0], ref adlp)
+						  == ADL.ADL_OK)
+						{
+							switch (indexCopy)
+							{
+								case 0:
+									if (adlp.EngineClock > 0)
+										return 0.01f * adlp.EngineClock;
+									break;
+								case 1:
+									if (adlp.MemoryClock > 0)
+										return 0.01f * adlp.MemoryClock;
+									break;
+								case 2:
+									if (adlp.Vddc > 0)
+										return 0.001f * adlp.Vddc;
+									break;
+								case 3:
+									return Math.Min(adlp.ActivityPercent, 100);
+							}
+						}
+						return 0;
+					});
+			}
 		}
 
 		private static int[] GetAtiGpus()

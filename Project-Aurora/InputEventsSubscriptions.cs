@@ -36,12 +36,12 @@ namespace Aurora
         {
             try
             {
-                input_hook = Hook.GlobalEvents();
+                //input_hook = Hook.GlobalEvents();
 
-                input_hook.KeyDown += Input_hook_KeyDown;
-                input_hook.KeyPress += Input_hook_KeyPress;
-                input_hook.KeyUp += Input_hook_KeyUp;
-                input_hook.MouseClick += Input_hook_MouseClick;
+                //input_hook.KeyDown += Input_hook_KeyDown;
+                //input_hook.KeyPress += Input_hook_KeyPress;
+                //input_hook.KeyUp += Input_hook_KeyUp;
+                //input_hook.MouseClick += Input_hook_MouseClick;
             }
             catch (Exception exc)
             {
@@ -93,7 +93,7 @@ namespace Aurora
             {
                 if (disposing)
                 {
-                    input_hook.Dispose();
+ //                   input_hook.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

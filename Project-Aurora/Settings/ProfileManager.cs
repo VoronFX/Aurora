@@ -105,8 +105,7 @@ namespace Aurora.Settings
 
                 Settings = CloneSettings(Profiles[profile_name]);
 
-                if (ProfileChanged != null)
-                    ProfileChanged(this, new EventArgs());
+	            ProfileChanged?.Invoke(this, new EventArgs());
             }
         }
 

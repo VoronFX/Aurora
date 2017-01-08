@@ -3,6 +3,7 @@ using Microsoft.VisualBasic.Devices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -129,55 +130,147 @@ namespace Aurora.Profiles
 	/// </summary>
 	public class LocalPCInformation : Node<LocalPCInformation>
 	{
+		private static readonly TimeInfo time = new TimeInfo();
+		private static readonly MemoryInfo memory = new MemoryInfo();
+		private static readonly CpuInfo cpu = new CpuInfo();
+		private static readonly NvidiaGpuInfo nvidiaGpu = new NvidiaGpuInfo();
+		private static readonly AtiGpuInfo atiGpu = new AtiGpuInfo();
+		private static readonly PhysicalDiskInfo physicalDisk = new PhysicalDiskInfo();
+
+		private static readonly PerformanceCounters.PerformanceCounterManager PerformanceCounterManager 
+			= new PerformanceCounters.PerformanceCounterManager();
+
 		private static readonly CpuTotal CpuTotal = new CpuTotal();
 		private static readonly CpuPerCore CpuPerCore = new CpuPerCore();
-		private static readonly Memory Memory = new Memory();
 		private static readonly GpuPerformance GpuPerformance = new GpuPerformance();
 
-		/// <summary>
-		/// The current hour
-		/// </summary>
-		public int CurrentHour => Utils.Time.GetHours();
+		public class TimeInfo
+		{
+			protected static readonly TimeInfo Instance = new TimeInfo();
 
-		/// <summary>
-		/// The current minute
-		/// </summary>
-		public int CurrentMinute => Utils.Time.GetMinutes();
+			/// <summary>
+			/// The current hour
+			/// </summary>
+			public int CurrentHour => Utils.Time.GetHours();
 
-		/// <summary>
-		/// The current second
-		/// </summary>
-		public int CurrentSecond => Utils.Time.GetSeconds();
+			/// <summary>
+			/// The current minute
+			/// </summary>
+			public int CurrentMinute => Utils.Time.GetMinutes();
 
-		/// <summary>
-		/// The current millisecond
-		/// </summary>
-		public int CurrentMillisecond => Utils.Time.GetMilliSeconds();
+			/// <summary>
+			/// The current second
+			/// </summary>
+			public int CurrentSecond => Utils.Time.GetSeconds();
 
-		/// <summary>
-		/// Used RAM
-		/// </summary>
-		public long MemoryUsed => Memory.GetTotalMemoryInMiB() - Memory.GetPhysicalAvailableMemoryInMiB();
+			/// <summary>
+			/// The current millisecond
+			/// </summary>
+			public int CurrentMillisecond => Utils.Time.GetMilliSeconds();
+		}
 
-		/// <summary>
-		/// Available RAM
-		/// </summary>
-		public long MemoryFree => Memory.GetPhysicalAvailableMemoryInMiB();
+		public TimeInfo Time => time;
 
-		/// <summary>
-		/// Total RAM
-		/// </summary>
-		public long MemoryTotal => Memory.GetTotalMemoryInMiB();
+		public class MemoryInfo
+		{
+			protected static readonly MemoryInfo Instance = new MemoryInfo();
 
-		/// <summary>
-		/// Current CPU Usage
-		/// </summary>
-		public float CPUUsage => CpuTotal.GetValue();
+			/// <summary>
+			/// Percent Used Physical Memory
+			/// </summary>
+			public float UsedPhysicalMemory(int updateInterval) => 
+				PerformanceCounterManager.GetCounter("Aurora Internal", 
+					nameof(ComputerInfo), "% PhysicalMemoryUsed", updateInterval).GetValue();
 
-		/// <summary>
-		/// Current CPU Usage per core
-		/// </summary>
-		public float[] CpuCoresUsage => CpuPerCore.GetValue();
+			/// <summary>
+			/// Percent Used Virtual Memory
+			/// </summary>
+			public float UsedVirtualMemory(int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Aurora Internal",
+					nameof(ComputerInfo), "% VirtualMemoryUsed", updateInterval).GetValue();
+		}
+
+		public MemoryInfo Memory => memory;
+
+		public class CpuInfo
+		{
+			protected static readonly CpuInfo Instance = new CpuInfo();
+
+			/// <summary>
+			/// Percent Total CPU Usage
+			/// </summary>
+			public float TotalUsage(int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					"_Total", updateInterval).GetValue();
+
+			/// <summary>
+			/// Percent Per Core CPU Usage
+			/// </summary> 
+			public float PerCoreUsage(int core, int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					core.ToString(), updateInterval).GetValue();
+		}
+
+		public CpuInfo CPU => cpu;
+
+		public class PhysicalDiskInfo
+		{
+			protected static readonly PhysicalDiskInfo Instance = new PhysicalDiskInfo();
+
+			/// <summary>
+			/// Percent Total Physical Disk Usage
+			/// </summary>
+			public float TotalPhysicalDiskUsage(int updateInterval) =>
+				PerformanceCounterManager.GetCounter("PhysicalDisk", "% Disk Time",
+					"_Total", updateInterval).GetValue();
+
+			/// <summary>
+			/// Percent Per Core CPU Usage
+			/// </summary>
+			public float PerCoreUsage(int core, int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					core.ToString(), updateInterval).GetValue();
+		}
+
+	//	public PhysicalDiskInfo PhysicalDisk => disk;
+
+		public class NvidiaGpuInfo
+		{
+			/// <summary>
+			/// Percent Total CPU Usage
+			/// </summary>
+			public float TotalUsage(int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					"_Total", updateInterval).GetValue();
+
+			/// <summary>
+			/// Percent Per Core CPU Usage
+			/// </summary>
+			public float PerCoreUsage(int core, int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					core.ToString(), updateInterval).GetValue();
+		}
+
+		public NvidiaGpuInfo NvidiaGpu => nvidiaGpu;
+
+		public class AtiGpuInfo
+		{
+			/// <summary>
+			/// Percent Total CPU Usage
+			/// </summary>
+			public float TotalUsage(int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					"_Total", updateInterval).GetValue();
+
+			/// <summary>
+			/// Percent Per Core CPU Usage
+			/// </summary>
+			public float PerCoreUsage(int core, int updateInterval) =>
+				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
+					core.ToString(), updateInterval).GetValue();
+		}
+
+		public AtiGpuInfo AtiGpu => atiGpu;
 
 		/// <summary>
 		/// Current GPU Fan speed in rpm
@@ -208,6 +301,100 @@ namespace Aurora.Profiles
 		/// Current GPU Core voltage. ATI only.
 		/// </summary>
 		public float GpuCoreVoltage => GpuPerformance.CoreVoltage();
+
+		private static ExpandoObject gpu = new ExpandoObject();
+
+		public ExpandoObject GPU => gpu;
+
+
+		static LocalPCInformation()
+		{
+			ss = new ExpandoObject();
+			((dynamic)ss).Name = 66f;
+			((dynamic)gpu).Name = (Func<string, float>)((x) => 34f);
+
+		}
+
+		private static ExpandoObject ss;
+		public ExpandoObject aaa => ss;
+
+		public class Test : Node<Test>
+		{
+			float r = 70f;
+			public Test()
+			{
+				//if (!PropertyLookup.ContainsKey("Core0"))
+				//PropertyLookup.Add("Core0", new Tuple<Func<Test, object>, Action<Test, object>>(
+				//	test => test.r, (test, o) => test.r = (float)o));
+			}
+
+			public float Shit1(bool rr)
+			{
+				return 2f;
+			}
+			public float Shit2(bool rr, bool r2r)
+			{
+				return 2f;
+			}
+			public float Get => 56f;
+			public float Get2()
+			{
+				return 56f;
+			}
+			public float Get3(bool rr)
+			{
+				return 56f;
+			}
+			public float Gdet = 56f;
+
+			[Range(0, 1)]
+
+			public static readonly float[] cores = new[] { 4f, 5f };
+
+			public class Test4
+			{
+				public float Val() => 55f;
+			}
+		}
+		public class Test22 : IStringProperty
+		{
+			private int a = 33;
+			public object GetValueFromString(string name, object input = null)
+			{
+				return a;
+			}
+
+			public void SetValueFromString(string name, object value)
+			{
+				a = (int)value;
+			}
+
+			public IStringProperty Clone()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public IStringProperty TEst2
+		{
+			get { return new Test22(); }
+		}
+
+		public dynamic Test1
+		{
+			get
+			{
+				dynamic obj = new ExpandoObject();
+				obj.Name = 22f;
+				obj.Get2 = new Func<float>(() => 34f);
+				return obj;
+			}
+		}
+
+		public Test Test3
+		{
+			get { return new Test(); }
+		}
 
 		/// <summary>
 		/// Current GPU Core usage

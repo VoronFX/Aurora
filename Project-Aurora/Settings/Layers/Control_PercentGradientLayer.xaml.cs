@@ -42,7 +42,7 @@ namespace Aurora.Settings.Layers
                 this.ComboBox_variable.Text = (this.DataContext as PercentGradientLayerHandler).Properties._VariablePath;
                 this.ComboBox_max_variable.Text = (this.DataContext as PercentGradientLayerHandler).Properties._MaxVariablePath;
                 this.ComboBox_effect_type.SelectedIndex = (int)(this.DataContext as PercentGradientLayerHandler).Properties._PercentType;
-                this.updown_blink_value.Value = (int)((this.DataContext as PercentGradientLayerHandler).Properties._BlinkThreshold * 100);
+                this.updown_blink_value.Value = (int)((this.DataContext as PercentGradientLayerHandler).Properties._BlinkThresholdStart * 100);
                 this.CheckBox_threshold_reverse.IsChecked = (this.DataContext as PercentGradientLayerHandler).Properties._BlinkDirection;
                 this.KeySequence_keys.Sequence = (this.DataContext as PercentGradientLayerHandler).Properties._Sequence;
 
@@ -127,7 +127,7 @@ namespace Aurora.Settings.Layers
         private void updown_blink_value_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (IsLoaded && settingsset && this.DataContext is PercentGradientLayerHandler && sender is Xceed.Wpf.Toolkit.IntegerUpDown && (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.HasValue)
-                (this.DataContext as PercentGradientLayerHandler).Properties._BlinkThreshold = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value / 100.0D;
+                (this.DataContext as PercentGradientLayerHandler).Properties._BlinkThresholdStart = (sender as Xceed.Wpf.Toolkit.IntegerUpDown).Value.Value / 100.0D;
         }
 
         private void ComboBox_effect_type_SelectionChanged(object sender, SelectionChangedEventArgs e)
