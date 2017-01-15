@@ -70,7 +70,10 @@ namespace Aurora.Controls
             }
             set
             {
-                if(!value.Equals(Sequence))
+                if (value == null)
+                    value = new Settings.KeySequence();
+
+                if (!value.Equals(Sequence))
                 {
                     sequence_removeFromLayerEditor();
                 }
@@ -90,6 +93,25 @@ namespace Aurora.Controls
 
                 if (SequenceUpdated != null)
                     SequenceUpdated(this, new EventArgs());
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public static readonly DependencyProperty FreestyleEnabledProperty = DependencyProperty.Register("FreestyleEnabled", typeof(bool), typeof(UserControl));
+
+        public bool FreestyleEnabled
+        {
+            get
+            {
+                return (bool)GetValue(FreestyleEnabledProperty);
+            }
+            set
+            {
+                SetValue(FreestyleEnabledProperty, value);
+
+                this.sequence_freestyle_checkbox.IsEnabled = value;
+                this.sequence_freestyle_checkbox.ToolTip = (value ? null : "Freestyle has been disabled.");
+                    
             }
         }
 
@@ -194,7 +216,7 @@ namespace Aurora.Controls
 
         public void sequence_updateToLayerEditor()
         {
-            if (Sequence != null && IsInitialized && IsVisible)
+            if (Sequence != null && IsInitialized && IsVisible && IsEnabled)
             {
                 if (Sequence.type == Settings.KeySequenceType.FreeForm)
                 {
@@ -251,7 +273,12 @@ namespace Aurora.Controls
                 this.sequence_up.IsEnabled = (bool)e.NewValue;
                 this.sequence_down.IsEnabled = (bool)e.NewValue;
                 this.sequence_remove.IsEnabled = (bool)e.NewValue;
-                this.sequence_freestyle_checkbox.IsEnabled = (bool)e.NewValue;
+                this.sequence_freestyle_checkbox.IsEnabled = (bool)e.NewValue && FreestyleEnabled;
+
+                if ((bool)e.NewValue)
+                    sequence_updateToLayerEditor();
+                else
+                    sequence_removeFromLayerEditor();
             }
         }
 
@@ -267,6 +294,18 @@ namespace Aurora.Controls
                 this.sequence_up.IsEnabled = IsEnabled && false;
                 this.sequence_down.IsEnabled = IsEnabled && false;
             }
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is bool)
+            {
+                if ((bool)e.NewValue)
+                    sequence_updateToLayerEditor();
+                else
+                    sequence_removeFromLayerEditor();
+            }
+                
         }
     }
 }

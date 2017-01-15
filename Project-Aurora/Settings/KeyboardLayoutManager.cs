@@ -19,19 +19,23 @@ namespace Aurora.Settings
     {
         public String visualName;
         public Devices.DeviceKeys tag;
-        public bool line_break;
-        public double margin_left;
-        public double margin_top;
-        public double width;
-        public double height;
-        public double font_size;
-        public int width_bits;
-        public int height_bits;
-        public int margin_left_bits;
-        public int margin_top_bits;
-        public bool enabled = true;
-        public bool absolute_location = false;
+        public bool? line_break;
+        public double? margin_left;
+        public double? margin_top;
+        public double? width;
+        public double? height;
+        public double? font_size;
+        public int? width_bits;
+        public int? height_bits;
+        public int? margin_left_bits;
+        public int? margin_top_bits;
+        public bool? enabled = true;
+        public bool? absolute_location = false;
         public String image = "";
+
+        public KeyboardKey() : this("", DeviceKeys.NONE)
+        {
+        }
 
         public KeyboardKey(String text, Devices.DeviceKeys tag, bool enabled = true, bool linebreak = false, double fontsize = 12, double margin_left = 7, double margin_top = 0, double width = 30, double height = 30, int width_bits = 2, int height_bits = 2, int margin_left_bits = 0, int margin_top_bits = 0)
         {
@@ -49,6 +53,27 @@ namespace Aurora.Settings
             this.margin_top_bits = margin_top_bits;
             this.enabled = enabled;
         }
+
+        public KeyboardKey UpdateFromOtherKey(KeyboardKey otherKey)
+        {
+            if(otherKey != null)
+            {
+                if (otherKey.visualName != null) this.visualName = otherKey.visualName;
+                this.tag = otherKey.tag;
+                if (otherKey.line_break != null) this.line_break = otherKey.line_break;
+                if (otherKey.width != null) this.width = otherKey.width;
+                if (otherKey.height != null) this.height = otherKey.height;
+                if (otherKey.font_size != null) this.font_size = otherKey.font_size;
+                if (otherKey.margin_left != null) this.margin_left = otherKey.margin_left;
+                if (otherKey.margin_top != null) this.margin_top = otherKey.margin_top;
+                if (otherKey.width_bits != null) this.width_bits = otherKey.width_bits;
+                if (otherKey.height_bits != null) this.height_bits = otherKey.height_bits;
+                if (otherKey.margin_left_bits != null) this.margin_left_bits = otherKey.margin_left_bits;
+                if (otherKey.margin_top_bits != null) this.margin_top_bits = otherKey.margin_top_bits;
+                if (otherKey.enabled != null) this.enabled = otherKey.enabled;
+            }
+            return this;
+        }
     }
 
     public enum KeyboardRegion
@@ -61,16 +86,19 @@ namespace Aurora.Settings
 
     public class VirtualGroupConfiguration
     {
-        public bool replace_RWin_with_FN = false;
-
         public Devices.DeviceKeys[] keys_to_remove = new Devices.DeviceKeys[] { };
 
-        public Devices.DeviceKeys[] keys_to_set_as_new_line = new Devices.DeviceKeys[] { };
+        public Dictionary<DeviceKeys, KeyboardKey> key_modifications = new Dictionary<DeviceKeys, KeyboardKey>();
 
         /// <summary>
         /// A list of paths for each included group json
         /// </summary>
         public string[] included_features = new string[] { };
+
+        public VirtualGroupConfiguration()
+        {
+
+        }
     }
 
     public class VirtualGroup
@@ -111,16 +139,16 @@ namespace Aurora.Settings
                 grouped_keys.Add(key);
 
                 if (key.width + key.margin_left > 0)
-                    current_width += key.width + key.margin_left;
+                    current_width += key.width.Value + key.margin_left.Value;
 
                 if (key.margin_top > 0)
-                    current_height += key.margin_top;
+                    current_height += key.margin_top.Value;
 
 
                 if (layout_width < current_width)
                     layout_width = current_width;
 
-                if (key.line_break)
+                if (key.line_break.Value)
                 {
                     current_height += 37;
                     current_width = 0;
@@ -130,17 +158,17 @@ namespace Aurora.Settings
                     layout_height = current_height;
 
 
-                int key_tly = key.margin_top_bits + height_bit;
-                int key_tlx = key.margin_left_bits + width_bit;
+                int key_tly = key.margin_top_bits.Value + height_bit;
+                int key_tlx = key.margin_left_bits.Value + width_bit;
 
-                int key_bry = key_tly + key.height_bits;
-                int key_brx = key_tlx + key.width_bits;
+                int key_bry = key_tly + key.height_bits.Value;
+                int key_brx = key_tlx + key.width_bits.Value;
 
                 if (width_bit_max < key_brx) width_bit_max = key_brx;
                 if (height_bit_max < key_bry) height_bit_max = key_bry;
 
 
-                if (key.line_break)
+                if (key.line_break.Value)
                 {
                     height_bit += 3;
                     width_bit = 0;
@@ -220,19 +248,19 @@ namespace Aurora.Settings
 
 
                 if (key.width_bits + key.margin_left_bits > _region_bitmap.Width)
-                    _region_bitmap.Width += key.width_bits + key.margin_left_bits - location_x_bit;
+                    _region_bitmap.Width += key.width_bits.Value + key.margin_left_bits.Value - location_x_bit;
                 else if (key.margin_left_bits + added_width_bits < 0)
                 {
-                    added_width_bits = -key.margin_left_bits;
-                    _region_bitmap.Width -= key.margin_left_bits;
+                    added_width_bits = -key.margin_left_bits.Value;
+                    _region_bitmap.Width -= key.margin_left_bits.Value;
                 }
 
                 if (key.height_bits + key.margin_top_bits > _region_bitmap.Height)
-                    _region_bitmap.Height += key.height_bits + key.margin_top_bits - location_y_bit;
+                    _region_bitmap.Height += key.height_bits.Value + key.margin_top_bits.Value - location_y_bit;
                 else if (key.margin_top_bits + added_height_bits < 0)
                 {
-                    added_height_bits = -key.margin_top_bits;
-                    _region_bitmap.Height -= key.margin_top_bits;
+                    added_height_bits = -key.margin_top_bits.Value;
+                    _region_bitmap.Height -= key.margin_top_bits.Value;
                 }
 
             }
@@ -250,20 +278,20 @@ namespace Aurora.Settings
 
             foreach (var key in grouped_keys)
             {
-                if (!key.absolute_location)
+                if (!key.absolute_location.Value)
                     continue;
 
                 if (key.margin_left < x_correction)
-                    x_correction = key.margin_left;
+                    x_correction = key.margin_left.Value;
 
                 if (key.margin_top < y_correction)
-                    y_correction = key.margin_top;
+                    y_correction = key.margin_top.Value;
 
                 if (key.margin_left_bits < x_correction_bit)
-                    x_correction_bit = key.margin_left_bits;
+                    x_correction_bit = key.margin_left_bits.Value;
 
                 if (key.margin_top_bits < y_correction_bit)
-                    y_correction_bit = key.margin_top_bits;
+                    y_correction_bit = key.margin_top_bits.Value;
             }
 
             if (grouped_keys.Count > 0)
@@ -274,7 +302,7 @@ namespace Aurora.Settings
                 bool previous_linebreak = true;
                 foreach (var key in grouped_keys)
                 {
-                    if (key.absolute_location)
+                    if (key.absolute_location.Value)
                     {
                         key.margin_top -= y_correction;
                         key.margin_left -= x_correction;
@@ -283,13 +311,13 @@ namespace Aurora.Settings
                     }
                     else
                     {
-                        if (previous_linebreak && !key.line_break)
+                        if (previous_linebreak && !key.line_break.Value)
                         {
                             key.margin_left -= x_correction;
                             key.margin_left_bits -= x_correction_bit;
                         }
 
-                        previous_linebreak = key.line_break;
+                        previous_linebreak = key.line_break.Value;
                     }
                 }
 
@@ -303,14 +331,13 @@ namespace Aurora.Settings
             grouped_keys.Clear();
         }
 
-        internal void AdjustFNKey()
+        internal void AdjustKeys(Dictionary<DeviceKeys, KeyboardKey> keys)
         {
-            var applicable_keys = grouped_keys.FindAll(key => key.tag == DeviceKeys.RIGHT_WINDOWS);
+            var applicable_keys = grouped_keys.FindAll(key => keys.ContainsKey( key.tag ));
 
             foreach (var key in applicable_keys)
             {
-                key.tag = DeviceKeys.FN_Key;
-                key.visualName = "FN";
+                key.UpdateFromOtherKey(keys[key.tag]);
             }
         }
 
@@ -331,16 +358,16 @@ namespace Aurora.Settings
             foreach (var key in grouped_keys)
             {
                 if (key.width + key.margin_left > 0)
-                    current_width += key.width + key.margin_left;
+                    current_width += key.width.Value + key.margin_left.Value;
 
                 if (key.margin_top > 0)
-                    current_height += key.margin_top;
+                    current_height += key.margin_top.Value;
 
 
                 if (layout_width < current_width)
                     layout_width = current_width;
 
-                if (key.line_break)
+                if (key.line_break.Value)
                 {
                     current_height += 37;
                     current_width = 0;
@@ -350,17 +377,17 @@ namespace Aurora.Settings
                     layout_height = current_height;
 
 
-                int key_tly = key.margin_top_bits + height_bit;
-                int key_tlx = key.margin_left_bits + width_bit;
+                int key_tly = key.margin_top_bits.Value + height_bit;
+                int key_tlx = key.margin_left_bits.Value + width_bit;
 
-                int key_bry = key_tly + key.height_bits;
-                int key_brx = key_tlx + key.width_bits;
+                int key_bry = key_tly + key.height_bits.Value;
+                int key_brx = key_tlx + key.width_bits.Value;
 
                 if (width_bit_max < key_brx) width_bit_max = key_brx;
                 if (height_bit_max < key_bry) height_bit_max = key_bry;
 
 
-                if (key.line_break)
+                if (key.line_break.Value)
                 {
                     height_bit += 3;
                     width_bit = 0;
@@ -380,21 +407,11 @@ namespace Aurora.Settings
             _region_bitmap.Height = height_bit_max;
 
         }
-
-        internal void SetNewLineKeys(DeviceKeys[] keys_to_set_as_new_line)
-        {
-            var applicable_keys = grouped_keys.FindAll(key => keys_to_set_as_new_line.Contains(key.tag));
-
-            foreach (var key in applicable_keys)
-                key.line_break = true;
-        }
     }
 
     public class KeyboardLayoutManager
     {
         private VirtualGroup virtual_keyboard_group;
-
-        //private List<KeyboardKey> keyboard = new List<KeyboardKey>();
 
         private Dictionary<Devices.DeviceKeys, IKeycap> _virtual_keyboard_map = new Dictionary<DeviceKeys, IKeycap>();
 
@@ -546,6 +563,10 @@ namespace Aurora.Settings
                     layoutConfigPath = Path.Combine(layoutsPath, "masterkeys_pro_l.json");
                 else if (keyboard_preference == PreferredKeyboard.Masterkeys_Pro_S)
                     layoutConfigPath = Path.Combine(layoutsPath, "masterkeys_pro_s.json");
+                else if (keyboard_preference == PreferredKeyboard.Masterkeys_Pro_L_White)
+                    layoutConfigPath = Path.Combine(layoutsPath, "masterkeys_pro_l_white.json");
+                else if (keyboard_preference == PreferredKeyboard.Masterkeys_Pro_M_White)
+                    layoutConfigPath = Path.Combine(layoutsPath, "masterkeys_pro_m_white.json");
                 //else if (keyboard_preference == PreferredKeyboard.Roccat_Ryos)
                 //    layoutConfigPath = Path.Combine(layoutsPath, "roccat_ryos.json");
                 else
@@ -559,10 +580,7 @@ namespace Aurora.Settings
                     string content = File.ReadAllText(layoutConfigPath, Encoding.UTF8);
                     VirtualGroupConfiguration layoutConfig = JsonConvert.DeserializeObject<VirtualGroupConfiguration>(content, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
 
-                    if (layoutConfig.replace_RWin_with_FN)
-                        virtual_keyboard_group.AdjustFNKey();
-
-                    virtual_keyboard_group.SetNewLineKeys(layoutConfig.keys_to_set_as_new_line);
+                    virtual_keyboard_group.AdjustKeys(layoutConfig.key_modifications);
                     virtual_keyboard_group.RemoveKeys(layoutConfig.keys_to_remove);
 
                     foreach (string feature in layoutConfig.included_features)
@@ -620,8 +638,8 @@ namespace Aurora.Settings
                                 {
                                     if (key.tag == DeviceKeys.NONE)
                                     {
-                                        outline_width = key.width + 2*key.margin_left;
-                                        outline_width_bits = key.width_bits + 2*key.margin_left_bits;
+                                        outline_width = key.width.Value + 2 * key.margin_left.Value;
+                                        outline_width_bits = key.width_bits.Value + 2 * key.margin_left_bits.Value;
                                     }
                                 }
 
@@ -668,24 +686,24 @@ namespace Aurora.Settings
 
             foreach (KeyboardKey key in virtual_keyboard_group.grouped_keys)
             {
-                int key_tly = key.margin_top_bits + height_bit;
-                int key_tlx = key.margin_left_bits + width_bit;
+                int key_tly = key.margin_top_bits.Value + height_bit;
+                int key_tlx = key.margin_left_bits.Value + width_bit;
 
-                int key_bry = key_tly + key.height_bits;
-                int key_brx = key_tlx + key.width_bits;
+                int key_bry = key_tly + key.height_bits.Value;
+                int key_brx = key_tlx + key.width_bits.Value;
 
-                if (key.absolute_location)
-                    this.bitmap_map[key.tag] = new BitmapRectangle(key.margin_left_bits, key.margin_top_bits, key_brx - key_tlx, key_bry - key_tly);
+                if (key.absolute_location.Value)
+                    this.bitmap_map[key.tag] = new BitmapRectangle(key.margin_left_bits.Value, key.margin_top_bits.Value, key_brx - key_tlx, key_bry - key_tly);
                 else
                     this.bitmap_map[key.tag] = new BitmapRectangle(key_tlx, key_tly, key_brx - key_tlx, key_bry - key_tly);
 
-                if (!key.absolute_location)
+                if (!key.absolute_location.Value)
                 {
                     if (width_bit_max < key_brx) width_bit_max = key_brx;
                     if (height_bit_max < key_bry) height_bit_max = key_bry;
 
 
-                    if (key.line_break)
+                    if (key.line_break.Value)
                     {
                         height_bit += PixelToByte(37);
                         width_bit = 0;
@@ -767,8 +785,8 @@ namespace Aurora.Settings
 
             foreach (KeyboardKey key in virtual_keyboard_group.grouped_keys)
             {
-                double keyMargin_Left = key.margin_left;
-                double keyMargin_Top = key.margin_top;
+                double keyMargin_Left = key.margin_left.Value;
+                double keyMargin_Top = key.margin_top.Value;
 
                 string image_path = "";
 
@@ -801,10 +819,10 @@ namespace Aurora.Settings
                 if (key.tag != DeviceKeys.NONE && !_virtual_keyboard_map.ContainsKey(key.tag) && keycap is IKeycap)
                     _virtual_keyboard_map.Add(key.tag, keycap as IKeycap);
 
-                if (key.absolute_location)
-                    keycap.Margin = new Thickness(key.margin_left, key.margin_top, 0, 0);
+                if (key.absolute_location.Value)
+                    keycap.Margin = new Thickness(key.margin_left.Value, key.margin_top.Value, 0, 0);
                 else
-                    keycap.Margin = new Thickness(current_width + key.margin_left, current_height + key.margin_top, 0, 0);
+                    keycap.Margin = new Thickness(current_width + key.margin_left.Value, current_height + key.margin_top.Value, 0, 0);
 
                 if (key.tag == DeviceKeys.ESC)
                 {
@@ -812,10 +830,10 @@ namespace Aurora.Settings
                     baseline_y = keycap.Margin.Top;
                 }
 
-                if (!key.absolute_location)
+                if (!key.absolute_location.Value)
                 {
                     if (key.width + keyMargin_Left > 0)
-                        current_width += key.width + keyMargin_Left;
+                        current_width += key.width.Value + keyMargin_Left;
 
                     if (keyMargin_Top > 0)
                         current_height += keyMargin_Top;
@@ -824,7 +842,7 @@ namespace Aurora.Settings
                     if (layout_width < current_width)
                         layout_width = current_width;
 
-                    if (key.line_break)
+                    if (key.line_break.Value)
                     {
                         current_height += 37;
                         current_width = 0;
@@ -840,12 +858,48 @@ namespace Aurora.Settings
             {
                 //No items, display error
                 Label error_message = new Label();
-                error_message.Content = new TextBlock()
+
+                DockPanel info_panel = new DockPanel();
+
+                TextBlock info_message = new TextBlock()
                 {
                     Text = "No keyboard selected\r\nPlease select your keyboard in the settings",
                     TextAlignment = TextAlignment.Center,
-                    Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0))
+                    Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0)),
                 };
+
+                DockPanel.SetDock(info_message, Dock.Top);
+                info_panel.Children.Add(info_message);
+
+                DockPanel info_instruction = new DockPanel();
+
+                info_instruction.Children.Add(new TextBlock()
+                {
+                    Text = "Press (",
+                    Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0)),
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+
+                info_instruction.Children.Add(new System.Windows.Controls.Image()
+                {
+                    Source = new BitmapImage(new Uri(@"Resources/settings_icon.png", UriKind.Relative)),
+                    Stretch = Stretch.Uniform,
+                    Height = 40.0,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+
+                info_instruction.Children.Add(new TextBlock()
+                {
+                    Text = ") and go into \"Devices & Wrappers\" tab",
+                    Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0)),
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+
+                DockPanel.SetDock(info_instruction, Dock.Bottom);
+                info_panel.Children.Add(info_instruction);
+
+                error_message.Content = info_panel;
+
                 error_message.FontSize = 16.0;
                 error_message.FontWeight = FontWeights.Bold;
                 error_message.HorizontalContentAlignment = HorizontalAlignment.Center;

@@ -202,7 +202,7 @@ namespace Aurora.EffectsEngine
 					effect_config.last_effect_call = Utils.Time.GetMillisecondsSinceEpoch();
 					break;
 				case LayerEffects.GradientShift_Custom_Angle:
-					effect_config.shift_amount += ((Utils.Time.GetMillisecondsSinceEpoch() - effect_config.last_effect_call) / 1000.0f) * 0.25f * effect_config.speed;
+					effect_config.shift_amount += ((Utils.Time.GetMillisecondsSinceEpoch() - effect_config.last_effect_call) / 1000.0f) * 0.067f * effect_config.speed;
 					effect_config.shift_amount = effect_config.shift_amount % Effects.canvas_biggest;
 
 					if (effect_config.animation_type == AnimationType.Translate_XY)
@@ -641,9 +641,9 @@ namespace Aurora.EffectsEngine
 				{
 					for (int x = 0; x < width; x++)
 					{
-						p[(y * stride) + x * 4] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4], value);
-						p[(y * stride) + x * 4 + 1] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4 + 1], value);
-						p[(y * stride) + x * 4 + 2] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4 + 2], value);
+						//p[(y * stride) + x * 4] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4], value);
+						//p[(y * stride) + x * 4 + 1] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4 + 1], value);
+						//p[(y * stride) + x * 4 + 2] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4 + 2], value);
 						p[(y * stride) + x * 4 + 3] = Utils.ColorUtils.ColorByteMultiplication(p[(y * stride) + x * 4 + 3], value);
 					}
 				}
@@ -722,7 +722,7 @@ namespace Aurora.EffectsEngine
 				{
 					//foregroundColor = Utils.ColorUtils.BlendColors(backgroundColor, foregroundColor,
 					//	flash_level * Math.Sin((Utils.Time.GetMillisecondsSinceEpoch() % (double)flash_speed) / (double)flash_speed * Math.PI));
-					
+
 					foregroundColor = Utils.ColorUtils.BlendColors(backgroundColor, foregroundColor,
 						flash_level * Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % flash_speed) / (flash_speed / 2f)));
 
@@ -1064,6 +1064,61 @@ namespace Aurora.EffectsEngine
 					}
 				}
 			}
+
+			return this;
+		}
+
+		/// <summary>
+		/// Excludes provided sequence from the layer (Applies a mask)
+		/// </summary>
+		/// <param name="sequence">The mask to be applied</param>
+		/// <returns>Itself</returns>
+		public EffectLayer Exclude(KeySequence sequence)
+		{
+			//Create draw alpha mask
+			EffectLayer _alpha_mask = new EffectLayer(this.name + " - Alpha Mask", Color.Transparent);
+			_alpha_mask.Set(sequence, Color.Black);
+
+			//Apply alpha mask
+			BitmapData srcData_alpha = _alpha_mask.colormap.LockBits(
+				new Rectangle(0, 0, _alpha_mask.colormap.Width, _alpha_mask.colormap.Height),
+				ImageLockMode.ReadWrite,
+				PixelFormat.Format32bppArgb);
+
+			int alpha_mask_stride = srcData_alpha.Stride;
+			IntPtr alpha_mask_Scan0 = srcData_alpha.Scan0;
+
+
+			BitmapData srcData = colormap.LockBits(
+				new Rectangle(0, 0, colormap.Width, colormap.Height),
+				ImageLockMode.ReadWrite,
+				PixelFormat.Format32bppArgb);
+
+			int stride = srcData.Stride;
+
+			IntPtr Scan0 = srcData.Scan0;
+
+			int width = colormap.Width;
+			int height = colormap.Height;
+
+			unsafe
+			{
+				byte* p_alpha = (byte*)(void*)alpha_mask_Scan0;
+				byte* p = (byte*)(void*)Scan0;
+
+				for (int y = 0; y < height; y++)
+				{
+					for (int x = 0; x < width; x++)
+					{
+						byte mask_alpha = p_alpha[(y * alpha_mask_stride) + x * 4 + 3];
+						if (mask_alpha != 0)
+							p[(y * stride) + x * 4 + 3] = (byte)(255 - mask_alpha);
+					}
+				}
+			}
+
+			_alpha_mask.colormap.UnlockBits(srcData_alpha);
+			colormap.UnlockBits(srcData);
 
 			return this;
 		}

@@ -53,6 +53,8 @@ namespace Aurora.Settings
         RainFall = 6,
         [Description("Blackout")]
         Blackout = 7,
+        [Description("Matrix")]
+        Matrix = 8
     }
 
     /// <summary>
@@ -184,6 +186,11 @@ namespace Aurora.Settings
         Masterkeys_Pro_L = 500,
         [Description("Masterkeys Pro S")]
         Masterkeys_Pro_S = 501,
+        [Description("Masterkeys Pro L White")]
+        Masterkeys_Pro_L_White = 502,
+        [Description("Masterkeys Pro M White")]
+        Masterkeys_Pro_M_White = 503,
+
 
         //Roccat range is 600-699
         //[Description("Roccat Ryos")]
@@ -325,6 +332,7 @@ namespace Aurora.Settings
         public bool atmoorb_enabled;
         public bool atmoorb_use_smoothing;
         public string atmoorb_ids;
+        public int atmoorb_send_delay;
 
         [JsonIgnoreAttribute]
         public Dictionary<string, ProfileManager> ApplicationProfiles = new Dictionary<string, ProfileManager>()
@@ -425,8 +433,9 @@ namespace Aurora.Settings
             atmoorb_enabled = false;
             atmoorb_use_smoothing = true;
             atmoorb_ids = "1";
+            atmoorb_send_delay = 50;
         }
-    }
+  }
 
     public class ConfigManager
     {

@@ -40,6 +40,9 @@ namespace Aurora.Settings.Layers
         [Description("Blinking Layer")]
         Blinking = 121,
 
+        [Description("Image Layer")]
+        Image = 122,
+
         [Description("Percent Effect Layer")]
         Percent = 200,
 
@@ -269,7 +272,7 @@ namespace Aurora.Settings.Layers
             {
                 logic.Check(gs, this._Handler);   
             }
-            return this._Handler.Render(gs);
+            return this._Handler.PostRenderFX(this._Handler.Render(gs));
         }
 
         public void SetProfile(ProfileManager profile)

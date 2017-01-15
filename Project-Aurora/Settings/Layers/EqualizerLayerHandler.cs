@@ -12,13 +12,16 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace Aurora.Settings.Layers
 {
     public enum EqualizerType
     {
-        [Description("Power Spectrum")]
+        [Description("Power Bars")]
         PowerBars,
 
         [Description("Waveform")]
@@ -37,11 +40,17 @@ namespace Aurora.Settings.Layers
         [Description("Alternating Colors")]
         AlternatingColor,
 
-        [Description("Gradient")]
-        Gradient,
+        [Description("Gradient Notched Color")]
+        GradientNotched,
 
         [Description("Gradient Color Shift")]
-        GradientColorShift
+        GradientColorShift,
+
+        [Description("Gradient (Horizontal)")]
+        GradientHorizontal,
+
+        [Description("Gradient (Vertical)")]
+        GradientVertical
     }
 
     public class EqualizerLayerHandlerProperties : LayerHandlerProperties<EqualizerLayerHandlerProperties>
@@ -71,6 +80,21 @@ namespace Aurora.Settings.Layers
         [JsonIgnore]
         public float MaxAmplitude { get { return Logic._MaxAmplitude ?? _MaxAmplitude ?? 20.0f; } }
 
+        public bool? _DimBackgroundOnSound { get; set; }
+
+        [JsonIgnore]
+        public bool DimBackgroundOnSound { get { return Logic._DimBackgroundOnSound ?? _DimBackgroundOnSound ?? false; } }
+
+        public Color? _DimColor { get; set; }
+
+        [JsonIgnore]
+        public Color DimColor { get { return Logic._DimColor ?? _DimColor ?? Color.Empty; } }
+
+        public SortedSet<float> _Frequencies { get; set; }
+
+        [JsonIgnore]
+        public SortedSet<float> Frequencies { get { return Logic._Frequencies ?? _Frequencies ?? new SortedSet<float>(); } }
+
         public EqualizerLayerHandlerProperties() : base()
         {
 
@@ -90,12 +114,18 @@ namespace Aurora.Settings.Layers
             _EQType = EqualizerType.PowerBars;
             _ViewType = EqualizerPresentationType.SolidColor;
             _MaxAmplitude = 20.0f;
+            _DimBackgroundOnSound = false;
+            _DimColor = Color.FromArgb(169, 0, 0, 0);
+            _Frequencies = new SortedSet<float>() { 60, 170, 310, 600, 1000, 2000, 3000, 4000, 5000 };
         }
     }
 
     public class EqualizerLayerHandler : LayerHandler<EqualizerLayerHandlerProperties>
     {
-        float[] freqs = { 60, 170, 310, 600, 1000, 2000, 3000, 4000, 5000 };
+        public event NewLayerRendered NewLayerRender = delegate { };
+
+        MMDeviceEnumerator audio_device_enumerator = new NAudio.CoreAudioApi.MMDeviceEnumerator();
+        MMDevice default_device = null;
 
         private List<float> flux_array = new List<float>();
 
@@ -117,15 +147,6 @@ namespace Aurora.Settings.Layers
 
             sampleAggregator.FftCalculated += new EventHandler<FftEventArgs>(FftCalculated);
             sampleAggregator.PerformFFT = true;
-
-            // Here you decide what you want to use as the waveIn.
-            // There are many options in NAudio and you can use other streams/files.
-            // Note that the code varies for each different source.
-            waveIn = new WasapiLoopbackCapture();
-
-            waveIn.DataAvailable += OnDataAvailable;
-
-            waveIn.StartRecording();
         }
 
         protected override UserControl CreateControl()
@@ -133,45 +154,94 @@ namespace Aurora.Settings.Layers
             return new Control_EqualizerLayer(this);
         }
 
+        private void UpdateAudioCapture()
+        {
+            if (waveIn != null)
+            {
+                waveIn.StopRecording();
+                waveIn.Dispose();
+            }
+
+            default_device = audio_device_enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+            // Here you decide what you want to use as the waveIn.
+            // There are many options in NAudio and you can use other streams/files.
+            // Note that the code varies for each different source.
+            waveIn = new WasapiLoopbackCapture(default_device);
+
+            waveIn.DataAvailable += OnDataAvailable;
+
+            waveIn.StartRecording();
+        }
+
         public override EffectLayer Render(IGameState gamestate)
         {
+            MMDevice current_device = audio_device_enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+            if (default_device == null || default_device.ID != current_device.ID)
+            {
+                UpdateAudioCapture();
+            }
+
+            float[] freqs = Properties.Frequencies.ToArray(); //Defined Frequencies
+
             double[] freq_results = new double[freqs.Length];
 
-            if (previous_freq_results == null)
+            if (previous_freq_results == null || previous_freq_results.Length < freqs.Length)
                 previous_freq_results = new float[freqs.Length];
+
+            //Maintain local copies of fft, to prevent data overwrite
+            Complex[] _local_fft = new List<Complex>(_ffts).ToArray();
+            Complex[] _local_fft_previous = new List<Complex>(_ffts_prev).ToArray();
 
             EffectLayer equalizer_layer = new EffectLayer();
 
+            if(Properties.DimBackgroundOnSound)
+            {
+                bool hasSound = false;
+                foreach(var bin in _local_fft)
+                {
+                    if(bin.X > 0.0005 || bin.X < -0.0005)
+                    {
+                        hasSound = true;
+                        break;
+                    }
+                }
+
+                if(hasSound)
+                    equalizer_layer.Fill(Properties.DimColor);
+            }
+
             using (Graphics g = equalizer_layer.GetGraphics())
             {
-                int wave_step_amount = _ffts.Length / Effects.canvas_width;
+                int wave_step_amount = _local_fft.Length / Effects.canvas_width;
 
                 switch (Properties.EQType)
                 {
                     case EqualizerType.Waveform:
                         for (int x = 0; x < Effects.canvas_width; x++)
                         {
-                            float fft_val = _ffts.Length > x * wave_step_amount ? _ffts[x * wave_step_amount].X : 0.0f;
+                            float fft_val = _local_fft.Length > x * wave_step_amount ? _local_fft[x * wave_step_amount].X : 0.0f;
 
-                            Color col = GetColor(fft_val, x, Effects.canvas_width);
+                            Brush brush = GetBrush(fft_val, x, Effects.canvas_width);
 
-                            g.DrawLine(new Pen(col), x, Effects.canvas_height_center, x, Effects.canvas_height_center - fft_val * 500.0f);
+                            g.DrawLine(new Pen(brush), x, Effects.canvas_height_center, x, Effects.canvas_height_center - fft_val / Properties.MaxAmplitude * 500.0f);
                         }
                         break;
                     case EqualizerType.Waveform_Bottom:
                         for (int x = 0; x < Effects.canvas_width; x++) 
                         {
-                            float fft_val = _ffts.Length > x * wave_step_amount ? _ffts[x * wave_step_amount ].X : 0.0f;
+                            float fft_val = _local_fft.Length > x * wave_step_amount ? _local_fft[x * wave_step_amount ].X : 0.0f;
 
-                            Color col = GetColor(fft_val, x, Effects.canvas_width);
+                            Brush brush = GetBrush(fft_val, x, Effects.canvas_width);
 
-                            g.DrawLine(new Pen(col), x, Effects.canvas_height, x, Effects.canvas_height - Math.Abs(fft_val) * 1000.0f);
+                            g.DrawLine(new Pen(brush), x, Effects.canvas_height, x, Effects.canvas_height - Math.Abs(fft_val / Properties.MaxAmplitude) * 1000.0f);
                         }
                         break;
                     case EqualizerType.PowerBars:
 
                         //Perform FFT again to get frequencies
-                        FastFourierTransform.FFT(false, (int)Math.Log(fftLength, 2.0), _ffts);
+                        FastFourierTransform.FFT(false, (int)Math.Log(fftLength, 2.0), _local_fft);
 
                         while (flux_array.Count < freqs.Length)
                         {
@@ -192,8 +262,8 @@ namespace Aurora.Settings.Layers
 
                             for (int j = startF; j <= endF; j++)
                             {
-                                float curr_fft = (float)Math.Sqrt(_ffts[j].X * _ffts[j].X + _ffts[j].Y * _ffts[j].Y);
-                                float prev_fft = (float)Math.Sqrt(_ffts_prev[j].X * _ffts_prev[j].X + _ffts_prev[j].Y * _ffts_prev[j].Y);
+                                float curr_fft = (float)Math.Sqrt(_local_fft[j].X * _local_fft[j].X + _local_fft[j].Y * _local_fft[j].Y);
+                                float prev_fft = (float)Math.Sqrt(_local_fft_previous[j].X * _local_fft_previous[j].X + _local_fft_previous[j].Y * _local_fft_previous[j].Y);
 
                                 float value = curr_fft - prev_fft;
                                 float flux_calc = (value + Math.Abs(value)) / 2;
@@ -226,14 +296,18 @@ namespace Aurora.Settings.Layers
 
                             previous_freq_results[f_x] = fft_val;
 
-                            Color col = GetColor(-(f_x % 2), f_x, freq_results.Length - 1);
+                            Brush brush = GetBrush(-(f_x % 2), f_x, freq_results.Length - 1);
 
-                            g.FillRectangle(new SolidBrush(col), x, y - height, width, height);
+                            g.FillRectangle(brush, x, y - height, width, height);
                         }
 
                         break;
                 }
             }
+
+            var hander = NewLayerRender;
+            if (hander != null)
+                hander.Invoke(equalizer_layer.GetBitmap());
 
             return equalizer_layer;
         }
@@ -272,21 +346,37 @@ namespace Aurora.Settings.Layers
             return (int)(freq / (44000 / _ffts.Length));
         }
 
-        private Color GetColor(float value, float position, float max_position)
+        private Brush GetBrush(float value, float position, float max_position)
         {
             if (Properties.ViewType == EqualizerPresentationType.AlternatingColor)
             {
                 if (value >= 0)
-                    return Properties.PrimaryColor;
+                    return new SolidBrush(Properties.PrimaryColor);
                 else
-                    return Properties.SecondaryColor;
+                    return new SolidBrush(Properties.SecondaryColor);
             }
-            else if (Properties.ViewType == EqualizerPresentationType.Gradient)
-                return Properties.Gradient.GetColorSpectrum().GetColorAt(position, max_position);
+            else if (Properties.ViewType == EqualizerPresentationType.GradientNotched)
+                return new SolidBrush(Properties.Gradient.GetColorSpectrum().GetColorAt(position, max_position));
+            else if (Properties.ViewType == EqualizerPresentationType.GradientHorizontal)
+            {
+                EffectBrush e_brush = new EffectBrush(Properties.Gradient.GetColorSpectrum());
+                e_brush.start = new PointF(0, 0);
+                e_brush.end = new PointF(Effects.canvas_width, 0);
+
+                return e_brush.GetDrawingBrush();
+            }
             else if (Properties.ViewType == EqualizerPresentationType.GradientColorShift)
-                return Properties.Gradient.GetColorSpectrum().GetColorAt(Utils.Time.GetMilliSeconds(), 1000);
+                return new SolidBrush(Properties.Gradient.GetColorSpectrum().GetColorAt(Utils.Time.GetMilliSeconds(), 1000));
+            else if (Properties.ViewType == EqualizerPresentationType.GradientVertical)
+            {
+                EffectBrush e_brush = new EffectBrush(Properties.Gradient.GetColorSpectrum());
+                e_brush.start = new PointF(0, Effects.canvas_height);
+                e_brush.end = new PointF(0, 0);
+
+                return e_brush.GetDrawingBrush();
+            }
             else
-                return Properties.PrimaryColor;
+                return new SolidBrush(Properties.PrimaryColor);
         }
     }
 

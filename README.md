@@ -1,7 +1,7 @@
 # Aurora - Unified Lighting Effects
 ![Aurora Logo](https://dl.dropboxusercontent.com/u/30675690/Aurora/aurora_logo_256x256.png)
 
-[Link to Aurora's webpage, includes some demos and changelogs](http://project-aurora.com/)
+[Link to Aurora's webpage, includes some demos and changelogs](http://aurora.modworkshop.net/)
 
 
 Project Aurora is a utility that unifies RGB lighting devices across different brands and enables them to work alongside each other, all while adding and improving RGB lighting support for various games that previous had none or little RGB lighting support. Aurora is mainly written in C#, but has C++ components to implement native support for other games. Aurora has native support for Dota 2, Counter-Strike: Global Offensive, Grand Theft Auto V, Rocket League, PAYDAY 2, The Division, League of Legends, Hotline Miami, The Talos Principle, Battlefield 3, Blacklight: Retribution, Magic: The Gathering - Duels of the Planeswalkers 2012, Middle-earth: Shadow of Mordor, Serious Sam 3, Robot Roller-Derby Disco Dodgeball, XCOM: Enemy Unknown, Evolve Stage 2, Metro: Last Light, Guild Wars 2, Worms W.M.D, and Blade and Soul.
@@ -23,7 +23,7 @@ Recommended:
 
 ## Run this program in the background at windows start
 You can set Aurora to run on Windows Startup. Go into Settings and check "Start with Windows".
-![Aurora Settings](https://puu.sh/sZA0V/10c9adf163.png)
+![Aurora Settings](https://puu.sh/tfKss/22603982e9.png)
 
 ## Natively Supported Games
 * Dota 2
@@ -83,13 +83,13 @@ Robot Roller-Derby Disco Dodgeball Demo
 
 
 ## Screenshots
-![Desktop Settings](https://puu.sh/sZzxe/fb5101bf4e.png)
-![Dota 2 Settings](https://puu.sh/sZzBn/e365e4da75.png)
-![CSGO Settings](https://puu.sh/sZzEA/496457da51.png)
-![GTA 5 Settings](https://puu.sh/sZzHe/50943d1455.png)
-![Rocket League Settings](https://puu.sh/sZzJs/45a609b843.png)
-![Payday 2 Settings](https://puu.sh/sZzRa/0ee4101856.png)
-![Skype Integration Settings](https://puu.sh/sZzWl/c0ca3573fd.png)
+![Desktop Settings](https://puu.sh/tfKzm/1ce3b0cd5c.png)
+![Dota 2 Settings](https://puu.sh/tfKNj/98229d2f69.png)
+![CSGO Settings](https://puu.sh/tfKRK/61f3bb3757.png)
+![GTA 5 Settings](https://puu.sh/tfKWL/d72e10b288.png)
+![Rocket League Settings](https://puu.sh/tfL4N/30f5b9cfea.png)
+![Payday 2 Settings](https://puu.sh/tfLcn/4978a48199.png)
+![Skype Integration Settings](https://puu.sh/tfLfu/57b1df348a.png)
 
 
 ## Indepth features

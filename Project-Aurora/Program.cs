@@ -6,6 +6,8 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
+using System.Linq;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Forms;
@@ -36,10 +38,10 @@ namespace Aurora
         public static InputEventsSubscriptions input_subscriptions = new InputEventsSubscriptions();
         public static GameEventHandler geh;
         public static NetworkListener net_listener;
-        public static Configuration Configuration = new Configuration();
-        public static DeviceManager dev_manager = new DeviceManager();
+        public static Configuration Configuration;
+        public static DeviceManager dev_manager;
         public static KeyboardLayoutManager kbLayout;
-        public static Effects effengine = new Effects();
+        public static Effects effengine;
         public static KeyRecorder key_recorder = new KeyRecorder();
 
         /// <summary>
@@ -114,24 +116,42 @@ namespace Aurora
             log4net.Config.BasicConfigurator.Configure();
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Equals("devenv.exe"))
+            if (!Global.isDebug)
                 currentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             //Make sure there is only one instance of Aurora
-            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            Process[] processes;
+            if ((processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName)).Length > 1)
             {
-                Global.logger.LogLine("Aurora is already running.", Logging_Level.Error);
-                System.Windows.MessageBox.Show("Aurora is already running.\r\nExiting.", "Aurora - Error");
+                try
+                {
+                    NamedPipeClientStream client = new NamedPipeClientStream(".", "aurora\\interface", PipeDirection.Out);
+                    client.Connect(30);
+                    if (!client.IsConnected)
+                        throw new Exception();
+                    byte[] command = System.Text.Encoding.ASCII.GetBytes("restore");
+                    client.Write(command, 0, command.Length);
+                    client.Close();
+                }
+                catch
+                {
+                    Global.logger.LogLine("Aurora is already running.", Logging_Level.Error);
+                    System.Windows.MessageBox.Show("Aurora is already running.\r\nExiting.", "Aurora - Error");
+                }
                 Environment.Exit(0);
             }
-            
+
 
             if (isDelayed)
                 System.Threading.Thread.Sleep((int)delayTime);
 
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 
+            Global.dev_manager = new DeviceManager();
+            Global.effengine = new Effects();
+
             //Load config
+            Global.logger.LogLine("Loading Configuration", Logging_Level.Info);
             try
             {
                 Global.Configuration = ConfigManager.Load();
@@ -139,7 +159,7 @@ namespace Aurora
             catch (Exception e)
             {
                 Global.logger.LogLine("Exception during ConfigManager.Load(). Error: " + e, Logging_Level.Error);
-                System.Windows.MessageBox.Show("Exception during ConfigManager.Load().Error: " + e.Message, "Aurora - Error");
+                System.Windows.MessageBox.Show("Exception during ConfigManager.Load().Error: " + e.Message + "\r\n\r\n Default configuration loaded.", "Aurora - Error");
 
                 Global.Configuration = new Configuration();
             }
@@ -164,11 +184,11 @@ namespace Aurora
                 }
             }
 
+            Global.logger.LogLine("Loading Device Manager", Logging_Level.Info);
             Global.dev_manager.Initialize();
 
             Global.logger.LogLine("Loading KB Layouts", Logging_Level.Info);
             Global.kbLayout = new KeyboardLayoutManager();
-
             Global.kbLayout.LoadBrand(Global.Configuration.keyboard_brand, Global.Configuration.mouse_preference, Global.Configuration.mouse_orientation);
 
             Global.logger.LogLine("Input Hooking", Logging_Level.Info);

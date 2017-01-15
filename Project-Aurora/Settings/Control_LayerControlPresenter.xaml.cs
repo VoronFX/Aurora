@@ -41,6 +41,9 @@ namespace Aurora.Settings
         {
             Layer = layer;
             cmbLayerType.SelectedItem = Layer.Handler.Type;
+            grdLayerConfigs.Visibility = Visibility.Hidden;
+            grd_LayerControl.IsHitTestVisible = true;
+            grd_LayerControl.Effect = null;
         }
 
         private void SetLayer(Layer layer)
@@ -56,6 +59,12 @@ namespace Aurora.Settings
 
             cmbLayerType.SelectedItem = Layer.Handler.Type;
             ctrlLayerTypeConfig.Content = layer.Control;
+            chkLayerSmoothing.IsChecked = Layer.Handler.EnableSmoothing;
+            chk_ExcludeMask.IsChecked = Layer.Handler.EnableExclusionMask;
+            keyseq_ExcludeMask.Sequence = Layer.Handler.ExclusionMask;
+            grdLayerConfigs.Visibility = Visibility.Hidden;
+            grd_LayerControl.IsHitTestVisible = true;
+            grd_LayerControl.Effect = null;
             isSettingNewLayer = false;
         }
 
@@ -65,7 +74,21 @@ namespace Aurora.Settings
             {
                 LayerType enumVal = (LayerType)Enum.Parse(typeof(LayerType), ((sender as ComboBox).SelectedItem).ToString());
 
-                switch (enumVal)
+                ResetLayer(enumVal);
+            }
+        }
+
+        private void btnLogic_Click(object sender, RoutedEventArgs e)
+        {
+            Window_LayerLogicEditor logic_edit = new Window_LayerLogicEditor(this._Layer);
+            logic_edit.ShowDialog();
+        }
+
+        private void ResetLayer(LayerType type)
+        {
+            if (IsLoaded && !isSettingNewLayer)
+            {
+                switch (type)
                 {
                     case LayerType.Solid:
                         _Layer.Handler = new SolidColorLayerHandler();
@@ -102,6 +125,9 @@ namespace Aurora.Settings
                         break;
                     case LayerType.Blinking:
                         _Layer.Handler = new BlinkingLayerHandler();
+                        break;
+                    case LayerType.Image:
+                        _Layer.Handler = new ImageLayerHandler();
                         break;
                     case LayerType.LockColor:
                         _Layer.Handler = new LockColourLayerHandler();
@@ -166,14 +192,60 @@ namespace Aurora.Settings
                 }
 
                 ctrlLayerTypeConfig.Content = _Layer.Control;
+                chkLayerSmoothing.IsChecked = _Layer.Handler.EnableSmoothing;
+                chk_ExcludeMask.IsChecked = Layer.Handler.EnableExclusionMask;
+                keyseq_ExcludeMask.Sequence = Layer.Handler.ExclusionMask;
                 this._Layer.AssociatedProfile.SaveProfiles();
             }
         }
 
-        private void btnLogic_Click(object sender, RoutedEventArgs e)
+        private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            Window_LayerLogicEditor logic_edit = new Window_LayerLogicEditor(this._Layer);
-            logic_edit.ShowDialog();
+            if (IsLoaded && !isSettingNewLayer && sender is Button)
+            {
+                LayerType enumVal = (LayerType)Enum.Parse(typeof(LayerType), (cmbLayerType.SelectedItem).ToString());
+
+                ResetLayer(enumVal);
+            }
+        }
+
+        private void btnConfig_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded && !isSettingNewLayer && sender is Button)
+            {
+                if(this.grdLayerConfigs.IsVisible)
+                {
+                    this.grdLayerConfigs.Visibility = Visibility.Hidden;
+                    grd_LayerControl.IsHitTestVisible = true;
+                    grd_LayerControl.Effect = null;
+                }
+                else
+                {
+                    this.grdLayerConfigs.Visibility = Visibility.Visible;
+                    grd_LayerControl.IsHitTestVisible = false;
+                    grd_LayerControl.Effect = new System.Windows.Media.Effects.BlurEffect();
+                }
+            }
+        }
+
+        private void chkLayerSmoothing_Checked(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded && !isSettingNewLayer && sender is CheckBox)
+                Layer.Handler.EnableSmoothing = (sender as CheckBox).IsChecked.Value;
+        }
+
+        private void chk_ExcludeMask_Checked(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded && !isSettingNewLayer && sender is CheckBox)
+                Layer.Handler.EnableExclusionMask = (sender as CheckBox).IsChecked.Value;
+
+            keyseq_ExcludeMask.IsEnabled = Layer.Handler.EnableExclusionMask;
+        }
+
+        private void keyseq_ExcludeMask_SequenceUpdated(object sender, EventArgs e)
+        {
+            if (IsLoaded && !isSettingNewLayer && sender is Aurora.Controls.KeySequence)
+                Layer.Handler.ExclusionMask = (sender as Aurora.Controls.KeySequence).Sequence;
         }
     }
 }

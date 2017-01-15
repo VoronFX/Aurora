@@ -10,6 +10,7 @@ using Xceed.Wpf.Toolkit;
 using Aurora.Profiles.Desktop;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Aurora.Settings
 {
@@ -39,7 +40,9 @@ namespace Aurora.Settings
 			this.app_exit_mode.SelectedIndex = (int)Global.Configuration.close_mode;
 			this.app_detection_mode.SelectedIndex = (int)Global.Configuration.detection_mode;
 
-			this.volume_as_brightness_enabled.IsChecked = Global.Configuration.use_volume_as_brightness;
+            load_excluded_listbox();
+
+            this.volume_as_brightness_enabled.IsChecked = Global.Configuration.use_volume_as_brightness;
 
 			this.brightness_kb_label.Text = Global.Configuration.keyboard_brightness_modifier + " %";
 			this.brightness_kb_slider.Value = (float)Global.Configuration.keyboard_brightness_modifier;
@@ -101,11 +104,13 @@ namespace Aurora.Settings
 			this.updates_autocheck_on_start.IsChecked = Global.Configuration.updates_check_on_start_up;
 			this.updates_background_install_minor.IsChecked = Global.Configuration.updates_allow_silent_minor;
 
-			this.atmoorb_enabled.IsChecked = Global.Configuration.atmoorb_enabled;
-			this.atmoorb_use_smoothing.IsChecked = Global.Configuration.atmoorb_use_smoothing;
-			this.atmoorb_IDs.Text = Global.Configuration.atmoorb_ids;
-			Global.dev_manager.NewDevicesInitialized += Dev_manager_NewDevicesInitialized;
-		}
+            this.atmoorb_enabled.IsChecked = Global.Configuration.atmoorb_enabled;
+            this.atmoorb_use_smoothing.IsChecked = Global.Configuration.atmoorb_use_smoothing;
+            this.atmoorb_IDs.Text = Global.Configuration.atmoorb_ids;
+            this.atmoorb_send_delay.Text = Global.Configuration.atmoorb_send_delay.ToString();
+
+            Global.dev_manager.NewDevicesInitialized += Dev_manager_NewDevicesInitialized;
+        }
 
 		private void Dev_manager_NewDevicesInitialized(object sender, EventArgs e)
 		{
@@ -393,15 +398,16 @@ namespace Aurora.Settings
 			load_excluded_listbox();
 		}
 
-		private void excluded_remove_Click(object sender, RoutedEventArgs e)
-		{
-			if (this.excluded_listbox.SelectedItem != null)
-			{
-				if (Global.Configuration.excluded_programs.Contains((string)this.excluded_listbox.SelectedItem))
-				{
-					Global.Configuration.excluded_programs.Remove((string)this.excluded_listbox.SelectedItem);
-				}
-			}
+        private void excluded_remove_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (this.excluded_listbox.SelectedItem != null)
+            {
+                if (Global.Configuration.excluded_programs.Contains((string)this.excluded_listbox.SelectedItem))
+                {
+                    Global.Configuration.excluded_programs.Remove((string)this.excluded_listbox.SelectedItem);
+                }
+            }
 
 			load_excluded_listbox();
 		}
@@ -489,15 +495,15 @@ namespace Aurora.Settings
 			}
 		}
 
-		private void run_at_win_startup_Checked(object sender, RoutedEventArgs e)
-		{
-			if (IsLoaded && sender is CheckBox)
-			{
-				if ((sender as CheckBox).IsChecked.Value)
-					runRegistryPath.SetValue("Aurora", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" -silent -delay 5000");
-				else
-					runRegistryPath.DeleteValue("Aurora");
-			}
+        private void run_at_win_startup_Checked(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded && sender is CheckBox)
+            {
+                if ((sender as CheckBox).IsChecked.Value)
+                    runRegistryPath.SetValue("Aurora", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" -silent");
+                else
+                    runRegistryPath.DeleteValue("Aurora");
+            }
 
 		}
 
@@ -959,22 +965,55 @@ namespace Aurora.Settings
 			}
 		}
 
-		private void volume_overlay_dim_background_Checked(object sender, RoutedEventArgs e)
-		{
-			if (IsLoaded)
-			{
-				Global.Configuration.volume_overlay_settings.dim_background = (this.volume_overlay_dim_background.IsChecked.HasValue) ? this.volume_overlay_dim_background.IsChecked.Value : false;
-				ConfigManager.Save(Global.Configuration);
-			}
-		}
 
-		private void volume_overlay_dim_color_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
-		{
-			if (IsLoaded && this.volume_overlay_dim_color.SelectedColor.HasValue)
-			{
-				Global.Configuration.volume_overlay_settings.dim_color = Utils.ColorUtils.MediaColorToDrawingColor(this.volume_overlay_dim_color.SelectedColor.Value);
-				ConfigManager.Save(Global.Configuration);
-			}
-		}
-	}
+        private void atmoorb_send_delay_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                int send_delay;
+                bool isValidInteger = int.TryParse(this.atmoorb_send_delay.Text, out send_delay);
+                if(isValidInteger)
+                    Global.Configuration.atmoorb_send_delay = send_delay;
+
+                ConfigManager.Save(Global.Configuration);
+            }
+        }
+
+        private void volume_overlay_dim_background_Checked(object sender, RoutedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                Global.Configuration.volume_overlay_settings.dim_background = (this.volume_overlay_dim_background.IsChecked.HasValue) ? this.volume_overlay_dim_background.IsChecked.Value : false;
+                ConfigManager.Save(Global.Configuration);
+            }
+        }
+
+        private void volume_overlay_dim_color_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (IsLoaded && this.volume_overlay_dim_color.SelectedColor.HasValue)
+            {
+                Global.Configuration.volume_overlay_settings.dim_color = Utils.ColorUtils.MediaColorToDrawingColor(this.volume_overlay_dim_color.SelectedColor.Value);
+                ConfigManager.Save(Global.Configuration);
+            }
+        }
+
+        private void excluded_process_name_DropDownOpened(object sender, EventArgs e)
+        {
+            HashSet<string> processes = new HashSet<string>();
+
+            foreach (var p in Process.GetProcesses())
+            {
+                try
+                {
+                    processes.Add( Path.GetFileName( p.MainModule.FileName ) );
+                }
+                catch(Exception exc)
+                {
+
+                }
+            }
+
+            excluded_process_name.ItemsSource = processes.ToArray();
+        }
+    }
 }

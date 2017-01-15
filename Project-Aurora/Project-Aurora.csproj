@@ -244,6 +244,7 @@
     <Compile Include="ConfigUI.xaml.cs">
       <DependentUpon>ConfigUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ArrangeListBox.cs" />
     <Compile Include="Controls\ColorZones.xaml.cs">
       <DependentUpon>ColorZones.xaml</DependentUpon>
     </Compile>
@@ -603,10 +604,16 @@
     <None Include="kb_layouts\Extra Features\masterkeys_pro_l_right_features.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="kb_layouts\Extra Features\masterkeys_pro_m_white_right_features.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="kb_layouts\logitech_g410.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="kb_layouts\logitech_g810.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="kb_layouts\masterkeys_pro_l_white.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="kb_layouts\razer_blackwidow_te.json">
@@ -649,6 +656,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="kb_layouts\Plain Keyboard\layout.us.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="kb_layouts\masterkeys_pro_m_white.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\Devices\example_script.cs">
@@ -770,6 +780,9 @@
     <Compile Include="Settings\Layers\Control_GradientLayer.xaml.cs">
       <DependentUpon>Control_GradientLayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Layers\Control_ImageLayer.xaml.cs">
+      <DependentUpon>Control_ImageLayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Layers\Control_SolidFillLayer.xaml.cs">
       <DependentUpon>Control_SolidFillLayer.xaml</DependentUpon>
     </Compile>
@@ -786,6 +799,7 @@
     <Compile Include="Settings\Layers\PercentLayerHandler.cs" />
     <Compile Include="Settings\Layers\ShortcutAssistantLayerHandler.cs" />
     <Compile Include="Settings\Layers\GradientLayerHandler.cs" />
+    <Compile Include="Settings\Layers\ImageLayerHandler.cs" />
     <Compile Include="Settings\Layers\SolidColorLayerHandler.cs" />
     <Compile Include="Settings\Layers\SolidFillLayerHandler.cs" />
     <Compile Include="Settings\Window_LayerLogicEditor.xaml.cs">
@@ -1160,6 +1174,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Settings\Layers\Control_ImageLayer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Settings\Layers\Control_SolidFillLayer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1234,6 +1252,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -1256,7 +1275,7 @@
     <Resource Include="Resources\gta5_64x64.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\x64\Aurora-LogiLEDWrapper.dll" />
+    <Resource Include="Resources\Win64\Aurora-LogiLEDWrapper.dll" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddProfile_Icon.png" />
@@ -1329,6 +1348,10 @@
     <Resource Include="Resources\Visible.png" />
     <Resource Include="Resources\Daytime_Icon.png" />
     <Resource Include="Resources\Nighttime_Icon.png" />
+    <Resource Include="Resources\Layers_Drag.png" />
+    <Resource Include="Resources\Layers_Add.png" />
+    <Resource Include="Resources\Layers_Remove.png" />
+    <Resource Include="Resources\LayerConfig_icon.png" />
     <Content Include="SDKDLL.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1341,7 +1364,7 @@
     <Resource Include="Resources\blacklight_64x64.png" />
     <Content Include="Resources\CorsairInstall\Step1.png" />
     <Content Include="Resources\CorsairInstall\Step2.png" />
-    <Resource Include="Resources\x64\Aurora-LightFXWrapper.dll" />
+    <Resource Include="Resources\Win64\Aurora-LightFXWrapper.dll" />
     <None Include="ver_minor.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1369,7 +1392,7 @@
     <Resource Include="Resources\bns_48x48.png" />
     <Resource Include="Resources\keycap_backglow.png" />
     <Content Include="Resources\Win32\Aurora-RazerLEDWrapper.dll" />
-    <Resource Include="Resources\x64\Aurora-RazerLEDWrapper.dll" />
+    <Resource Include="Resources\Win64\Aurora-RazerLEDWrapper.dll" />
     <Resource Include="Resources\FreeForm_Circle.png" />
     <Resource Include="Resources\FreeForm_CircleFilled.png" />
     <Resource Include="Resources\FreeForm_Line.png" />

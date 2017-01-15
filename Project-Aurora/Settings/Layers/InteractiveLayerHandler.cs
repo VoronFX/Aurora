@@ -138,7 +138,7 @@ namespace Aurora.Settings.Layers
 
             foreach(Devices.DeviceKeys key in possible_peripheral_keys)
             {
-                if (key != Devices.DeviceKeys.NONE)
+                if (key != Devices.DeviceKeys.NONE && !Properties.Sequence.keys.Contains(key))
                 {
                     PointF pt = Effects.GetBitmappingFromDeviceKey(key).Center;
                     if (pt != new PointF(0, 0))
@@ -169,7 +169,7 @@ namespace Aurora.Settings.Layers
 
             Devices.DeviceKeys device_key = Utils.KeyUtils.GetDeviceKey(e.KeyCode);
 
-            if (device_key != Devices.DeviceKeys.NONE)
+            if (device_key != Devices.DeviceKeys.NONE && !Properties.Sequence.keys.Contains(device_key))
             {
                 PointF pt = Effects.GetBitmappingFromDeviceKey(device_key).Center;
                 if (pt != new PointF(0, 0))

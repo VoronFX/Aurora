@@ -104,7 +104,7 @@ namespace Aurora
                     }
 
                     watch.Stop();
-                    update_timer?.Change(Math.Max(timer_interval - (int)watch.ElapsedMilliseconds, 0), Timeout.Infinite);
+                    update_timer?.Change(Math.Max(timer_interval, 0), Timeout.Infinite);
                 }, null, 0, System.Threading.Timeout.Infinite);
 
                 /*update_timer = new Timer(33);
@@ -243,7 +243,7 @@ namespace Aurora
                 if (process_name.Equals("csgo.exe"))
                 {
                     //Update timer set to 100 ticks a second for CSGO for Smooth Bomb Effect
-                    timer_interval = 10; // in miliseconds
+                    timer_interval = 33; // in miliseconds
                 }
                 else
                 {
