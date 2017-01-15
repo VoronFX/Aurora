@@ -223,6 +223,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Voron.AdaptiveWrapPanel, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Voron.AdaptiveLayoutPanel.1.0.0.1\lib\net45\Voron.AdaptiveWrapPanel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\WPFToolkit.dll</HintPath>
@@ -255,11 +259,9 @@
     <Compile Include="Controls\LayerEditor.xaml.cs">
       <DependentUpon>LayerEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Layout\AdaptiveWrapPanel.cs" />
     <Compile Include="Controls\Layout\ColumnProperty3.xaml.cs">
       <DependentUpon>ColumnProperty3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Layout\ColumnWrapPanel.cs" />
     <Compile Include="Controls\Layout\HeaderedSeparator.cs" />
     <Compile Include="Controls\Layout\ColumnProperty.cs" />
     <Compile Include="Controls\Layout\Converters.cs" />
