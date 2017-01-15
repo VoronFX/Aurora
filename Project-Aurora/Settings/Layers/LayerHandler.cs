@@ -3,6 +3,7 @@ using Aurora.Profiles;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Aurora.Settings.Layers
         IStringProperty Logic { get; set; }
     }
 
-    public abstract class LayerHandlerProperties<TProperty> : StringProperty<TProperty>, ILogic where TProperty : LayerHandlerProperties<TProperty>
+    public abstract class LayerHandlerProperties<TProperty> : StringProperty<TProperty>, ILogic, INotifyPropertyChanged where TProperty : LayerHandlerProperties<TProperty>
     {
         [GameStateIgnoreAttribute]
         [JsonIgnore]
@@ -60,7 +61,15 @@ namespace Aurora.Settings.Layers
             _PrimaryColor = Utils.ColorUtils.GenerateRandomColor();
             _Sequence = new KeySequence();
         }
-    }
+
+		protected virtual void RaisePropertyChanged(string propertyName)
+		{
+			var handler = PropertyChanged;
+			handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+	}
 
     public class LayerHandlerProperties2Color<TProperty> : LayerHandlerProperties<TProperty> where TProperty : LayerHandlerProperties2Color<TProperty>
     {

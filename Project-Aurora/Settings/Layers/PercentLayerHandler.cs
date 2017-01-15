@@ -22,12 +22,12 @@ namespace Aurora.Settings.Layers
 		public double? _BlinkThresholdStart { get; set; }
 
 		[JsonIgnore]
-		public double BlinkThresholdStart { get { return Logic._BlinkThresholdStart ?? _BlinkThresholdStart ?? 0.0; } }
+		public double BlinkThresholdStart{ get { return Logic._BlinkThresholdStart ?? _BlinkThresholdStart?? 0.0; } }
 
-		public double? _BlinkThresholdMaximum { get; set; }
+		public double? _BlinkFadeIn { get; set; }
 
 		[JsonIgnore]
-		public double BlinkThresholdMaximum { get { return Logic._BlinkThresholdMaximum ?? _BlinkThresholdMaximum ?? 0.0; } }
+		public double BlinkFadeIn { get { return Logic._BlinkFadeIn ?? _BlinkFadeIn ?? 0.0; } }
 
 		public int? _BlinkSpeed { get; set; }
 
@@ -65,7 +65,7 @@ namespace Aurora.Settings.Layers
 			this._SecondaryColor = Utils.ColorUtils.GenerateRandomColor();
 			this._PercentType = PercentEffectType.Progressive_Gradual;
 			this._BlinkThresholdStart = 0.0;
-			this._BlinkThresholdMaximum = 0.0;
+			this._BlinkFadeIn = 0.0;
 			this._BlinkDirection = false;
 		}
 	}
@@ -104,7 +104,7 @@ namespace Aurora.Settings.Layers
 
 			value -= minvalue;
 
-			return new EffectLayer().PercentEffect(Properties.PrimaryColor, Properties.SecondaryColor, Properties.Sequence, value, maxvalue, Properties.PercentType, Properties.BlinkThresholdStart, Properties.BlinkThresholdMaximum, Properties.BlinkSpeed);
+			return new EffectLayer().PercentEffect(Properties.PrimaryColor, Properties.SecondaryColor, Properties.Sequence, value, maxvalue, Properties.PercentType, Properties.BlinkFadeIn, Properties.BlinkFadeIn, Properties.BlinkSpeed);
 		}
 
 		public override void SetProfile(ProfileManager profile)

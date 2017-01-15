@@ -14,7 +14,7 @@
              xmlns:qc="http://QuickConverter.CodePlex.com/"
              xmlns:adaptiveWrapPanel="clr-namespace:Voron.AdaptiveWrapPanel;assembly=Voron.AdaptiveWrapPanel"
              x:Class="Aurora.Settings.Layers.Control_PercentLayer"
-             mc:Ignorable="d" Loaded="UserControl_Loaded" d:DataContext="{x:Type local:PercentLayerHandler}">
+             mc:Ignorable="d" Loaded="UserControl_Loaded" d:DataContext="{d:DesignInstance local:PercentLayerHandler}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ObjectDataProvider x:Key="PercentEffectType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
@@ -26,126 +26,62 @@
             <DataTemplate x:Key="PercentEffectTypeTemplate">
                 <TextBlock Text="{Binding Converter={StaticResource PercentEffectTypeToStringVC}}" />
             </DataTemplate>
+            <local:DrawingColorToMediaColorConverter x:Key="DrawingColorToMediaColorConverter"></local:DrawingColorToMediaColorConverter>
         </ResourceDictionary>
     </UserControl.Resources>
         
-    <adaptiveWrapPanel:AdaptiveWrapPanel HorizontalContentAlignment="Stretch">
+    <adaptiveWrapPanel:AdaptiveWrapPanel HorizontalContentAlignment="Stretch" >
 
-
-        <StackPanel Orientation="Vertical" Margin="10,0,5,0" MinWidth="250" VerticalAlignment="Top">
+        <StackPanel Orientation="Vertical" Margin="10,0,5,0" MinWidth="250" VerticalAlignment="Top" >
 
             <layout:ColumnProperty PropertyHeader="Current Value:">
                 <ComboBox x:Name="ComboBoxVariable" IsEditable="True" Text="{Binding Properties._VariablePath}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Minimum Value:">
-                <ComboBox x:Name="ComboBoxMinVariable" IsEditable="True" TextBoxBase.TextChanged="ComboBox_min_variable_TextChanged" />
+                <ComboBox x:Name="ComboBoxMinVariable" IsEditable="True" Text="{Binding Properties._MinVariablePath}" />
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Maximum Value:">
-                <ComboBox x:Name="ComboBoxMaxVariable" IsEditable="True" TextBoxBase.TextChanged="ComboBox_max_variable_TextChanged"/>
+                <ComboBox x:Name="ComboBoxMaxVariable" IsEditable="True" Text="{Binding Properties._MaxVariablePath}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Progress Color:">
-                <xctk:ColorPicker x:Name="ColorPicker_progressColor" Margin="5,0,0,0"  ColorMode="ColorCanvas" SelectedColorChanged="ColorPicker_progressColor_SelectedColorChanged" UsingAlphaChannel="True" />
+                <xctk:ColorPicker x:Name="ColorPickerProgressColor" Margin="5,0,0,0" ColorMode="ColorCanvas" UsingAlphaChannel="True" SelectedColor="{Binding Properties._PrimaryColor, Converter={StaticResource DrawingColorToMediaColorConverter}}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Background Color:">
-                <xctk:ColorPicker x:Name="ColorPicker_backgroundColor" Margin="5,0,0,0" ColorMode="ColorCanvas"  SelectedColorChanged="ColorPicker_backgroundColor_SelectedColorChanged" UsingAlphaChannel="True"/>
+                <xctk:ColorPicker x:Name="ColorPickerBackgroundColor" Margin="5,0,0,0" ColorMode="ColorCanvas" UsingAlphaChannel="True" SelectedColor="{Binding Properties._SecondaryColor, Converter={StaticResource DrawingColorToMediaColorConverter}}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Effect Type:">
                 <ComboBox x:Name="ComboBox_effect_type" Margin="5,0,0,0" SelectionChanged="ComboBox_effect_type_SelectionChanged" ItemsSource="{Binding Source={StaticResource PercentEffectType}}" ItemTemplate="{Binding Source={StaticResource PercentEffectTypeTemplate}}"/>
             </layout:ColumnProperty>
+            
         </StackPanel>
         <StackPanel Orientation="Vertical" Margin="10,0,5,0" MinWidth="250" VerticalAlignment="Top">
             <layout:HeaderedSeparator Header="Blinking" Margin="0,0,5,0"/>
 
-            <layout:ColumnProperty PropertyHeader="Blink starts threshold:" AfterText="%" >
-                <xctk:IntegerUpDown x:Name="updown_blink_start" Margin="5,0" Value="1" Maximum="100" Minimum="0" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_start_ValueChanged"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Blink maximum threshold:" AfterText="%" >
-                <xctk:IntegerUpDown x:Name="updown_blink_max" Margin="5,0" Value="1" Maximum="100" Minimum="0" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_max_ValueChanged"/>
-            </layout:ColumnProperty>
-
             <layout:ColumnProperty PropertyHeader="Blink speed:" AfterText="ms">
 
-                <xctk:IntegerUpDown x:Name="updown_blink_speed" Margin="5,0" Value="1000" Maximum="10000" Minimum="10" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_speed_ValueChanged"/>
+                <xctk:IntegerUpDown x:Name="BlinkSpeed" Margin="5,0" Maximum="10000" Minimum="10" MouseWheelActiveOnFocus="True" Value="{Binding Properties._BlinkSpeed}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Blink Threshold:" AfterText="{Binding Value, ElementName=BlinkThreshold, Mode=OneWay, StringFormat=\{0\} %}">
-                <Slider x:Name="BlinkThreshold" IsSnapToTickEnabled="True" Maximum="100" Value="95" VerticalAlignment="Center" SmallChange="1" ValueChanged="BlinkThreshold_OnValueChanged" />
+                <Slider x:Name="BlinkThreshold" IsSnapToTickEnabled="True" Maximum="100" VerticalAlignment="Center" SmallChange="1" Value="{Binding Properties._BlinkThresholdStart}"/>
             </layout:ColumnProperty>
 
             <layout:ColumnProperty PropertyHeader="Blink Fade In:" AfterText="{Binding Value, ElementName=BlinkFadeIn, Mode=OneWay, StringFormat=\{0\} %}">
-                <Slider x:Name="BlinkFadeIn" IsSnapToTickEnabled="True"  Maximum="{qc:MultiBinding  '$P3 ? $P0 :$P1 - $P0', P0={Binding Value, ElementName=BlinkThreshold}, P1={Binding Maximum, ElementName=BlinkThreshold}, P3={Binding IsChecked, ElementName=CheckBoxThresholdReverse}}" VerticalAlignment="Center"    />
+                <Slider x:Name="BlinkFadeIn" IsSnapToTickEnabled="True"  Maximum="{qc:MultiBinding  '$P3 ? $P0 :$P1 - $P0', P0={Binding Value, ElementName=BlinkThreshold}, P1={Binding Maximum, ElementName=BlinkThreshold}, P3={Binding IsChecked, ElementName=CheckBoxThresholdReverse}}" VerticalAlignment="Center" Value="{Binding Properties._BlinkFadeIn}"/>
             </layout:ColumnProperty>
 
             <Border Height="24" Margin="5,0,5,5">
-                <CheckBox x:Name="CheckBoxThresholdReverse" Content="Reverse blink threshold" VerticalAlignment="Center" Checked="CheckBox_threshold_reverse_Checked" Unchecked="CheckBox_threshold_reverse_Checked" HorizontalAlignment="Left"/>
+                <CheckBox x:Name="CheckBoxThresholdReverse" Content="Reverse blink threshold" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding Properties._BlinkDirection}"/>
             </Border>
 
         </StackPanel>
-        <Controls:KeySequence Margin="10,0,5,0" x:Name="KeySequence_keys" RecordingTag="PercentLayer" Title="Affected Keys" SequenceUpdated="KeySequence_keys_SequenceUpdated" VerticalAlignment="Stretch"/>
-
-        <StackPanel Orientation="Vertical" Margin="10,0,5,0" MinWidth="250"  adaptiveWrapPanel:AdaptiveWrapPanel.ColumnBreakBehavior="ForceNewColumn"  VerticalAlignment="Top">
-
-            <layout:ColumnProperty PropertyHeader="Current Value:">
-                <ComboBox x:Name="ComboBodxVariable" IsEditable="True" Text="{Binding Properties._VariablePath}"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Minimum Value:">
-                <ComboBox x:Name="ComboBoxMdinVariable" IsEditable="True" TextBoxBase.TextChanged="ComboBox_min_variable_TextChanged" />
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Maximum Value:">
-                <ComboBox x:Name="ComboBoxMaxVaghriable" IsEditable="True" TextBoxBase.TextChanged="ComboBox_max_variable_TextChanged"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Progress Color:">
-                <xctk:ColorPicker x:Name="ColorPicfker_progressColor" Margin="5,0,0,0"  ColorMode="ColorCanvas" SelectedColorChanged="ColorPicker_progressColor_SelectedColorChanged" UsingAlphaChannel="True" />
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Background Color:">
-                <xctk:ColorPicker x:Name="ColorPickedr_backgroundColor" Margin="5,0,0,0" ColorMode="ColorCanvas"  SelectedColorChanged="ColorPicker_backgroundColor_SelectedColorChanged" UsingAlphaChannel="True"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Effect Type:">
-                <ComboBox x:Name="ComboBox_effhect_type" Margin="5,0,0,0" SelectionChanged="ComboBox_effect_type_SelectionChanged" ItemsSource="{Binding Source={StaticResource PercentEffectType}}" ItemTemplate="{Binding Source={StaticResource PercentEffectTypeTemplate}}"/>
-            </layout:ColumnProperty>
-        </StackPanel>
-        <StackPanel Orientation="Vertical" Margin="10,0,5,0" MinWidth="250" VerticalAlignment="Top">
-            <layout:HeaderedSeparator Header="Blinking" Margin="0,0,5,0"/>
-
-            <layout:ColumnProperty PropertyHeader="Blink starts threshold:" AfterText="%" >
-                <xctk:IntegerUpDown x:Name="updown_blifnk_start" Margin="5,0" Value="1" Maximum="100" Minimum="0" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_start_ValueChanged"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Blink maximum threshold:" AfterText="%" >
-                <xctk:IntegerUpDown x:Name="updown_blinhk_max" Margin="5,0" Value="1" Maximum="100" Minimum="0" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_max_ValueChanged"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Blink speed:" AfterText="ms">
-
-                <xctk:IntegerUpDown x:Name="upghdown_blink_speed" Margin="5,0" Value="1000" Maximum="10000" Minimum="10" MouseWheelActiveOnFocus="True" ValueChanged="updown_blink_speed_ValueChanged"/>
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Blink Threshold:" AfterText="{Binding Value, ElementName=BlinkThreshold, Mode=OneWay, StringFormat=\{0\} %}">
-                <Slider x:Name="BlinkTfhreshold" IsSnapToTickEnabled="True" Maximum="100" Value="95" VerticalAlignment="Center" SmallChange="1" ValueChanged="BlinkThreshold_OnValueChanged" />
-            </layout:ColumnProperty>
-
-            <layout:ColumnProperty PropertyHeader="Blink Fade In:" AfterText="{Binding Value, ElementName=BlinkFadeIn, Mode=OneWay, StringFormat=\{0\} %}">
-                <Slider x:Name="BlinkhFadeIn" IsSnapToTickEnabled="True"  Maximum="{qc:MultiBinding  '$P3 ? $P0 :$P1 - $P0', P0={Binding Value, ElementName=BlinkThreshold}, P1={Binding Maximum, ElementName=BlinkThreshold}, P3={Binding IsChecked, ElementName=CheckBoxThresholdReverse}}" VerticalAlignment="Center"    />
-            </layout:ColumnProperty>
-
-            <Border Height="24" Margin="5,0,5,5">
-                <CheckBox x:Name="ChechkBoxThresholdReverse" Content="Reverse blink threshold" VerticalAlignment="Center" Checked="CheckBox_threshold_reverse_Checked" Unchecked="CheckBox_threshold_reverse_Checked" HorizontalAlignment="Left"/>
-            </Border>
-
-        </StackPanel>
-        <Controls:KeySequence Margin="10,0,5,0" x:Name="KeySeq3uence_keys" RecordingTag="PercentLayer" Title="Affected Keys" SequenceUpdated="KeySequence_keys_SequenceUpdated" VerticalAlignment="Stretch"/>
-
+        <Controls:KeySequence Margin="10,0,5,0" x:Name="KeySequence_keys" RecordingTag="PercentLayer" Title="Affected Keys" SequenceUpdated="KeySequence_keys_SequenceUpdated" VerticalAlignment="Stretch" adaptiveWrapPanel:AdaptiveWrapPanel.ColumnBreakBehavior="PreferNewColumn"/>
+        
     </adaptiveWrapPanel:AdaptiveWrapPanel>
 
 </UserControl>
