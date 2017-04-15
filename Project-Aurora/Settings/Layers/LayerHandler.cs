@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using Aurora.Controls.Layout;
 
 namespace Aurora.Settings.Layers
 {
@@ -17,6 +18,7 @@ namespace Aurora.Settings.Layers
         IStringProperty Logic { get; set; }
     }
 
+	[Magic]
     public abstract class LayerHandlerProperties<TProperty> : StringProperty<TProperty>, ILogic, INotifyPropertyChanged where TProperty : LayerHandlerProperties<TProperty>
     {
         [GameStateIgnoreAttribute]
@@ -65,8 +67,7 @@ namespace Aurora.Settings.Layers
 
 		protected virtual void RaisePropertyChanged(string propertyName)
 		{
-			var handler = PropertyChanged;
-			handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

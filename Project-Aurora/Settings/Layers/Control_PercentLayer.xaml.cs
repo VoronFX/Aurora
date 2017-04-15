@@ -137,4 +137,25 @@ namespace Aurora.Settings.Layers
 			return value == null ? (object)null : Utils.ColorUtils.MediaColorToDrawingColor((System.Windows.Media.Color)value);
 		}
 	}
+
+	//public class BlinkingEffect
+	//{
+	//	private long lastTime;
+	//	private int lastSpeed;
+	//	private int lastPhase;
+	//	private double lastLevel;
+
+	//	public double GetLevel(long currentTime, int blinkSpeed)
+	//	{
+	//		var currentPhase = currentTime % (double) blinkSpeed;
+
+	//		Math.Abs(1f - (currentTime % blinkSpeed) / (blinkSpeed / 2f));
+
+	//		var lastLevelWithNewSpeed = Math.Sin(lastTime % (double)blinkSpeed) / (double)blinkSpeed * Math.PI;
+	//		var currentLevel = Math.Sin(currentTime % (double)blinkSpeed) / (double)blinkSpeed * Math.PI;
+	//		var shift = lastLevel - lastLevelWithNewSpeed;
+
+
+	//	}
+	//}
 }
