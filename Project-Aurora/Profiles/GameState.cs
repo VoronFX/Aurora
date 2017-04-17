@@ -4,12 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Aurora.Profiles.PerformanceCounters;
 using Newtonsoft.Json.Linq;
+using PerformanceCounter = Aurora.Profiles.PerformanceCounters.PerformanceCounterManager.IntervalPerformanceCounter;
 
 namespace Aurora.Profiles
 {
@@ -128,25 +134,20 @@ namespace Aurora.Profiles
 	/// <summary>
 	/// Class representing local computer information
 	/// </summary>
-	public class LocalPCInformation : Node<LocalPCInformation>
+	public sealed class LocalPCInformation : Node<LocalPCInformation>
 	{
-		private static readonly TimeInfo time = new TimeInfo();
-		private static readonly MemoryInfo memory = new MemoryInfo();
-		private static readonly CpuInfo cpu = new CpuInfo();
+		private const int DefaultUpdateInterval = 1000;
 		private static readonly NvidiaGpuInfo nvidiaGpu = new NvidiaGpuInfo();
 		private static readonly AtiGpuInfo atiGpu = new AtiGpuInfo();
-		private static readonly PhysicalDiskInfo physicalDisk = new PhysicalDiskInfo();
 
-		private static readonly PerformanceCounters.PerformanceCounterManager PerformanceCounterManager 
+		private static readonly PerformanceCounters.PerformanceCounterManager PerformanceCounterManager
 			= new PerformanceCounters.PerformanceCounterManager();
 
-		private static readonly CpuTotal CpuTotal = new CpuTotal();
-		private static readonly CpuPerCore CpuPerCore = new CpuPerCore();
 		private static readonly GpuPerformance GpuPerformance = new GpuPerformance();
 
-		public class TimeInfo
+		public sealed class TimeInfo
 		{
-			protected static readonly TimeInfo Instance = new TimeInfo();
+			public static TimeInfo Instance { get; } = new TimeInfo();
 
 			/// <summary>
 			/// The current hour
@@ -169,70 +170,203 @@ namespace Aurora.Profiles
 			public int CurrentMillisecond => Utils.Time.GetMilliSeconds();
 		}
 
-		public TimeInfo Time => time;
+		public TimeInfo Time => TimeInfo.Instance;
 
-		public class MemoryInfo
+		public sealed class MemoryInfo
 		{
-			protected static readonly MemoryInfo Instance = new MemoryInfo();
+			public static MemoryInfo Instance { get; } = new MemoryInfo();
+
+			private static Lazy<PerformanceCounter> GetCounter(string name) =>
+				new Lazy<PerformanceCounter>(()=> PerformanceCounterManager.GetCounter("Aurora Internal",
+					nameof(ComputerInfo), name, DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
+
+			private static readonly Lazy<PerformanceCounter> UsedPhysicalMemoryCounter
+				= GetCounter("% PhysicalMemoryUsed");
+
+			private static readonly Lazy<PerformanceCounter> UsedVirtualMemoryCounter
+				= GetCounter("% VirtualMemoryUsed");
+
+			private static readonly Lazy<PerformanceCounter> AvailablePhysicalMemoryInMiBCounter
+				= GetCounter("AvailablePhysicalMemoryInMiB");
+
+			private static readonly Lazy<PerformanceCounter> AvailableVirtualMemoryInMiBCounter
+				= GetCounter("AvailableVirtualMemoryInMiB");
+
+			private static readonly Lazy<PerformanceCounter> TotalPhysicalMemoryInMiBCounter
+				= GetCounter("TotalPhysicalMemoryInMiB");
+
+			private static readonly Lazy<PerformanceCounter> TotalVirtualMemoryInMiBCounter
+				= GetCounter("TotalVirtualMemoryInMiB");
 
 			/// <summary>
 			/// Percent Used Physical Memory
 			/// </summary>
-			public float UsedPhysicalMemory(int updateInterval) => 
-				PerformanceCounterManager.GetCounter("Aurora Internal", 
-					nameof(ComputerInfo), "% PhysicalMemoryUsed", updateInterval).GetValue();
+			public float UsedPhysicalMemory => UsedPhysicalMemoryCounter.Value.GetValue();
 
 			/// <summary>
 			/// Percent Used Virtual Memory
 			/// </summary>
-			public float UsedVirtualMemory(int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Aurora Internal",
-					nameof(ComputerInfo), "% VirtualMemoryUsed", updateInterval).GetValue();
+			public float UsedVirtualMemory => UsedVirtualMemoryCounter.Value.GetValue();
+
+			/// <summary>
+			/// Available Physical Memory In MiB
+			/// </summary>
+			public float AvailablePhysicalMemoryInMiB => AvailablePhysicalMemoryInMiBCounter.Value.GetValue();
+
+			/// <summary>
+			/// Available Virtual Memory In MiB
+			/// </summary>
+			public float AvailableVirtualMemoryInMiB => AvailableVirtualMemoryInMiBCounter.Value.GetValue();
+
+			/// <summary>
+			/// Total Physical Memory In MiB
+			/// </summary>
+			public float TotalPhysicalMemoryInMiB => TotalPhysicalMemoryInMiBCounter.Value.GetValue();
+
+			/// <summary>
+			/// Total Virtual Memory In MiB
+			/// </summary>
+			public float TotalVirtualMemoryInMiB => TotalVirtualMemoryInMiBCounter.Value.GetValue();
+			
 		}
 
-		public MemoryInfo Memory => memory;
+		public MemoryInfo Memory => MemoryInfo.Instance;
 
-		public class CpuInfo
+		public sealed class CpuInfo
 		{
-			protected static readonly CpuInfo Instance = new CpuInfo();
+			public static CpuInfo Instance { get; } = new CpuInfo();
+
+			private static readonly Lazy<PerformanceCounter> TotalUsageCounter
+				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("Processor",
+					"% Processor Time", "_Total", DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
 
 			/// <summary>
 			/// Percent Total CPU Usage
 			/// </summary>
-			public float TotalUsage(int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					"_Total", updateInterval).GetValue();
+			public float TotalUsage => TotalUsageCounter.Value.GetValue();
 
-			/// <summary>
-			/// Percent Per Core CPU Usage
-			/// </summary> 
-			public float PerCoreUsage(int core, int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					core.ToString(), updateInterval).GetValue();
 		}
 
-		public CpuInfo CPU => cpu;
+		public CpuInfo CPU => CpuInfo.Instance;
 
-		public class PhysicalDiskInfo
+		public sealed class DiskInfo
 		{
-			protected static readonly PhysicalDiskInfo Instance = new PhysicalDiskInfo();
+			public static DiskInfo Instance { get; } = new DiskInfo();
+
+			private static readonly Lazy<PerformanceCounter> TotalPhysicalDiskUsageCounter
+				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("PhysicalDisk",
+					"% Disk Time", "_Total", DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
+
+			private static readonly Lazy<PerformanceCounter> TotalLogicalDiskUsageCounter
+				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("LogicalDisk",
+					"% Disk Time", "_Total", DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
+
+			private static readonly Lazy<PerformanceCounter> SystemDiskUsageCounter
+				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("LogicalDisk", 
+					"% Disk Time", Path.GetPathRoot(Environment.GetFolderPath(
+						Environment.SpecialFolder.System)).Substring(0, 2), DefaultUpdateInterval), 
+					LazyThreadSafetyMode.PublicationOnly);
 
 			/// <summary>
 			/// Percent Total Physical Disk Usage
 			/// </summary>
-			public float TotalPhysicalDiskUsage(int updateInterval) =>
-				PerformanceCounterManager.GetCounter("PhysicalDisk", "% Disk Time",
-					"_Total", updateInterval).GetValue();
+			public float TotalPhysicalDiskUsage => TotalPhysicalDiskUsageCounter.Value.GetValue();
 
 			/// <summary>
-			/// Percent Per Core CPU Usage
+			/// Percent Total Logical Disk Usage
 			/// </summary>
-			public float PerCoreUsage(int core, int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					core.ToString(), updateInterval).GetValue();
+			public float TotalLogicalDiskUsage => TotalLogicalDiskUsageCounter.Value.GetValue();
+
+			/// <summary>
+			/// Percent System Disk Usage
+			/// </summary>
+			public float SystemDiskUsage => SystemDiskUsageCounter.Value.GetValue();
+
 		}
 
-	//	public PhysicalDiskInfo PhysicalDisk => disk;
+		public DiskInfo Disk => DiskInfo.Instance;
+
+		public sealed class GpuInfo
+		{
+			public static GpuInfo Instance { get; } = new GpuInfo();
+
+			/// <summary>
+			/// Percent Total Physical Disk Usage
+			/// </summary>
+			public float TotalPhysicalDiskUsage =>
+				PerformanceCounterManager.GetCounter("PhysicalDisk", "% Disk Time",
+					"_Total", DefaultUpdateInterval).GetValue();
+
+			/// <summary>
+			/// Percent Total Logical Disk Usage
+			/// </summary>
+			public float TotalLogicalDiskUsage =>
+				PerformanceCounterManager.GetCounter("LogicalDisk", "% Disk Time",
+					"_Total", DefaultUpdateInterval).GetValue();
+
+			/// <summary>
+			/// Percent System Disk Usage
+			/// </summary>
+			public float SystemDiskUsage =>
+
+				PerformanceCounterManager.GetCounter("LogicalDisk", "% Disk Time",
+					SystemDriveLetter, DefaultUpdateInterval).GetValue();
+
+		}
+
+		public GpuInfo GPU => GpuInfo.Instance;
+
+		public sealed class NetworkInfo
+		{
+			public static NetworkInfo Instance { get; } = new NetworkInfo();
+
+			private static Lazy<PerformanceCounter> GetCounter(string name) =>
+				new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("Aurora Internal",
+					"Default Network", name, DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
+
+			private static readonly Lazy<PerformanceCounter> BytesReceivedPerSecCounter
+				= GetCounter("Bytes Received/sec");
+
+			private static readonly Lazy<PerformanceCounter> BytesSentPerSecCounter
+				= GetCounter("Bytes Sent/sec");
+
+			private static readonly Lazy<PerformanceCounter> BytesTotalPerSecCounter
+				= GetCounter("Bytes Total/sec");
+
+			private static readonly Lazy<PerformanceCounter> CurrentBandwidthUsageCounter
+				= GetCounter("Current Bandwidth");
+
+			private static readonly Lazy<PerformanceCounter> NetworkTotalUsageCounter
+				= GetCounter("% Network Total Usage");
+
+			/// <summary>
+			/// Default adapter download speed in Bytes/sec
+			/// </summary>
+			public float BytesReceivedPerSec => BytesReceivedPerSecCounter.Value.GetValue();
+
+			/// <summary>
+			/// Default adapter upload speed in Bytes/sec
+			/// </summary>
+			public float BytesSentPerSec => BytesSentPerSecCounter.Value.GetValue();
+
+			/// <summary>
+			/// Default adapter total speed in Bytes/sec
+			/// </summary>
+			public float BytesTotalPerSec => BytesTotalPerSecCounter.Value.GetValue();
+
+			/// <summary>
+			/// Default adapter current bandwidth
+			/// </summary>
+			public float CurrentBandwidth => CurrentBandwidthUsageCounter.Value.GetValue();
+
+			/// <summary>
+			/// Default adapter total usage percent
+			/// </summary>
+			public float NetworkTotalUsage => NetworkTotalUsageCounter.Value.GetValue();
+
+		}
+
+		public NetworkInfo Network => NetworkInfo.Instance;
 
 		public class NvidiaGpuInfo
 		{
