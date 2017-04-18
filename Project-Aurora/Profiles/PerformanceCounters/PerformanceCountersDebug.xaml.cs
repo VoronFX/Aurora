@@ -42,7 +42,7 @@ namespace Aurora.Controls
 			{
 				s = exception.ToString();
 			}
-			s += "\r\nInitLog:\r\n" + Aurora.Profiles.PerformanceCounters.GpuPerformance.InitLog;
+			s += "\r\nInitLog:\r\n" + Aurora.Profiles.PerformanceCounters.AuroraInternal.Gpu.InitLog;
 
 			Dispatcher.BeginInvoke((Action)(() =>
 			{

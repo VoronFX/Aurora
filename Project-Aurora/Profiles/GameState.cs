@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Aurora.Profiles.PerformanceCounters;
 using Newtonsoft.Json.Linq;
 using PerformanceCounter = Aurora.Profiles.PerformanceCounters.PerformanceCounterManager.IntervalPerformanceCounter;
+using PerformanceCounterManager = Aurora.Profiles.PerformanceCounters.PerformanceCounterManager;
 
 namespace Aurora.Profiles
 {
@@ -137,13 +138,6 @@ namespace Aurora.Profiles
 	public sealed class LocalPCInformation : Node<LocalPCInformation>
 	{
 		private const int DefaultUpdateInterval = 1000;
-		private static readonly NvidiaGpuInfo nvidiaGpu = new NvidiaGpuInfo();
-		private static readonly AtiGpuInfo atiGpu = new AtiGpuInfo();
-
-		private static readonly PerformanceCounters.PerformanceCounterManager PerformanceCounterManager
-			= new PerformanceCounters.PerformanceCounterManager();
-
-		private static readonly GpuPerformance GpuPerformance = new GpuPerformance();
 
 		public sealed class TimeInfo
 		{
@@ -177,7 +171,7 @@ namespace Aurora.Profiles
 			public static MemoryInfo Instance { get; } = new MemoryInfo();
 
 			private static Lazy<PerformanceCounter> GetCounter(string name) =>
-				new Lazy<PerformanceCounter>(()=> PerformanceCounterManager.GetCounter("Aurora Internal",
+				new Lazy<PerformanceCounter>(()=> PerformanceCounterManager.GetCounter(AuroraInternal.CategoryName,
 					nameof(ComputerInfo), name, DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
 
 			private static readonly Lazy<PerformanceCounter> UsedPhysicalMemoryCounter
@@ -249,6 +243,66 @@ namespace Aurora.Profiles
 
 		public CpuInfo CPU => CpuInfo.Instance;
 
+		public sealed class GpuInfo
+		{
+			public static GpuInfo Instance { get; } = new GpuInfo();
+
+			private static Lazy<PerformanceCounter> GetCounter(string name) =>
+				new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter(AuroraInternal.CategoryName,
+					"GPU", name, DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
+
+			private static readonly Lazy<PerformanceCounter> FanRpmCounter
+				= GetCounter("FanRpm");
+
+			private static readonly Lazy<PerformanceCounter> FanUsageCounter
+				= GetCounter("% FanUsage");
+
+			private static readonly Lazy<PerformanceCounter> TemperatureCounter
+				= GetCounter("Temperature");
+
+			private static readonly Lazy<PerformanceCounter> CoreClockCounter
+				= GetCounter("Core Clock");
+
+			private static readonly Lazy<PerformanceCounter> MemoryClockCounter
+				= GetCounter("Memory Clock");
+
+			private static readonly Lazy<PerformanceCounter> LoadCounter
+				= GetCounter("% Load");
+
+			/// <summary>
+			/// Fan speed in RPM
+			/// </summary>
+			public float FanSpeed => FanRpmCounter.Value.GetValue();
+
+			/// <summary>
+			/// Fan usage in percents
+			/// </summary>
+			public float FanUsage => FanUsageCounter.Value.GetValue();
+
+			/// <summary>
+			/// Temperature
+			/// </summary>
+			public float Temperature => TemperatureCounter.Value.GetValue();
+
+			/// <summary>
+			/// Core clock
+			/// </summary>
+			public float CoreClock => CoreClockCounter.Value.GetValue();
+
+			/// <summary>
+			/// Memory Clock
+			/// </summary>
+			public float MemoryClock => MemoryClockCounter.Value.GetValue();
+
+			/// <summary>
+			/// Usage in percents
+			/// </summary>
+			public float Usage => LoadCounter.Value.GetValue();
+
+		}
+
+		public GpuInfo GPU => GpuInfo.Instance;
+
 		public sealed class DiskInfo
 		{
 			public static DiskInfo Instance { get; } = new DiskInfo();
@@ -262,10 +316,8 @@ namespace Aurora.Profiles
 					"% Disk Time", "_Total", DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
 
 			private static readonly Lazy<PerformanceCounter> SystemDiskUsageCounter
-				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("LogicalDisk", 
-					"% Disk Time", Path.GetPathRoot(Environment.GetFolderPath(
-						Environment.SpecialFolder.System)).Substring(0, 2), DefaultUpdateInterval), 
-					LazyThreadSafetyMode.PublicationOnly);
+				= new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter(AuroraInternal.CategoryName,
+					"System Disk", "% Usage", DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
 
 			/// <summary>
 			/// Percent Total Physical Disk Usage
@@ -286,42 +338,12 @@ namespace Aurora.Profiles
 
 		public DiskInfo Disk => DiskInfo.Instance;
 
-		public sealed class GpuInfo
-		{
-			public static GpuInfo Instance { get; } = new GpuInfo();
-
-			/// <summary>
-			/// Percent Total Physical Disk Usage
-			/// </summary>
-			public float TotalPhysicalDiskUsage =>
-				PerformanceCounterManager.GetCounter("PhysicalDisk", "% Disk Time",
-					"_Total", DefaultUpdateInterval).GetValue();
-
-			/// <summary>
-			/// Percent Total Logical Disk Usage
-			/// </summary>
-			public float TotalLogicalDiskUsage =>
-				PerformanceCounterManager.GetCounter("LogicalDisk", "% Disk Time",
-					"_Total", DefaultUpdateInterval).GetValue();
-
-			/// <summary>
-			/// Percent System Disk Usage
-			/// </summary>
-			public float SystemDiskUsage =>
-
-				PerformanceCounterManager.GetCounter("LogicalDisk", "% Disk Time",
-					SystemDriveLetter, DefaultUpdateInterval).GetValue();
-
-		}
-
-		public GpuInfo GPU => GpuInfo.Instance;
-
 		public sealed class NetworkInfo
 		{
 			public static NetworkInfo Instance { get; } = new NetworkInfo();
 
 			private static Lazy<PerformanceCounter> GetCounter(string name) =>
-				new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter("Aurora Internal",
+				new Lazy<PerformanceCounter>(() => PerformanceCounterManager.GetCounter(AuroraInternal.CategoryName,
 					"Default Network", name, DefaultUpdateInterval), LazyThreadSafetyMode.PublicationOnly);
 
 			private static readonly Lazy<PerformanceCounter> BytesReceivedPerSecCounter
@@ -367,203 +389,6 @@ namespace Aurora.Profiles
 		}
 
 		public NetworkInfo Network => NetworkInfo.Instance;
-
-		public class NvidiaGpuInfo
-		{
-			/// <summary>
-			/// Percent Total CPU Usage
-			/// </summary>
-			public float TotalUsage(int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					"_Total", updateInterval).GetValue();
-
-			/// <summary>
-			/// Percent Per Core CPU Usage
-			/// </summary>
-			public float PerCoreUsage(int core, int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					core.ToString(), updateInterval).GetValue();
-		}
-
-		public NvidiaGpuInfo NvidiaGpu => nvidiaGpu;
-
-		public class AtiGpuInfo
-		{
-			/// <summary>
-			/// Percent Total CPU Usage
-			/// </summary>
-			public float TotalUsage(int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					"_Total", updateInterval).GetValue();
-
-			/// <summary>
-			/// Percent Per Core CPU Usage
-			/// </summary>
-			public float PerCoreUsage(int core, int updateInterval) =>
-				PerformanceCounterManager.GetCounter("Processor", "% Processor Time",
-					core.ToString(), updateInterval).GetValue();
-		}
-
-		public AtiGpuInfo AtiGpu => atiGpu;
-
-		/// <summary>
-		/// Current GPU Fan speed in rpm
-		/// </summary>
-		public float GpuFanRpm => GpuPerformance.FanRpm();
-
-		/// <summary>
-		/// Current GPU Fan speed in percents
-		/// </summary>
-		public float GpuFanUsage => GpuPerformance.FanUsage();
-
-		/// <summary>
-		/// Current GPU Core clock
-		/// </summary>
-		public float GpuCoreClock => GpuPerformance.CoreClock();
-
-		/// <summary>
-		/// Current GPU Memory clock
-		/// </summary>
-		public float GpuMemoryClock => GpuPerformance.MemoryClock();
-
-		/// <summary>
-		/// Current GPU Shader clock. NVidia only.
-		/// </summary>
-		public float GpuShaderClock => GpuPerformance.ShaderClock();
-
-		/// <summary>
-		/// Current GPU Core voltage. ATI only.
-		/// </summary>
-		public float GpuCoreVoltage => GpuPerformance.CoreVoltage();
-
-		private static ExpandoObject gpu = new ExpandoObject();
-
-		public ExpandoObject GPU => gpu;
-
-
-		static LocalPCInformation()
-		{
-			ss = new ExpandoObject();
-			((dynamic)ss).Name = 66f;
-			((dynamic)gpu).Name = (Func<string, float>)((x) => 34f);
-
-		}
-
-		private static ExpandoObject ss;
-		public ExpandoObject aaa => ss;
-
-		public class Test : Node<Test>
-		{
-			float r = 70f;
-			public Test()
-			{
-				//if (!PropertyLookup.ContainsKey("Core0"))
-				//PropertyLookup.Add("Core0", new Tuple<Func<Test, object>, Action<Test, object>>(
-				//	test => test.r, (test, o) => test.r = (float)o));
-			}
-
-			public float Shit1(bool rr)
-			{
-				return 2f;
-			}
-			public float Shit2(bool rr, bool r2r)
-			{
-				return 2f;
-			}
-			public float Get => 56f;
-			public float Get2()
-			{
-				return 56f;
-			}
-			public float Get3(bool rr)
-			{
-				return 56f;
-			}
-			public float Gdet = 56f;
-
-			[Range(0, 1)]
-
-			public static readonly float[] cores = new[] { 4f, 5f };
-
-			public class Test4
-			{
-				public float Val() => 55f;
-			}
-		}
-		public class Test22 : IStringProperty
-		{
-			private int a = 33;
-			public object GetValueFromString(string name, object input = null)
-			{
-				return a;
-			}
-
-			public void SetValueFromString(string name, object value)
-			{
-				a = (int)value;
-			}
-
-			public IStringProperty Clone()
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		public IStringProperty TEst2
-		{
-			get { return new Test22(); }
-		}
-
-		public dynamic Test1
-		{
-			get
-			{
-				dynamic obj = new ExpandoObject();
-				obj.Name = 22f;
-				obj.Get2 = new Func<float>(() => 34f);
-				return obj;
-			}
-		}
-
-		public Test Test3
-		{
-			get { return new Test(); }
-		}
-
-		/// <summary>
-		/// Current GPU Core usage
-		/// </summary>
-		public float GpuCoreUsage => GpuPerformance.CoreUsage();
-
-		/// <summary>
-		/// Current GPU Memory Controller usage. NVidia only.
-		/// </summary>
-		public float GpuMemoryControllerUsage => GpuPerformance.MemoryControllerUsage();
-
-		/// <summary>
-		/// Current GPU Video Engine usage. NVidia only.
-		/// </summary>
-		public float GpuVideoEngineUsage => GpuPerformance.VideoEngineUsage();
-
-		/// <summary>
-		/// Current GPU Memory usage in percents. NVidia only.
-		/// </summary>
-		public float GpuMemoryUsage => GpuPerformance.MemoryUsage();
-
-		/// <summary>
-		/// Current GPU Free memory. NVidia only.
-		/// </summary>
-		public float GpuMemoryFree => GpuPerformance.MemoryFree();
-
-		/// <summary>
-		/// Current GPU Used memory. NVidia only.
-		/// </summary>
-		public float GpuMemoryUsed => GpuPerformance.MemoryUsed();
-
-		/// <summary>
-		/// Current GPU Total memory. NVidia only.
-		/// </summary>
-		public float GpuMemoryTotal => GpuPerformance.MemoryTotal();
 
 	}
 

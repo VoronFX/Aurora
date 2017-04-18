@@ -4,162 +4,144 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Scripting.Runtime;
 
 namespace Aurora.Profiles.PerformanceCounters
 {
-	public abstract class EasedPerformanceCounterMultiFloat
-		: EasedPerformanceCounter<float[]>
-	{
-		private readonly float[] defaultValues;
-
-		protected EasedPerformanceCounterMultiFloat(float[] defaultValues)
-		{
-			this.defaultValues = defaultValues;
-		}
-
-		protected override float[] GetEasedValue(CounterFrame<float[]> currentFrame)
-		{
-			var prev = currentFrame.PreviousValue ?? defaultValues;
-			var curr = currentFrame.CurrentValue ?? defaultValues;
-
-			return prev.Select((x, i) => x + (curr[i] - x) * Math.Min(Utils.Time.GetMillisecondsSinceEpoch()
-				- currentFrame.Timestamp, UpdateInterval) / UpdateInterval).ToArray();
-		}
-	}
-
-	public abstract class EasedPerformanceCounterFloat
-		: EasedPerformanceCounter<float>
-	{
-		protected override float GetEasedValue(CounterFrame<float> currentFrame)
-		{
-			return currentFrame.PreviousValue + (currentFrame.CurrentValue - currentFrame.PreviousValue) *
-				   Math.Min(Utils.Time.GetMillisecondsSinceEpoch() - currentFrame.Timestamp, UpdateInterval) / UpdateInterval;
-		}
-	}
-	//Aurora Internal/GpuNVidia#0/CoreUsage
-	//Graphic Card/ATI#0/CoreUsage
-
-	public abstract class EasedPerformanceCounter<T>
-	{
-		public int UpdateInterval { get; set; } = 1000;
-		public int IdleTimeout { get; set; } = 3;
-
-		protected struct CounterFrame<T2>
-		{
-			public readonly T2 PreviousValue;
-			public readonly T2 CurrentValue;
-			public readonly long Timestamp;
-
-			public CounterFrame(T2 previousValue, T2 currentValue)
-			{
-				PreviousValue = previousValue;
-				CurrentValue = currentValue;
-				Timestamp = Utils.Time.GetMillisecondsSinceEpoch();
-			}
-		}
-
-		private CounterFrame<T> frame;
-		private T lastEasedValue;
-
-		private readonly Timer timer;
-		private int counterUsage;
-		private bool sleeping = true;
-		private int awakening;
-
-		protected abstract T GetEasedValue(CounterFrame<T> currentFrame);
-		protected abstract T UpdateValue();
-
-		public T GetValue(bool easing = true)
-		{
-			counterUsage = IdleTimeout;
-			if (sleeping)
-			{
-				if (Interlocked.CompareExchange(ref awakening, 1, 0) == 1)
-				{
-					sleeping = false;
-					timer.Change(0, Timeout.Infinite);
-				}
-			}
-
-			if (easing)
-			{
-				lastEasedValue = GetEasedValue(frame);
-				return lastEasedValue;
-			}
-			return frame.CurrentValue;
-		}
-
-		protected EasedPerformanceCounter()
-		{
-			timer = new Timer(UpdateTick, null, Timeout.Infinite, Timeout.Infinite);
-		}
-
-		private void UpdateTick(object state)
-		{
-			try
-			{
-				frame = new CounterFrame<T>(lastEasedValue, UpdateValue());
-			}
-			catch (Exception exc)
-			{
-				Global.logger.LogLine("EasedPerformanceCounter exception: " + exc, Logging_Level.Error);
-			}
-			finally
-			{
-				counterUsage--;
-				if (counterUsage <= 0)
-				{
-					awakening = 0;
-					sleeping = true;
-				}
-				else
-				{
-					timer.Change(UpdateInterval, Timeout.Infinite);
-				}
-			}
-		}
-	}
-
-	public sealed class PerformanceCounterManager
+	public static class PerformanceCounterManager
 	{
 		private static readonly ConcurrentDictionary<Tuple<string, string, string>, Func<float>> InternalPerformanceCounters =
 			new ConcurrentDictionary<Tuple<string, string, string>, Func<float>>();
 
-		public static void RegisterInternal(string categoryName, string counterName, string instanceName, [NotNull]Func<float> newSample)
+		private static readonly ConcurrentDictionary<Tuple<string, string, string>, Func<float>>
+			CreatedSystemPerformanceCounters =
+				new ConcurrentDictionary<Tuple<string, string, string>, Func<float>>();
+
+		private static readonly ConcurrentDictionary<Tuple<string, string, string, long>, IntervalPerformanceCounter>
+			CountersInstances =
+				new ConcurrentDictionary<Tuple<string, string, string, long>, IntervalPerformanceCounter>();
+
+		private static readonly ConcurrentQueue<IntervalPerformanceCounter> NewCounters
+			= new ConcurrentQueue<IntervalPerformanceCounter>();
+
+		public static void RegisterInternal(string categoryName, string counterName, string instanceName,
+			[NotNull] Func<float> newSample)
 		{
 			InternalPerformanceCounters.AddOrUpdate(new Tuple<string, string, string>(categoryName, counterName, instanceName),
 				newSample, (tuple, func) => newSample);
 		}
 
-		private readonly ConcurrentDictionary<Tuple<string, string, string, long>, IntervalPerformanceCounter> countersInstances =
-			new ConcurrentDictionary<Tuple<string, string, string, long>, IntervalPerformanceCounter>();
+		public static Func<float> GetSystemPerformanceCounter(string categoryName, string counterName, string instanceName)
+			=> GetSystemPerformanceCounter(new Tuple<string, string, string>(categoryName, counterName, instanceName));
 
-		public IntervalPerformanceCounter GetCounter(string categoryName, string counterName, string instanceName, long updateInterval)
+		public static Func<float> GetSystemPerformanceCounter(Tuple<string, string, string> key)
+			=> CreatedSystemPerformanceCounters.GetOrAdd(key, tuple2 =>
+			{
+				var performanceCounter = new PerformanceCounter(key.Item1, key.Item2, key.Item3);
+				return () => performanceCounter.NextValue();
+			});
+
+		public static IntervalPerformanceCounter GetCounter(string categoryName, string counterName, string instanceName,
+			long updateInterval)
 		{
-			return countersInstances.GetOrAdd(
+			return CountersInstances.GetOrAdd(
 				new Tuple<string, string, string, long>(categoryName, counterName, instanceName, updateInterval),
 				tuple =>
 				{
+					var key = new Tuple<string, string, string>(categoryName, counterName, instanceName);
 					Func<float> value;
-					if (!InternalPerformanceCounters.TryGetValue(
-						new Tuple<string, string, string>(categoryName, counterName, instanceName), out value))
+					if (!InternalPerformanceCounters.TryGetValue(key, out value))
 					{
-						var performanceCounter = new PerformanceCounter(categoryName, counterName, instanceName);
-						value = () => performanceCounter.NextValue();
+						value = GetSystemPerformanceCounter(key);
 					}
-					return new IntervalPerformanceCounter(categoryName, counterName, instanceName,
-						updateInterval, (int)Math.Ceiling(3000f / updateInterval), value);
+					var newCounter = new IntervalPerformanceCounter(tuple, (int) Math.Ceiling(3000f / updateInterval), value);
+					NewCounters.Enqueue(newCounter);
+					return newCounter;
 				});
 		}
-
-		public sealed class IntervalPerformanceCounter
+		
+		public sealed partial class IntervalPerformanceCounter
 		{
-			public string CategoryName { get; }
-			public string CounterName { get; }
-			public string InstanceName { get; }
-			public long UpdateInterval { get; }
+			private sealed class IntervalCounterList : List<IntervalPerformanceCounter>
+			{
+				public readonly long Interval;
+				public DateTime NextUpdate;
+
+				public IntervalCounterList(long interval)
+				{
+					Interval = interval;
+				}
+			}
+
+			private static readonly List<IntervalCounterList> Intervals = new List<IntervalCounterList>();
+			private static readonly Timer Timer = new Timer(UpdateTick, null, Timeout.Infinite, Timeout.Infinite);
+			private static int sleeping = 1;
+
+			private static void UpdateTick(object state)
+			{
+				IntervalPerformanceCounter newCounter;
+				if (!NewCounters.IsEmpty)
+				{
+					while (NewCounters.TryDequeue(out newCounter))
+					{
+						var interval = Intervals.FirstOrDefault(x => x.Interval == newCounter.UpdateInterval);
+						if (interval == null)
+						{
+							interval = new IntervalCounterList(newCounter.UpdateInterval);
+							Intervals.Add(interval);
+						}
+						interval.Add(newCounter);
+					}
+				}
+
+				var time = DateTime.UtcNow;
+				var nextUpdate = DateTime.MaxValue;
+				var activeCounters = false;
+				foreach (var interval in Intervals)
+				{
+					if (interval.NextUpdate <= time)
+					{
+						interval.NextUpdate = time.AddMilliseconds(interval.Interval);
+						foreach (var counter in interval)
+						{
+							if (Volatile.Read(ref counter.counterUsage) > 0)
+							{
+								try
+								{
+									Volatile.Write(ref counter.lastFrame,
+										new CounterFrame(counter.lastFrame.PreviousValue, counter.newSample()));
+								}
+								catch (Exception exc)
+								{
+									Global.logger.LogLine("IntervalPerformanceCounter exception in "
+										+ $"{counter.CategoryName}/{counter.CounterName}/{counter.InstanceName}/{counter.UpdateInterval}: {exc}",
+										Logging_Level.Error);
+								}
+								counter.counterUsage--;
+								activeCounters = true;
+							}
+						}
+					}
+					nextUpdate = nextUpdate > interval.NextUpdate ? interval.NextUpdate : nextUpdate;
+				}
+				if (activeCounters)
+				{
+					Timer.Change(nextUpdate - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
+				}
+				else
+				{
+					Volatile.Write(ref sleeping, 1);
+				}
+			}
+		}
+
+		public sealed partial class IntervalPerformanceCounter
+		{
+			public Tuple<string, string, string, long> Key { get; }
+			public string CategoryName => Key.Item1;
+			public string CounterName => Key.Item2;
+			public string InstanceName => Key.Item3;
+			public long UpdateInterval => Key.Item4;
 			public int IdleTimeout { get; }
 
 			private sealed class CounterFrame
@@ -179,22 +161,17 @@ namespace Aurora.Profiles.PerformanceCounters
 			private CounterFrame lastFrame;
 			private readonly Func<float> newSample;
 
-			public bool IsSleeping => Volatile.Read(ref sleeping);
-
-			private readonly Timer timer;
 			private int counterUsage;
-			private bool sleeping = true;
-			private int awakening;
 
 			public float GetValue(bool easing = true)
 			{
-				counterUsage = IdleTimeout;
-				if (Volatile.Read(ref sleeping))
+				Volatile.Write(ref counterUsage, IdleTimeout);
+
+				if (Volatile.Read(ref sleeping) == 1)
 				{
-					if (Interlocked.CompareExchange(ref awakening, 1, 0) == 1)
+					if (Interlocked.CompareExchange(ref sleeping, 0, 1) == 0)
 					{
-						Volatile.Write(ref sleeping, false);
-						timer.Change(0, Timeout.Infinite);
+						Timer.Change(0, Timeout.Infinite);
 					}
 				}
 
@@ -203,48 +180,15 @@ namespace Aurora.Profiles.PerformanceCounters
 					return frame.CurrentValue;
 
 				return frame.PreviousValue + (frame.CurrentValue - frame.PreviousValue) *
-						Math.Min(Utils.Time.GetMillisecondsSinceEpoch() - frame.Timestamp, UpdateInterval) / UpdateInterval;
+				       Math.Min(Utils.Time.GetMillisecondsSinceEpoch() - frame.Timestamp, UpdateInterval) / UpdateInterval;
 			}
 
-			public IntervalPerformanceCounter(string categoryName, string counterName, string instanceName,
-				long updateInterval, int idleTimeout, Func<float> newSample)
+			public IntervalPerformanceCounter(Tuple<string, string, string, long> key, int idleTimeout, Func<float> newSample)
 			{
 				this.newSample = newSample;
-				UpdateInterval = updateInterval;
+				Key = key;
 				IdleTimeout = idleTimeout;
-				CategoryName = categoryName;
-				CounterName = counterName;
-				InstanceName = instanceName;
-				timer = new Timer(UpdateTick, null, Timeout.Infinite, Timeout.Infinite);
-			}
-
-			private void UpdateTick(object state)
-			{
-				try
-				{
-					Volatile.Write(ref lastFrame, 
-						new CounterFrame(Volatile.Read(ref lastFrame).PreviousValue, newSample()));
-				}
-				catch (Exception exc)
-				{
-					Global.logger.LogLine($"IntervalPerformanceCounter exception in {CategoryName}/{CounterName}/{InstanceName}/{UpdateInterval}: {exc}", Logging_Level.Error);
-				}
-				finally
-				{
-					counterUsage--;
-					if (counterUsage <= 0)
-					{
-						awakening = 0;
-						Volatile.Write(ref sleeping, true);
-					}
-					else
-					{
-						timer.Change(UpdateInterval, Timeout.Infinite);
-					}
-				}
 			}
 		}
 	}
-
-
 }
