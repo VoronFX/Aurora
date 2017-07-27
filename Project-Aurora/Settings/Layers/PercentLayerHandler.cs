@@ -2,6 +2,7 @@
 using Aurora.Profiles;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using DynamicExpresso;
 
 namespace Aurora.Settings.Layers
 {
@@ -22,7 +24,7 @@ namespace Aurora.Settings.Layers
 		public double? _BlinkThresholdStart { get; set; }
 
 		[JsonIgnore]
-		public double BlinkThresholdStart{ get { return Logic._BlinkThresholdStart ?? _BlinkThresholdStart?? 0.0; } }
+		public double BlinkThresholdStart { get { return Logic._BlinkThresholdStart ?? _BlinkThresholdStart ?? 0.0; } }
 
 		public double? _BlinkFadeIn { get; set; }
 
@@ -79,10 +81,28 @@ namespace Aurora.Settings.Layers
 
 	public class PercentLayerHandler<TProperty> : LayerHandler<TProperty> where TProperty : PercentLayerHandlerProperties<TProperty>
 	{
+		private static readonly ConcurrentDictionary<string, Func<double>> expressions
+			= new ConcurrentDictionary<string, Func<double>>();
+
+		private static readonly Interpreter ExpressionInterpreter = new Interpreter();
+		private const string ExpressionKeyword = "C#|";
 		private static double ParseVariablePath(IGameState state, string variable)
 		{
 			double value;
-			if (!double.TryParse(variable, out value) && !string.IsNullOrWhiteSpace(variable))
+			if (variable.StartsWith(ExpressionKeyword))
+			{
+				try
+				{
+					value = expressions.GetOrAdd(variable, s =>
+						ExpressionInterpreter.ParseAsDelegate<Func<double>>(s.Substring(ExpressionKeyword.Length,
+							s.Length - ExpressionKeyword.Length)))();
+				}
+				catch (Exception exc)
+				{
+					return 0;
+				}			
+			}
+			else if (!double.TryParse(variable, out value) && !string.IsNullOrWhiteSpace(variable))
 			{
 				try
 				{
