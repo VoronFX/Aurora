@@ -1,121 +1,166 @@
 ﻿//
 // Voron Scripts - GpuLoad
-// v1.0-beta.5
+// v1.0-beta.6
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
-// 
+//
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Aurora.Devices;
 using Aurora.EffectsEngine;
 using Aurora.Profiles;
-using Aurora.Scripts.VoronScripts.OpenHardwareMonitor;
 using Aurora.Scripts.VoronScripts.OpenHardwareMonitor.OpenHardwareMonitor.Hardware.ATI;
 using Aurora.Scripts.VoronScripts.OpenHardwareMonitor.OpenHardwareMonitor.Hardware.Nvidia;
 using Aurora.Settings;
+using Aurora.Utils;
 
 namespace Aurora.Scripts.VoronScripts
 {
-
-	public class GpuLoad
+	public class GpuLoad : IEffectScript
 	{
-		public string ID = "GpuLoad";
-
-		public KeySequence DefaultKeys = new KeySequence(
-			new[] { DeviceKeys.G5, DeviceKeys.G4, DeviceKeys.G3, DeviceKeys.G2, DeviceKeys.G1 });
-
-		// Independant RainbowLoop
-		private readonly ColorSpectrum rainbowLoop = new ColorSpectrum(
-			Color.FromArgb(255, 0, 0),
-			Color.FromArgb(255, 127, 0),
-			Color.FromArgb(255, 255, 0),
-			Color.FromArgb(0, 255, 0),
-			Color.FromArgb(0, 0, 255),
-			Color.FromArgb(75, 0, 130),
-			Color.FromArgb(139, 0, 255),
-			Color.FromArgb(255, 0, 0)
-			);
-
-		private readonly ColorSpectrum loadGradient = new ColorSpectrum(Color.Lime, Color.Orange, Color.Red);
-
-		private readonly DeviceKeys[] gpuRainbowKeys =
-			{ DeviceKeys.PRINT_SCREEN, DeviceKeys.SCROLL_LOCK, DeviceKeys.PAUSE_BREAK };
-
-		private float blinkingThreshold = 0.95f;
-		private int blinkingSpeed = 1000;
-
-		public EffectLayer[] UpdateLights(ScriptSettings settings, object state = null)
+		public string ID
 		{
-			Queue<EffectLayer> layers = new Queue<EffectLayer>();
+			get { return "GpuLoad"; }
+		}
 
-			EffectLayer GPULayer = new EffectLayer(ID + " - GpuLoad");
-			EffectLayer GPURainbowLayer = new EffectLayer(ID + " - GpuRainbowLoad");
+		public KeySequence DefaultKeys;
+
+		public VariableRegistry Properties { get; private set; }
+
+		public GpuLoad()
+		{
+			Properties = new VariableRegistry();
+
+			Properties.RegProp("Gpu Load Keys or Freeform",
+				new KeySequence(new[] { DeviceKeys.G5, DeviceKeys.G4, DeviceKeys.G3, DeviceKeys.G2, DeviceKeys.G1 }),
+				"Select keys or freeform region to display GPU Load. Keys are smoother.");
+
+			Properties.RegProp("Enable Overload", true,
+				"Gpu load will be start blinking when load will reach certain threshold");
+
+			Properties.RegProp("Overload Threshold", 95, "Overload threshold in percent of load", 0, 100);
+
+			Properties.RegProp("Overload Blinking Speed", 1000, "Speed of CoreOverload blinking in ms", 10, 10000);
+
+			Properties.RegProp("Overload Color", new RealColor(Color.Black));
+
+			Properties.RegProp("Load Gradient (Advanced)", ScriptHelper.SpectrumToString(new ColorSpectrum(
+					Color.Lime,
+					Color.Orange,
+					Color.Red)
+				),
+				"Gradient that is used for displaying load. One color per line. Position can be optionally set with @ symbol.");
+
+			Properties.RegProp("Load Circle Keys", new KeySequence(new[]
+				{
+					DeviceKeys.PRINT_SCREEN, DeviceKeys.SCROLL_LOCK, DeviceKeys.PAUSE_BREAK
+				}),
+				"Circle will rotate faster with GPU load. Select only keys.");
+
+			Properties.RegProp("Load Circle Gradient (Advanced)", ScriptHelper.SpectrumToString(new ColorSpectrum(
+					Color.FromArgb(255, 0, 0),
+					Color.FromArgb(255, 127, 0),
+					Color.FromArgb(255, 255, 0),
+					Color.FromArgb(0, 255, 0),
+					Color.FromArgb(0, 0, 255),
+					Color.FromArgb(75, 0, 130),
+					Color.FromArgb(139, 0, 255),
+					Color.FromArgb(255, 0, 0)
+				)),
+				"Gradient that is used for displaying load circle. One color per line. Position can be optionally set with @ symbol.");
+		}
+
+		private KeyValuePair<string, ColorSpectrum> LoadCircleGradient { get; set; }
+		private KeyValuePair<string, ColorSpectrum> LoadGradient { get; set; }
+		private float OverloadThreshold { get; set; }
+		private Color OverloadColor { get; set; }
+		private int BlinkingSpeed { get; set; }
+		private KeySequence GpuKeys { get; set; }
+		private IList<DeviceKeys> LoadCircleKeys { get; set; }
+		private bool EnableOverload { get; set; }
+
+		private void ReadProperties(VariableRegistry properties)
+		{
+			LoadCircleGradient = ScriptHelper.UpdateSpectrumProperty(LoadCircleGradient,
+				properties.GetVariable<string>("Load Circle Gradient (Advanced)"));
+			LoadGradient = ScriptHelper.UpdateSpectrumProperty(LoadGradient,
+				properties.GetVariable<string>("Load Gradient (Advanced)"));
+			GpuKeys = properties.GetVariable<KeySequence>("Gpu Load Keys or Freeform");
+			LoadCircleKeys = properties.GetVariable<KeySequence>("Load Circle Keys").keys;
+			OverloadThreshold = properties.GetVariable<int>("Overload Threshold") / 100f;
+			OverloadColor = properties.GetVariable<RealColor>("Overload Color").GetDrawingColor();
+			BlinkingSpeed = properties.GetVariable<int>("Overload Blinking Speed");
+			EnableOverload = properties.GetVariable<bool>("Enable Overload");
+		}
+
+		public object UpdateLights(VariableRegistry properties, IGameState state = null)
+		{
+			ReadProperties(properties);
+
+			var GPULayer = new EffectLayer(ID + " - GpuLoad");
+			var GPUCircleLayer = new EffectLayer(ID + " - GPUCircleLayer");
 
 			var value = Gpu.GetValue() / 100f;
 			//(Utils.Time.GetMillisecondsSinceEpoch() % 3000) / 30.0f / 100f;
 
-			var blinkingLevel = (value - blinkingThreshold) / (1 - blinkingThreshold);
+			var blinkingLevel = (value - BlinkingSpeed) / (1 - BlinkingSpeed);
 
 			blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
-				* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % blinkingSpeed) / (blinkingSpeed / 2f));
+				* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / (BlinkingSpeed / 2f));
 
-			if (DefaultKeys.type == KeySequenceType.Sequence)
+			if (GpuKeys.type == KeySequenceType.Sequence)
 			{
 				// Animating by key sequence manually cause of bug in PercentEffect in Aurora v0.5.1d
 
-				for (int i = 0; i < DefaultKeys.keys.Count; i++)
+				for (int i = 0; i < GpuKeys.keys.Count; i++)
 				{
 					var blendLevel = Math.Min(1, Math.Max(0,
-						(value - (i / (float)DefaultKeys.keys.Count)) / (1f / DefaultKeys.keys.Count)));
+						(value - (i / (float)GpuKeys.keys.Count)) / (1f / GpuKeys.keys.Count)));
 
-					GPULayer.Set(DefaultKeys.keys[i], Color.FromArgb((byte)(blendLevel * 255),
-						loadGradient.GetColorAt(i / (DefaultKeys.keys.Count - 1f))));
+					GPULayer.Set(GpuKeys.keys[i], Color.FromArgb((byte)(blendLevel * 255),
+						LoadGradient.Value.GetColorAt(i / (GpuKeys.keys.Count - 1f))));
 
-					if (blinkingThreshold <= 1)
+					if (EnableOverload && OverloadThreshold <= 1)
 					{
-						GPULayer.Set(DefaultKeys.keys[i], (Color)EffectColor.BlendColors(
-							new EffectColor(GPULayer.Get(DefaultKeys.keys[i])),
-							new EffectColor(Color.Black),
-								blendLevel * i / (DefaultKeys.keys.Count - 1f) * blinkingLevel));
+						GPULayer.Set(GpuKeys.keys[i], (Color)EffectColor.BlendColors(
+							new EffectColor(GPULayer.Get(GpuKeys.keys[i])),
+							new EffectColor(OverloadColor),
+								blendLevel * i / (GpuKeys.keys.Count - 1f) * blinkingLevel));
 					}
 				}
 			}
 			else
 			{
-				GPULayer.PercentEffect(loadGradient, DefaultKeys, value, 1, PercentEffectType.Progressive_Gradual);
+				GPULayer.PercentEffect(LoadGradient.Value, GpuKeys.freeform, value, 1, PercentEffectType.Progressive_Gradual);
 				GPULayer.PercentEffect(
 					new ColorSpectrum(
 						Color.FromArgb(0, Color.Black),
 						Color.FromArgb((byte)(255 * blinkingLevel), Color.Black)),
-					DefaultKeys, value, 1, PercentEffectType.Progressive_Gradual);
+					GpuKeys, value, 1, PercentEffectType.Progressive_Gradual);
 			}
 
-			rainbowLoop.Shift((float)(-0.003 + -0.01 * value));
+			// Circle
 
-			for (int i = 0; i < gpuRainbowKeys.Length; i++)
+			LoadCircleGradient.Value.Shift((float)(-0.003 + -0.01 * value));
+
+			for (int i = 0; i < LoadCircleKeys.Count; i++)
 			{
-				GPURainbowLayer.Set(gpuRainbowKeys[i],
+				GPUCircleLayer.Set(LoadCircleKeys[i],
 					Color.FromArgb((byte)(255 * value),
-					rainbowLoop.GetColorAt(i, gpuRainbowKeys.Length * 3)));
+						LoadCircleGradient.Value.GetColorAt(i, LoadCircleKeys.Count * 3)));
 			}
 
-			layers.Enqueue(GPULayer);
-			layers.Enqueue(GPURainbowLayer);
-
-			return layers.ToArray();
+			return new[] { GPULayer, GPUCircleLayer };
 		}
 
 		private static readonly GpuCounter Gpu = new GpuCounter();
@@ -414,6 +459,45 @@ namespace Aurora.Scripts.VoronScripts
 			}
 		}
 
+	}
+
+	internal static class ScriptHelper
+	{
+		public static void RegProp(this VariableRegistry registry,
+			string name, object defaultValue, string remark = "", object min = null, object max = null)
+		{
+			registry.Register(name, defaultValue, name, max, min, remark);
+		}
+
+		public static string SpectrumToString(ColorSpectrum spectrum)
+		{
+			return string.Join(Environment.NewLine,
+				spectrum.GetSpectrumColors().Select(x => string.Format("#{0:X2}{1:X2}{2:X2}{3:X2} @ {4}", x.Value.A, x.Value.R,
+					x.Value.G, x.Value.B, x.Key)));
+		}
+
+		public static ColorSpectrum StringToSpectrum(string text)
+		{
+			var colors = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split('@'))
+				.ToArray();
+			var spectrum = new ColorSpectrum();
+			foreach (var colorset in colors.Select((x, i) => new
+			{
+				Color = ColorTranslator.FromHtml(x[0]),
+				Position = x.Length > 1 ? float.Parse(x[1]) : (1f / colors.Length * i)
+			}))
+			{
+				spectrum.SetColorAt(colorset.Position, colorset.Color);
+			}
+			return spectrum;
+		}
+
+		public static KeyValuePair<string, ColorSpectrum> UpdateSpectrumProperty(KeyValuePair<string, ColorSpectrum> current,
+			string newValue)
+		{
+			return newValue == current.Key ? current :
+				new KeyValuePair<string, ColorSpectrum>(newValue, StringToSpectrum(newValue));
+		}
 	}
 
 	#region OpenHardwareMonitor
