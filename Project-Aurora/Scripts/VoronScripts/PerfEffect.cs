@@ -10,10 +10,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -94,8 +92,8 @@ namespace Aurora.Scripts.VoronScripts
 			Properties.RegProp("Effect type", (long)EffectTypes.ProgressiveGradual,
 				String.Join(Environment.NewLine,
 				Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Select(x => string.Format("{0} - {1}", (int)x, x))),
-				(int)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Min(),
-				(int)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Max());
+				(long)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Min(),
+				(long)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Max());
 
 			Properties.RegProp("Value source", "Processor | % Processor Time | _Total",
 				String.Join(Environment.NewLine, new[]
@@ -117,17 +115,17 @@ namespace Aurora.Scripts.VoronScripts
 
 			Properties.RegProp("Enable Overload Blinking", true, "Last gradient color will blink when value reaches overload threshold level");
 
-			Properties.RegProp("Overload Start Threshold", 95L, "Blinking start be visible when value reaches this level", 0, 100);
+			Properties.RegProp("Overload Start Threshold", 95L, "Blinking start be visible when value reaches this level", 0L, 100L);
 
-			Properties.RegProp("Overload Full Threshold", 100L, "Blinking will be fully visible when value reaches this level", 0, 100);
+			Properties.RegProp("Overload Full Threshold", 100L, "Blinking will be fully visible when value reaches this level", 0L, 100L);
 
-			Properties.RegProp("Overload Blinking Speed", 1000L, "Speed of CoreOverload blinking in ms", 10, 10000);
+			Properties.RegProp("Overload Blinking Speed", 1000L, "Speed of CoreOverload blinking in (ms)", 10L, 10000L);
 
 			Properties.RegProp("Overload Blinking Color", new RealColor(Color.Black));
 
-			Properties.RegProp("Cycled Gradient Shift Base Speed", 0L, "Cycled gradient shifting speed at 0%", -1000, 1000);
+			Properties.RegProp("Cycled Gradient Shift Base Speed", 0L, "Cycled gradient shifting speed at 0%", -1000L, 1000L);
 
-			Properties.RegProp("Cycled Gradient Shift Full Speed", 100L, "Cycled gradient shifting speed at 100%", -1000, 1000);
+			Properties.RegProp("Cycled Gradient Shift Full Speed", 100L, "Cycled gradient shifting speed at 100%", -1000L, 1000L);
 
 		}
 
