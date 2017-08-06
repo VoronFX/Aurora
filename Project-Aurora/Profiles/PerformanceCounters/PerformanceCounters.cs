@@ -61,9 +61,9 @@ namespace Aurora.Profiles.PerformanceCounters
 								case 3:
 									return computerInfo.TotalVirtualMemory / 1048576f;
 								case 4:
-									return (computerInfo.TotalPhysicalMemory - computerInfo.AvailablePhysicalMemory) * 100 / 1048576f;
+									return (float) ((computerInfo.TotalPhysicalMemory - computerInfo.AvailablePhysicalMemory) * 100d / computerInfo.TotalPhysicalMemory);
 								case 5:
-									return (computerInfo.TotalVirtualMemory - computerInfo.AvailableVirtualMemory) * 100 / 1048576f;
+									return (float) ((computerInfo.TotalVirtualMemory - computerInfo.AvailableVirtualMemory) * 100d / computerInfo.TotalVirtualMemory);
 							}
 							return 0;
 						});

@@ -54,12 +54,12 @@ namespace Aurora.Profiles.PerformanceCounters
 					{
 						value = GetSystemPerformanceCounter(key);
 					}
-					var newCounter = new IntervalPerformanceCounter(tuple, (int) Math.Ceiling(3000f / updateInterval), value);
+					var newCounter = new IntervalPerformanceCounter(tuple, (int)Math.Ceiling(3000f / updateInterval), value);
 					NewCounters.Enqueue(newCounter);
 					return newCounter;
 				});
 		}
-		
+
 		public sealed partial class IntervalPerformanceCounter
 		{
 			private sealed class IntervalCounterList : List<IntervalPerformanceCounter>
@@ -109,7 +109,7 @@ namespace Aurora.Profiles.PerformanceCounters
 								try
 								{
 									Volatile.Write(ref counter.lastFrame,
-										new CounterFrame(counter.lastFrame.PreviousValue, counter.newSample()));
+										new CounterFrame(counter.lastFrame.CurrentValue, counter.newSample()));
 								}
 								catch (Exception exc)
 								{
@@ -126,7 +126,8 @@ namespace Aurora.Profiles.PerformanceCounters
 				}
 				if (activeCounters)
 				{
-					Timer.Change(nextUpdate - DateTime.UtcNow, Timeout.InfiniteTimeSpan);
+					var nextDelay = nextUpdate - DateTime.UtcNow;
+					Timer.Change(nextDelay.Ticks > 0 ? nextDelay : TimeSpan.Zero, Timeout.InfiniteTimeSpan);
 				}
 				else
 				{
@@ -158,7 +159,7 @@ namespace Aurora.Profiles.PerformanceCounters
 				}
 			}
 
-			private CounterFrame lastFrame;
+			private CounterFrame lastFrame = new CounterFrame(0, 0);
 			private readonly Func<float> newSample;
 
 			private int counterUsage;
@@ -169,7 +170,7 @@ namespace Aurora.Profiles.PerformanceCounters
 
 				if (Volatile.Read(ref sleeping) == 1)
 				{
-					if (Interlocked.CompareExchange(ref sleeping, 0, 1) == 0)
+					if (Interlocked.CompareExchange(ref sleeping, 0, 1) == 1)
 					{
 						Timer.Change(0, Timeout.Infinite);
 					}
@@ -180,7 +181,7 @@ namespace Aurora.Profiles.PerformanceCounters
 					return frame.CurrentValue;
 
 				return frame.PreviousValue + (frame.CurrentValue - frame.PreviousValue) *
-				       Math.Min(Utils.Time.GetMillisecondsSinceEpoch() - frame.Timestamp, UpdateInterval) / UpdateInterval;
+					   Math.Min(Utils.Time.GetMillisecondsSinceEpoch() - frame.Timestamp, UpdateInterval) / UpdateInterval;
 			}
 
 			public IntervalPerformanceCounter(Tuple<string, string, string, long> key, int idleTimeout, Func<float> newSample)
