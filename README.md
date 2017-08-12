@@ -7,7 +7,7 @@ The goal of this fork is to help me debug my scripts for Aurora and probably mak
 The actual Aurora project you can find here: [Link to Aurora project](https://github.com/antonpup/Aurora)
 
 # UPDATE
-* Last update has a big breaking changes. Read about them and downloadn new version here:  [Voron Scripts v1.0-beta.6](https://github.com/VoronFX/Aurora/releases/tag/vscripts-v1.0-beta.6)
+* Last update has a big breaking changes. Read about them and download new version here:  [Voron Scripts v1.0-beta.6](https://github.com/VoronFX/Aurora/releases/tag/vscripts-v1.0-beta.6)
 * Old info about old scripts now is here: [Voron Scripts v1.0-beta.5](https://github.com/VoronFX/Aurora/tree/voron-scripts-aurora6) 
 
 # About scripts
@@ -34,6 +34,7 @@ For example, you can set script to show ping to game server while that game is a
 ![Gpu load on the left](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/gpu.gif)
 ![Load of cpu cores on top](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/cpu.gif)
 ![Ping display on F keys](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/pingpulser.gif)
+![Load bars](https://raw.githubusercontent.com/VoronFX/Aurora/voron-scripts/Project-Aurora/Scripts/VoronScripts/Resources/bars.gif)
 
 # Download and install
 1. Download current profile version [here](https://github.com/VoronFX/Aurora/releases/latest).
