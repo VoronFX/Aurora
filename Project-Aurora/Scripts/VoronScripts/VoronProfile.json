@@ -1,0 +1,4416 @@
+﻿{
+  "$type": "Aurora.Profiles.Desktop.DesktopProfile, Aurora",
+  "cpu_usage_enabled": true,
+  "cpu_used_color": "0, 205, 255",
+  "cpu_free_color": "0, 65, 80",
+  "cpu_free_color_transparent": false,
+  "cpu_usage_effect_type": 2,
+  "cpu_sequence": {
+    "$type": "Aurora.Settings.KeySequence, Aurora",
+    "keys": {
+      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+      "$values": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    "type": 0,
+    "freeform": {
+      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+      "Type": 1,
+      "X": 0.0,
+      "Y": 0.0,
+      "Width": 30.0,
+      "Height": 30.0,
+      "Angle": 0.0
+    }
+  },
+  "ram_usage_enabled": true,
+  "ram_used_color": "255, 80, 0",
+  "ram_free_color": "90, 30, 0",
+  "ram_free_color_transparent": false,
+  "ram_usage_effect_type": 2,
+  "ram_sequence": {
+    "$type": "Aurora.Settings.KeySequence, Aurora",
+    "keys": {
+      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+      "$values": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ]
+    },
+    "type": 0,
+    "freeform": {
+      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+      "Type": 1,
+      "X": 0.0,
+      "Y": 0.0,
+      "Width": 30.0,
+      "Height": 30.0,
+      "Angle": 0.0
+    }
+  },
+  "shortcuts_assistant_enabled": true,
+  "shortcuts_assistant_bim_bg": false,
+  "ctrl_key_color": "Red",
+  "ctrl_key_sequence": {
+    "$type": "Aurora.Settings.KeySequence, Aurora",
+    "keys": {
+      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+      "$values": [
+        80,
+        81,
+        79,
+        44,
+        96,
+        98,
+        60,
+        78
+      ]
+    },
+    "type": 0,
+    "freeform": {
+      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+      "Type": 1,
+      "X": 0.0,
+      "Y": 0.0,
+      "Width": 30.0,
+      "Height": 30.0,
+      "Angle": 0.0
+    }
+  },
+  "win_key_color": "Blue",
+  "win_key_sequence": {
+    "$type": "Aurora.Settings.KeySequence, Aurora",
+    "keys": {
+      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+      "$values": [
+        42,
+        41,
+        84,
+        62,
+        89,
+        103,
+        102,
+        104,
+        38
+      ]
+    },
+    "type": 0,
+    "freeform": {
+      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+      "Type": 1,
+      "X": 0.0,
+      "Y": 0.0,
+      "Width": 30.0,
+      "Height": 30.0,
+      "Angle": 0.0
+    }
+  },
+  "alt_key_color": "Yellow",
+  "alt_key_sequence": {
+    "$type": "Aurora.Settings.KeySequence, Aurora",
+    "keys": {
+      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+      "$values": [
+        5,
+        41,
+        81,
+        94,
+        101,
+        38
+      ]
+    },
+    "type": 0,
+    "freeform": {
+      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+      "Type": 1,
+      "X": 0.0,
+      "Y": 0.0,
+      "Width": 30.0,
+      "Height": 30.0,
+      "Angle": 0.0
+    }
+  },
+  "lighting_areas": {
+    "$type": "System.Collections.Generic.List`1[[Aurora.Settings.ColorZone, Aurora]], mscorlib",
+    "$values": []
+  },
+  "interactive_effects_enabled": false,
+  "interactive_effect_type": 0,
+  "interactive_effects_random_primary_color": false,
+  "interactive_effect_primary_color": "Lime",
+  "interactive_effects_random_secondary_color": false,
+  "interactive_effect_secondary_color": "Red",
+  "interactive_effect_speed": 1.0,
+  "interactive_effect_width": 2,
+  "interactive_effects_mouse_clicking": false,
+  "ProfileName": "Voron",
+  "TriggerKeybind": {
+    "$type": "Aurora.Settings.Keybind, Aurora",
+    "_AssignedKeys": {
+      "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+      "$values": []
+    }
+  },
+  "ScriptSettings": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.ScriptSettings, Aurora]], mscorlib",
+    "CpuCores": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "GpuLoad": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "Voron Scripts - PerfEffect - v1.0-beta.6": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "Voron Scripts - PingEffect - v1.0-beta.6": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    }
+  },
+  "Layers": {
+    "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.Layer, Aurora]], System",
+    "$values": [
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "GPU Memory",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        16
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Aurora Internal | NvidiaGpu #0 | % Memory Usage",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "208, 58, 98",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Memory Usage",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        15
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Aurora Internal | Memory | % PhysicalMemoryUsed",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "131, 203, 74",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "GPU",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        112,
+                        111,
+                        110,
+                        109,
+                        108
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 2,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Aurora Internal | GPU | % Load",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "28, 70, 75",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Disk Usage",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        14
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Aurora Internal | System Disk | % Usage",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "48, 216, 144",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Core 4",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | 3",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "72, 136, 15",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Core 3",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        115
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | 2",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "169, 199, 28",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Core 2",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        114
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 35.0,
+                      "Height": 35.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | 1",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "132, 143, 30",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Core 1",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 35.0,
+                      "Height": 35.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | 0",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#0000FF00 | #FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": true,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "229, 44, 38",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Ping Pulser",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PingEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Graph Mode": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": false,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Graph Mode",
+                  "Remark": "Display graph of last ping responses instead of bar representing last one response.\r\nIn graph mode animation begins only after ping response (another words a bit later then in normal mode).",
+                  "Default": false
+                },
+                "Default Host": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "google.com",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Default Host",
+                  "Remark": "Ping this host when no known apps in foreground.",
+                  "Default": "google.com"
+                },
+                "Per App Hosts": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "\"LolClient\" 185.40.64.69 | \"Client\" 109.105.133.67",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Per App Hosts",
+                  "Remark": "Ping special host (i.e. game server) when certain app is in foreground. Separate apps with \"|\".",
+                  "Default": "\"LolClient\" 185.40.64.69"
+                },
+                "Max Ping": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 400,
+                  "Max": 3000,
+                  "Min": 50,
+                  "Title": "Max Ping",
+                  "Remark": "Such pings or higher will fill full bar.",
+                  "Default": 400
+                },
+                "Ping Signal Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Lime"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Ping Signal Color",
+                  "Remark": "Color of ping signal",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 255"
+                  }
+                },
+                "Ping Signal Width": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 17,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Ping Signal Width",
+                  "Remark": "Width of ping signal",
+                  "Default": 17
+                },
+                "Ping Shadow Width": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 17,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Ping Shadow Width",
+                  "Remark": "Width of shadow preceding ping signal",
+                  "Default": 17
+                },
+                "Fail Animation Duration": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 2000,
+                  "Max": 5000,
+                  "Min": 200,
+                  "Title": "Fail Animation Duration",
+                  "Remark": "Duration of failed ping animation in (ms)",
+                  "Default": 2000
+                },
+                "Success Animation Duration": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 500,
+                  "Max": 5000,
+                  "Min": 200,
+                  "Title": "Success Animation Duration",
+                  "Remark": "Duration of succeeded ping animation in (ms)",
+                  "Default": 500
+                },
+                "Delay Between Requests": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1500,
+                  "Max": 10000,
+                  "Min": 200,
+                  "Title": "Delay Between Requests",
+                  "Remark": "Minimum delay to make a new request from start of the last request.",
+                  "Default": 1000
+                },
+                "Delay After Animation": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 500,
+                  "Max": 10000,
+                  "Min": 0,
+                  "Title": "Delay After Animation",
+                  "Remark": "Minimum delay to make a new request from last animation end. (ms)",
+                  "Default": 500
+                },
+                "Bar Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#FF00FF00 | #FFFFA500 | #FFFF0000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Bar Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Fail Animation Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#00FF0000 | #FFFF0000 | #FF000000 | #FFFF0000 | #FF000000",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Fail Animation Gradient",
+                  "Remark": "Gradient that is used for animation failed ping. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#00FF0000 | #FFFF0000 | #FF000000 | #FFFF0000 | #FF000000"
+                },
+                "Number of Pings in graph mode": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 10,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Number of Pings in graph mode",
+                  "Remark": "Amount of last pings that will be used to display graph.",
+                  "Default": 10
+                }
+              }
+            },
+            "_PrimaryColor": "240, 113, 10",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Num Circle Dim",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        55,
+                        56,
+                        57,
+                        75,
+                        92,
+                        91,
+                        90,
+                        73
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | _Total",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#FF00CDFF @ 0 | #AA00CDFF @ 0.5 | #00000000 @ 0.95 | #00000000 @ 1",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": false,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "1, 22, 80",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Num Circle",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        90,
+                        91,
+                        92,
+                        75,
+                        57,
+                        56,
+                        55,
+                        73
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 3,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | _Total",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#FF00007F @ 0 | #FF0000FF @ 0.0834 | #FF000000 @ 0.2500 | #FF00FF00 @ 0.4168 | #FF000000 @ 0.5835 | #FFFF0000 @ 0.7502 | #FF000000 @ 0.9169 | #FF00007F @ 1",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": false,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 50,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "196, 5, 148",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Interactive Enter Wave",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.InteractiveLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.InteractiveLayerHandlerProperties, Aurora",
+            "_RandomPrimaryColor": false,
+            "_RandomSecondaryColor": false,
+            "_EffectSpeed": 17.5,
+            "_InteractiveEffect": 1,
+            "_EffectWidth": 5,
+            "_SecondaryColor": "Blue",
+            "_PrimaryColor": "Lime",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  113,
+                  114,
+                  115,
+                  116,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  108,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27,
+                  28,
+                  29,
+                  30,
+                  31,
+                  32,
+                  33,
+                  34,
+                  35,
+                  36,
+                  37,
+                  109,
+                  38,
+                  39,
+                  40,
+                  41,
+                  42,
+                  43,
+                  44,
+                  45,
+                  46,
+                  47,
+                  48,
+                  49,
+                  50,
+                  51,
+                  52,
+                  53,
+                  54,
+                  55,
+                  56,
+                  57,
+                  58,
+                  110,
+                  59,
+                  60,
+                  61,
+                  62,
+                  63,
+                  64,
+                  65,
+                  66,
+                  67,
+                  68,
+                  69,
+                  70,
+                  73,
+                  74,
+                  75,
+                  111,
+                  76,
+                  78,
+                  79,
+                  80,
+                  81,
+                  82,
+                  83,
+                  84,
+                  85,
+                  86,
+                  87,
+                  88,
+                  89,
+                  90,
+                  91,
+                  92,
+                  112,
+                  94,
+                  95,
+                  96,
+                  97,
+                  98,
+                  99,
+                  100,
+                  101,
+                  102,
+                  103,
+                  104,
+                  105,
+                  106
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Interactive Layer",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.InteractiveLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.InteractiveLayerHandlerProperties, Aurora",
+            "_RandomPrimaryColor": false,
+            "_RandomSecondaryColor": false,
+            "_EffectSpeed": 20.0,
+            "_InteractiveEffect": 2,
+            "_EffectWidth": 2,
+            "_SecondaryColor": "Magenta",
+            "_PrimaryColor": "Magenta",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Overload dim",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ScriptLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ScriptLayerHandlerProperties, Aurora",
+            "_Script": "Voron Scripts - PerfEffect - v1.0-beta.6",
+            "_ScriptProperties": {
+              "$type": "Aurora.Settings.VariableRegistry, Aurora",
+              "Variables": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.VariableRegistryItem, Aurora]], mscorlib",
+                "Keys or Freestyle": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        69,
+                        70,
+                        48,
+                        47,
+                        38,
+                        26,
+                        23,
+                        24,
+                        43,
+                        42,
+                        64,
+                        65,
+                        66,
+                        84,
+                        85,
+                        98,
+                        99,
+                        97,
+                        81,
+                        80,
+                        62,
+                        61,
+                        76,
+                        1,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        39,
+                        40,
+                        41,
+                        59,
+                        60,
+                        78,
+                        79,
+                        94,
+                        95,
+                        96,
+                        63,
+                        44,
+                        45,
+                        46,
+                        25,
+                        67,
+                        68,
+                        82,
+                        83,
+                        86,
+                        87,
+                        100,
+                        101,
+                        88,
+                        72,
+                        51,
+                        50,
+                        29,
+                        30,
+                        28,
+                        27,
+                        49,
+                        31,
+                        32,
+                        33,
+                        52,
+                        53,
+                        54,
+                        89,
+                        103,
+                        102,
+                        104,
+                        34,
+                        55,
+                        73,
+                        90,
+                        91,
+                        74,
+                        56,
+                        35,
+                        36,
+                        57,
+                        75,
+                        93,
+                        58,
+                        37,
+                        92,
+                        106,
+                        105,
+                        108,
+                        109,
+                        110,
+                        111,
+                        112,
+                        14,
+                        15,
+                        16
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Keys or Freestyle",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Settings.KeySequence, Aurora",
+                    "keys": {
+                      "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                      "$values": [
+                        113,
+                        114,
+                        115,
+                        116
+                      ]
+                    },
+                    "type": 0,
+                    "freeform": {
+                      "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                      "Type": 1,
+                      "X": 0.0,
+                      "Y": 0.0,
+                      "Width": 30.0,
+                      "Height": 30.0,
+                      "Angle": 0.0
+                    }
+                  }
+                },
+                "Effect type": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 3,
+                  "Min": 0,
+                  "Title": "Effect type",
+                  "Remark": "0 - AllAtOnce\r\n1 - Progressive\r\n2 - ProgressiveGradual\r\n3 - CycledGradientShift",
+                  "Default": 2
+                },
+                "Value source": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "Processor | % Processor Time | _Total",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value source",
+                  "Remark": "Enter any valid Aurora Internal or Windows performance counter for your system in format \"Category | Name | Instance\".\r\nList of all available Windows counters can be found in Performance Monitor.\r\nAll Aurora Internal counters are listed below:\r\nAurora Internal | Default Network | % Network Total Usage\r\nAurora Internal | Default Network | Bytes Received/sec\r\nAurora Internal | Default Network | Bytes Sent/sec\r\nAurora Internal | Default Network | Bytes Total/sec\r\nAurora Internal | Default Network | Current Bandwidth\r\nAurora Internal | GPU | % FanUsage\r\nAurora Internal | GPU | % Load\r\nAurora Internal | GPU | Core Clock\r\nAurora Internal | GPU | FanRpm\r\nAurora Internal | GPU | Memory Clock\r\nAurora Internal | GPU | Temperature\r\nAurora Internal | Memory | % PhysicalMemoryUsed\r\nAurora Internal | Memory | % VirtualMemoryUsed\r\nAurora Internal | Memory | AvailablePhysicalMemoryInMiB\r\nAurora Internal | Memory | AvailableVirtualMemoryInMiB\r\nAurora Internal | Memory | TotalPhysicalMemoryInMiB\r\nAurora Internal | Memory | TotalVirtualMemoryInMiB\r\nAurora Internal | NvidiaGpu #0 | % FanUsage\r\nAurora Internal | NvidiaGpu #0 | % Load Core\r\nAurora Internal | NvidiaGpu #0 | % Load Memory Controller\r\nAurora Internal | NvidiaGpu #0 | % Load Video Engine\r\nAurora Internal | NvidiaGpu #0 | % Memory Usage\r\nAurora Internal | NvidiaGpu #0 | Clock Core\r\nAurora Internal | NvidiaGpu #0 | Clock Memory\r\nAurora Internal | NvidiaGpu #0 | Clock Shader\r\nAurora Internal | NvidiaGpu #0 | FanRpm\r\nAurora Internal | NvidiaGpu #0 | Memory Free\r\nAurora Internal | NvidiaGpu #0 | Memory Total\r\nAurora Internal | NvidiaGpu #0 | Memory Used\r\nAurora Internal | NvidiaGpu #0 | Temperature Board\r\nAurora Internal | NvidiaGpu #0 | Temperature GPU\r\nAurora Internal | NvidiaGpu #0 | Temperature Memory\r\nAurora Internal | NvidiaGpu #0 | Temperature Power Supply\r\nAurora Internal | System Disk | % Usage",
+                  "Default": "Processor | % Processor Time | _Total"
+                },
+                "Value expression": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "x",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Value expression",
+                  "Remark": "Math expression that is used to normalize raw value. \"x\" is the raw value. Normalized value should be in 0-100 range.",
+                  "Default": "x"
+                },
+                "Gradient": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": "#00000000 @ 0  | #00000000 @ 0.95  | #FF000000 @ 1",
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Gradient",
+                  "Remark": "Gradient that is used for effect. Separate color points with \"|\".\r\nOptionally set point position with \"@\" symbol.",
+                  "Default": "#FF00FF00 | #FFFFA500 | #FFFF0000"
+                },
+                "Enable Overload Blinking": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": false,
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Enable Overload Blinking",
+                  "Remark": "Last gradient color will blink when value reaches overload threshold level",
+                  "Default": true
+                },
+                "Overload Start Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 95,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Start Threshold",
+                  "Remark": "Blinking start be visible when value reaches this level",
+                  "Default": 95
+                },
+                "Overload Full Threshold": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 100,
+                  "Min": 0,
+                  "Title": "Overload Full Threshold",
+                  "Remark": "Blinking will be fully visible when value reaches this level",
+                  "Default": 100
+                },
+                "Overload Blinking Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 1000,
+                  "Max": 10000,
+                  "Min": 10,
+                  "Title": "Overload Blinking Speed",
+                  "Remark": "Speed of CoreOverload blinking in (ms)",
+                  "Default": 1000
+                },
+                "Overload Blinking Color": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "Black"
+                  },
+                  "Max": null,
+                  "Min": null,
+                  "Title": "Overload Blinking Color",
+                  "Remark": "",
+                  "Default": {
+                    "$type": "Aurora.Utils.RealColor, Aurora",
+                    "Color": "0, 0, 0"
+                  }
+                },
+                "Cycled Gradient Shift Base Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 0,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Base Speed",
+                  "Remark": "Cycled gradient shifting speed at 0%",
+                  "Default": 0
+                },
+                "Cycled Gradient Shift Full Speed": {
+                  "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
+                  "Value": 100,
+                  "Max": 1000,
+                  "Min": -1000,
+                  "Title": "Cycled Gradient Shift Full Speed",
+                  "Remark": "Cycled gradient shifting speed at 100%",
+                  "Default": 100
+                }
+              }
+            },
+            "_PrimaryColor": "225, 247, 210",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Ctrl Shortcuts",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
+            "_DimBackground": true,
+            "_DimColor": "169, 0, 0, 0",
+            "_ShortcutKeys": {
+              "$type": "Aurora.Settings.Keybind[], Aurora",
+              "$values": [
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      88
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      67
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      86
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      90
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      115
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      65
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      68
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      82
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      89
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      39
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      37
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      40
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      38
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      164,
+                      9
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      160,
+                      38
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      160,
+                      40
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      160,
+                      37
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      160,
+                      39
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      27
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      160,
+                      27
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      27
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      162,
+                      70
+                    ]
+                  }
+                }
+              ]
+            },
+            "_PresentationType": 0,
+            "_PrimaryColor": "Red",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": false,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Win Shortcuts",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
+            "_DimBackground": true,
+            "_DimColor": "169, 0, 0, 0",
+            "_ShortcutKeys": {
+              "$type": "Aurora.Settings.Keybind[], Aurora",
+              "$values": [
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      76
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      68
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      66
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      65
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      164,
+                      68
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      69
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      71
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      73
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      77
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      80
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      82
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      83
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      38
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      40
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      37
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      39
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      36
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      91,
+                      68
+                    ]
+                  }
+                }
+              ]
+            },
+            "_PresentationType": 0,
+            "_PrimaryColor": "Blue",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": false,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Alt Shortcuts",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
+            "_DimBackground": true,
+            "_DimColor": "169, 0, 0, 0",
+            "_ShortcutKeys": {
+              "$type": "Aurora.Settings.Keybind[], Aurora",
+              "$values": [
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      9
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      115
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      32
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      37
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      39
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      33
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      34
+                    ]
+                  }
+                },
+                {
+                  "$type": "Aurora.Settings.Keybind, Aurora",
+                  "_AssignedKeys": {
+                    "$type": "System.Collections.Generic.Queue`1[[System.Windows.Forms.Keys, System.Windows.Forms]], System",
+                    "$values": [
+                      164,
+                      9
+                    ]
+                  }
+                }
+              ]
+            },
+            "_PresentationType": 0,
+            "_PrimaryColor": "Yellow",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": []
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": false,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "CPU Usage",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.PercentLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.PercentLayerHandlerProperties, Aurora",
+            "_PercentType": 2,
+            "_BlinkThreshold": 0.0,
+            "_BlinkDirection": false,
+            "_VariablePath": "LocalPCInfo/CPUUsage",
+            "_MaxVariablePath": "100",
+            "_SecondaryColor": "0, 65, 80",
+            "_PrimaryColor": "0, 205, 255",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": false,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "RAM Usage",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.PercentLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.PercentLayerHandlerProperties, Aurora",
+            "_PercentType": 2,
+            "_BlinkThreshold": 0.0,
+            "_BlinkDirection": false,
+            "_VariablePath": "LocalPCInfo/MemoryUsed",
+            "_MaxVariablePath": "LocalPCInfo/MemoryTotal",
+            "_SecondaryColor": "90, 30, 0",
+            "_PrimaryColor": "255, 80, 0",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27,
+                  28,
+                  29
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": false,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Green Keys",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "Lime",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  76,
+                  96,
+                  101,
+                  98,
+                  88,
+                  31
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Pink Keys",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "Magenta",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  14,
+                  15,
+                  16,
+                  34
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Blue Keys",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "Blue",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  38,
+                  95,
+                  99,
+                  72,
+                  89,
+                  103,
+                  102,
+                  104,
+                  32,
+                  33,
+                  54,
+                  53,
+                  35,
+                  36,
+                  37,
+                  58,
+                  106,
+                  1,
+                  59,
+                  129,
+                  128
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Cyan Keys",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "0, 205, 255",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  108,
+                  109,
+                  110,
+                  111,
+                  112,
+                  113,
+                  114,
+                  115,
+                  116,
+                  17,
+                  28,
+                  29,
+                  39,
+                  40,
+                  41,
+                  60,
+                  61,
+                  62,
+                  78,
+                  79,
+                  80,
+                  43,
+                  44,
+                  64,
+                  65,
+                  82,
+                  83,
+                  46,
+                  47,
+                  48,
+                  49,
+                  50,
+                  51,
+                  67,
+                  68,
+                  69,
+                  70,
+                  85,
+                  86,
+                  87,
+                  55,
+                  56,
+                  57,
+                  73,
+                  74,
+                  75,
+                  90,
+                  91,
+                  92,
+                  105
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Orange Numbers",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "255, 80, 0",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      },
+      {
+        "$type": "Aurora.Settings.Layers.Layer, Aurora",
+        "Name": "Red Keys",
+        "Handler": {
+          "$type": "Aurora.Settings.Layers.SolidColorLayerHandler, Aurora",
+          "Properties": {
+            "$type": "Aurora.Settings.Layers.LayerHandlerProperties, Aurora",
+            "_PrimaryColor": "Red",
+            "_Sequence": {
+              "$type": "Aurora.Settings.KeySequence, Aurora",
+              "keys": {
+                "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+                "$values": [
+                  42,
+                  63,
+                  81,
+                  97,
+                  45,
+                  66,
+                  84,
+                  100,
+                  30,
+                  52,
+                  93,
+                  94
+                ]
+              },
+              "type": 0,
+              "freeform": {
+                "$type": "Aurora.Settings.FreeFormObject, Aurora",
+                "Type": 1,
+                "X": 0.0,
+                "Y": 0.0,
+                "Width": 30.0,
+                "Height": 30.0,
+                "Angle": 0.0
+              }
+            }
+          },
+          "EnableSmoothing": false,
+          "EnableExclusionMask": false,
+          "ExclusionMask": {
+            "$type": "Aurora.Settings.KeySequence, Aurora",
+            "keys": {
+              "$type": "System.Collections.Generic.List`1[[Aurora.Devices.DeviceKeys, Aurora]], mscorlib",
+              "$values": []
+            },
+            "type": 0,
+            "freeform": {
+              "$type": "Aurora.Settings.FreeFormObject, Aurora",
+              "Type": 1,
+              "X": 0.0,
+              "Y": 0.0,
+              "Width": 30.0,
+              "Height": 30.0,
+              "Angle": 0.0
+            }
+          },
+          "Opacity": 1.0
+        },
+        "Enabled": true,
+        "Logics": {
+          "$type": "System.Collections.ObjectModel.ObservableCollection`1[[Aurora.Settings.Layers.LogicItem, Aurora]], System",
+          "$values": []
+        },
+        "LogicPass": true
+      }
+    ]
+  }
+}

@@ -55,29 +55,34 @@ namespace Aurora.Scripts.VoronScripts
 					DeviceKeys.F7,  DeviceKeys.F8,  DeviceKeys.F9,  DeviceKeys.F10, DeviceKeys.F11, DeviceKeys.F12
 				}));
 
-			Properties.RegProp("Effect type", (long)EffectTypes.PingPulse,
-				String.Join(Environment.NewLine,
-				Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Select(x => string.Format("{0} - {1}", (int)x, x))),
-				(long)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Min(),
-				(long)Enum.GetValues(typeof(EffectTypes)).Cast<EffectTypes>().Max());
+			Properties.RegProp("Graph Mode", false, String.Join(Environment.NewLine, "Display graph of last ping responses instead of bar representing last one response."
+				, "In graph mode animation begins only after ping response (another words a bit later then in normal mode)."));
+
+			//Properties.RegProp("Effect type", (long)EffectTypes.PingPulse,
+			//	String.Join(Environment.NewLine,
+			//	Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Select(x => string.Format("{0} - {1}", (int)x, x))),
+			//	(long)Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Min(),
+			//	(long)Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Max());
 
 			Properties.RegProp("Default Host", "google.com", "Ping this host when no known apps in foreground.");
-			Properties.RegProp("Per App Hosts", "185.40.64.69 \"LolClient.exe\"",
+			Properties.RegProp("Per App Hosts", "\"LolClient\" 185.40.64.69",
 				"Ping special host (i.e. game server) when certain app is in foreground. Separate apps with \"|\".");
 
-			Properties.RegProp("Max Ping", 400L, "Such pings or higher will fill full bar.", 50L, 5000L);
-			Properties.RegProp("AimationReserveDelay", 200L, String.Join(Environment.NewLine,
-				"Reserve delay between actual ping response and animation in (ms).",
-				"The lower the value the more recent information you see, the higher the value the less chance of animation glitches."), 0L, 1000L);
+			Properties.RegProp("Max Ping", 400L, "Such pings or higher will fill full bar.", 50L, 3000L);
+			//Properties.RegProp("Animation Reserve Delay", 100L, String.Join(Environment.NewLine,
+			//	"Reserve delay between actual ping response and animation in (ms).",
+			//	"The lower the value the more recent information you see, the higher the value the less chance of animation glitches."), 0L, 1000L);
 
+			Properties.RegProp("Ping Signal Color", new RealColor(Color.Blue), "Color of ping signal");
 			Properties.RegProp("Ping Signal Width", 17L, "Width of ping signal", 0L, 100L);
 			Properties.RegProp("Ping Shadow Width", 17L, "Width of shadow preceding ping signal", 0L, 100L);
 
-			Properties.RegProp("Fail Animation Duration", 1000L, "Duration of failed ping animation in (ms)", 200L, 5000L);
+			Properties.RegProp("Fail Animation Duration", 2000L, "Duration of failed ping animation in (ms)", 200L, 5000L);
 			Properties.RegProp("Success Animation Duration", 500L, "Duration of succeeded ping animation in (ms)", 200L, 5000L);
-			Properties.RegProp("Time Between Requests", 1500L, "Width of shadow preceding ping signal in (ms)", 200L, 10000L);
+			Properties.RegProp("Delay Between Requests", 1000L, "Minimum delay to make a new request from start of the last request.", 200L, 10000L);
+			Properties.RegProp("Delay After Animation", 500L, "Minimum delay to make a new request from last animation end. (ms)", 0L, 10000L);
 
-			Properties.RegProp("Gradient", "#FF00FF00 | #FFFFA500 | #FFFF0000",
+			Properties.RegProp("Bar Gradient", "#FF00FF00 | #FFFFA500 | #FFFF0000",
 				String.Join(Environment.NewLine,
 				"Gradient that is used for effect. Separate color points with \"|\".",
 				"Optionally set point position with \"@\" symbol."));
@@ -86,12 +91,16 @@ namespace Aurora.Scripts.VoronScripts
 				String.Join(Environment.NewLine,
 					"Gradient that is used for animation failed ping. Separate color points with \"|\".",
 					"Optionally set point position with \"@\" symbol."));
+
+			Properties.RegProp("Number of Pings in graph mode", 10L, "Amount of last pings that will be used to display graph.", 1, 50);
+
+			//Properties.RegProp("BrightMode", false);
 		}
 
-		private static readonly ConcurrentDictionary<Tuple<KeySequence, string, string>, Pinger> pingAnimations
-			= new ConcurrentDictionary<Tuple<KeySequence, string, string>, Pinger>();
+		private static readonly ConcurrentDictionary<Tuple<KeySequence, string, string>, KeyValuePair<AnimationData, Pinger>> PingAnimations
+			= new ConcurrentDictionary<Tuple<KeySequence, string, string>, KeyValuePair<AnimationData, Pinger>>();
 
-		private static readonly ConcurrentDictionary<string, ColorSpectrum> gradients
+		private static readonly ConcurrentDictionary<string, ColorSpectrum> Gradients
 			= new ConcurrentDictionary<string, ColorSpectrum>();
 
 		private KeySequence Keys { get; set; }
@@ -101,44 +110,69 @@ namespace Aurora.Scripts.VoronScripts
 		private string PerAppHosts { get; set; }
 
 		private long MaxPing { get; set; }
-		private long AimationReserveDelay { get; set; }
+		private long AnimationReserveDelay { get; set; }
 
 		private float PingSignalWidth { get; set; }
 		private float PingShadowWidth { get; set; }
 
 		private long FailAnimationDuration { get; set; }
 		private long SuccessAnimationDuration { get; set; }
-		private long TimeBetweenRequests { get; set; }
-		private ColorSpectrum Gradient { get; set; }
+		private long DelayBetweenRequests { get; set; }
+		private long DelayAfterAnimation { get; set; }
+		private ColorSpectrum BarGradient { get; set; }
 		private ColorSpectrum FailAnimationGradient { get; set; }
 
+		private ColorSpectrum ShadowGradient { get; set; }
+		private ColorSpectrum PingGradient { get; set; }
+		private Color PingSignalColor { get; set; }
+
+		private AnimationData Data { get; set; }
 		private Pinger Pinger { get; set; }
+
+		private bool BrightMode { get; set; }
+		private long PingsInGraphMode { get; set; }
+
+		private long CurrentTime { get; set; }
 
 		private void ReadProperties(VariableRegistry properties)
 		{
 			Keys = properties.GetVariable<KeySequence>("Keys or Freestyle");
-			EffectType = (EffectTypes)properties.GetVariable<long>("Effect type");
+			EffectType = properties.GetVariable<bool>("Graph Mode") ? EffectTypes.PingGraph : EffectTypes.PingPulse;
+			//(EffectTypes)properties.GetVariable<long>("Effect type");
 
 			PingSignalWidth = properties.GetVariable<long>("Ping Signal Width") / 100f;
 			PingShadowWidth = properties.GetVariable<long>("Ping Shadow Width") / 100f;
 
 			FailAnimationDuration = properties.GetVariable<long>("Fail Animation Duration");
 			SuccessAnimationDuration = properties.GetVariable<long>("Success Animation Duration");
-			TimeBetweenRequests = properties.GetVariable<long>("Time Between Requests");
+			DelayBetweenRequests = properties.GetVariable<long>("Delay Between Requests");
+			DelayAfterAnimation = properties.GetVariable<long>("Delay After Animation");
 
-			Gradient = gradients.GetOrAdd(properties.GetVariable<string>("Gradient"), ScriptHelper.StringToSpectrum);
-			FailAnimationGradient = gradients.GetOrAdd(properties.GetVariable<string>("Fail Animation Gradient"), ScriptHelper.StringToSpectrum);
+			BarGradient = Gradients.GetOrAdd(properties.GetVariable<string>("Bar Gradient"), ScriptHelper.StringToSpectrum);
+			FailAnimationGradient = Gradients.GetOrAdd(properties.GetVariable<string>("Fail Animation Gradient"), ScriptHelper.StringToSpectrum);
 
 			DefaultHost = properties.GetVariable<string>("Default Host");
 			PerAppHosts = properties.GetVariable<string>("Per App Hosts");
 
 			MaxPing = properties.GetVariable<long>("Max Ping");
-			AimationReserveDelay = properties.GetVariable<long>("Aimation Reserve Delay");
+			AnimationReserveDelay = 50;// properties.GetVariable<long>("Animation Reserve Delay");
 
-			Pinger = pingAnimations.GetOrAdd(new Tuple<KeySequence, string, string>(Keys, DefaultHost, PerAppHosts),
-				key => new Pinger(DefaultHost, PerAppHosts.Split('|')
+			var data = PingAnimations.GetOrAdd(new Tuple<KeySequence, string, string>(Keys, DefaultHost, PerAppHosts),
+				key => new KeyValuePair<AnimationData, Pinger>(new AnimationData(), new Pinger(DefaultHost, PerAppHosts.Split('|')
 					.Select(x => x.Trim().Split(' ').Select(x2 => x2.Trim().ToLower()))
-					.ToDictionary(s => s.First(), s => s.Last())));
+					.ToDictionary(s => s.First(), s => s.Last()))));
+
+			Pinger = data.Value;
+			Data = data.Key;
+
+			ShadowGradient = new ColorSpectrum(Color.Black, Color.FromArgb(0, Color.Black));
+			PingSignalColor = properties.GetVariable<RealColor>("Ping Signal Color").GetDrawingColor();
+			PingGradient = new ColorSpectrum(Color.FromArgb(0, PingSignalColor), PingSignalColor);
+
+			BrightMode = false;// properties.GetVariable<bool>("BrightMode");
+			PingsInGraphMode = properties.GetVariable<long>("Number of Pings in graph mode");
+
+			CurrentTime = Time.GetMillisecondsSinceEpoch();
 		}
 
 		public object UpdateLights(VariableRegistry properties, IGameState state = null)
@@ -146,11 +180,11 @@ namespace Aurora.Scripts.VoronScripts
 			ReadProperties(properties);
 
 			var layer = new EffectLayer(ID);
-			Render(layer, Time.GetMillisecondsSinceEpoch());
+			Render(layer);
 			return layer;
 		}
 
-		public void Render(EffectLayer effectLayer, long currentTime)
+		public void Render(EffectLayer effectLayer)
 		{
 			// layers							|					|
 			// 0.OldReplyPingBar				|==========>		|
@@ -158,178 +192,232 @@ namespace Aurora.Scripts.VoronScripts
 			// 2.NewBar							|====>				|
 			// 3.SignalAnimation				|  -=>				|
 
-			float pingPos = -PingShadowWidth;
-			float pingOldBarWidth = 0;
-			float pingNewBarWidth = 0;
+			ProcessAnimationPhase();
 
-			if (Pinger.OldReply != null && Pinger.OldReply.Status == IPStatus.Success)
-			{
-				pingOldBarWidth = Pinger.OldReply.RoundtripTime / (float)MaxPing;
-				//(float)(Region.Width * (Math.Ceiling(OldReply.RoundtripTime * 12d / MaxPing) - 0.2) / 12);
-			}
+			var pingPos = -PingShadowWidth;
+			var newBarEnd = 0f;
+			var oldBarEnd = 0f;
+			var graphShift = Data.Phase == AnimationPhase.CompletingFailAnimation
+							 && CurrentTime - Data.FailAnimationStartTime > FailAnimationDuration / 2
+				? 0
+				: -1;
 
-			if (Pinger.Phase == Pinger.PingPhase.WaitingForActivation)
+			if (CurrentTime >= Data.SuccessAnimationStartTime && CurrentTime <= Data.FinalAnimationEndTime)
 			{
-				if (currentTime - Pinger.PingStartedTime > TimeBetweenRequests)
-					Pinger.AllowNextPing();
-			}
-			else if (Pinger.Phase != Pinger.PingPhase.Activated)
-			{
-				pingPos = Math.Max(0, currentTime - Pinger.PingStartedTime - AimationReserveDelay)
-						  * (1f + (PingSignalWidth + PingShadowWidth)) / (MaxPing + AimationReserveDelay)
-						  - PingShadowWidth;
-				pingNewBarWidth = pingPos;
-			}
+				var phase = Math.Min(1, ((CurrentTime - Data.SuccessAnimationStartTime) / (float)SuccessAnimationDuration));
 
-			if (Pinger.Phase == Pinger.PingPhase.PingEnded)
-			{
+				if (EffectType != EffectTypes.PingGraph || Data.Phase != AnimationPhase.CompletingFailAnimation)
+					pingPos += phase * (1f + PingSignalWidth + PingShadowWidth);
+
+				newBarEnd = pingPos;
 				if (Pinger.Reply != null && Pinger.Reply.Status == IPStatus.Success)
 				{
-					if (pingPos >= Pinger.Reply.RoundtripTime / (float)MaxPing)
+					newBarEnd = Math.Min(1f, Pinger.Reply.RoundtripTime / (float)MaxPing);
+					newBarEnd = Math.Max(0, Math.Min(newBarEnd, pingPos));
+				}
+			}
+
+			if (EffectType == EffectTypes.PingGraph)
+			{
+				oldBarEnd = 1f;
+				newBarEnd = pingPos;
+			}
+			else if (Data.OldReply != null && Data.OldReply.Status == IPStatus.Success)
+			{
+				oldBarEnd = Math.Min(1f, Data.OldReply.RoundtripTime / (float)MaxPing);
+			}
+
+			var oldBarStart = Math.Max(0, pingPos);
+
+			if (Keys.type == KeySequenceType.FreeForm)
+			{
+				var gradLayers = new GradientCascade();
+
+				if (EffectType == EffectTypes.PingGraph)
+				{
+					gradLayers.Add(GraphGradient(Data.Replies.ToArray(), (int)PingsInGraphMode, graphShift),
+						oldBarStart, oldBarEnd, oldBarStart, oldBarEnd);
+
+					if (Data.Phase != AnimationPhase.CompletingFailAnimation)
+						gradLayers.Add(GraphGradient(Data.Replies.ToArray(), (int)PingsInGraphMode, 0),
+							0, newBarEnd, 0, newBarEnd);
+				}
+				else
+				{
+					if (oldBarEnd - oldBarStart > 0)
 					{
-						Pinger.FinalAnimationTime = currentTime;
-						Pinger.Phase = Pinger.PingPhase.SuccessCompleteAnimation;
+						gradLayers.Add(BarGradient, oldBarStart, oldBarEnd, oldBarStart, oldBarEnd);
+					}
+					if (newBarEnd > 0f)
+					{
+						gradLayers.Add(BarGradient, 0, newBarEnd, 0, newBarEnd);
 					}
 				}
-				else if (pingPos >= 1 + PingSignalWidth)
-				{
-					Pinger.FinalAnimationTime = currentTime;
-					Pinger.Phase = Pinger.PingPhase.TimeoutErrorAnimation;
-				}
-			}
 
-			if (Pinger.Phase == Pinger.PingPhase.SuccessCompleteAnimation
-				|| Pinger.Phase == Pinger.PingPhase.TimeoutErrorAnimation)
-			{
-				if (currentTime - Pinger.FinalAnimationTime >=
-					(Pinger.Phase == Pinger.PingPhase.SuccessCompleteAnimation ?
-						SuccessAnimationDuration : FailAnimationDuration))
+				if (CurrentTime >= Data.SuccessAnimationStartTime && CurrentTime <= Data.FinalAnimationEndTime)
 				{
-					Pinger.OldReply = Pinger.Reply;
-					Pinger.Reply = null;
-					Pinger.Phase = Pinger.PingPhase.WaitingForActivation;
-					Render(effectLayer, currentTime);
-					return;
+					//pingPos = 0.5f;
+
+					gradLayers.Add(PingGradient, 0, 1, pingPos - PingSignalWidth, pingPos);
+					gradLayers.Add(ShadowGradient, 0, 1, pingPos, pingPos + PingShadowWidth);
+				}
+				if (Data.Phase == AnimationPhase.CompletingFailAnimation
+					&& CurrentTime >= Data.FailAnimationStartTime && CurrentTime <= Data.FinalAnimationEndTime)
+				{
+					var phase = Math.Min(1, ((CurrentTime - Data.FailAnimationStartTime) / (float)FailAnimationDuration));
+					gradLayers.Add(new ColorSpectrum(FailAnimationGradient.GetColorAt(phase)), 0, 1, 0, 1);
 				}
 
-				if (Pinger.Phase == Pinger.PingPhase.SuccessCompleteAnimation)
-				{
-					float pingNewBarFullWidth = Pinger.Reply.RoundtripTime / (float)MaxPing;
-
-					pingPos =
-						(currentTime - Pinger.FinalAnimationTime) *
-						(1 - pingNewBarFullWidth + PingSignalWidth) / (SuccessAnimationDuration)
-						+ pingNewBarFullWidth;
-
-					pingNewBarWidth = Math.Min(pingPos, pingNewBarFullWidth);
-				}
-			}
-
-			if (Keys != null)
-			{
-				// Animating by keys. Prefferable. 
-
-				Func<float, float, float, float> getBlend2 = (l, pos, r) =>
-				{
-					var leftEdgePercent = (1 + pos) / Keys.keys.Count - l;
-					var rightEdgePercent = r - (pos / Keys.keys.Count);
-					leftEdgePercent /= 1f / Keys.keys.Count;
-					rightEdgePercent /= 1f / Keys.keys.Count;
-					leftEdgePercent = 1 - Math.Max(0, Math.Min(1, leftEdgePercent));
-					rightEdgePercent = 1 - Math.Max(0, Math.Min(1, rightEdgePercent));
-					return 1 - leftEdgePercent - rightEdgePercent;
-				};
-
-				for (int i = 0; i < Keys.keys.Count; i++)
-				{
-					var keyColor = new EffectColor(Color.Black);
-					float kL = i / (Keys.keys.Count - 1f);
-
-
-					keyColor.BlendColors(new EffectColor(Gradient.GetColorAt(kL)), getBlend2(pingPos, i, pingOldBarWidth));
-					keyColor.BlendColors(new EffectColor(Color.Black),
-						getBlend2(pingPos, i, pingPos + PingShadowWidth)
-						* (1 - ((i / (float)Keys.keys.Count - pingPos) / PingShadowWidth)));
-					keyColor.BlendColors(new EffectColor(Gradient.GetColorAt(kL)),
-						getBlend2(0, i, Math.Min(pingPos, pingNewBarWidth)));
-					keyColor.BlendColors(new EffectColor(Gradient.GetColorAt(Math.Min(1, pingNewBarWidth))),
-						getBlend2(pingPos - PingSignalWidth, i, pingPos)
-						* (((i + 1) / (float)Keys.keys.Count - (pingPos - PingSignalWidth)) / PingSignalWidth));
-
-					if (Pinger.Phase == Pinger.PingPhase.TimeoutErrorAnimation)
-						keyColor += new EffectColor(FailAnimationGradient.GetColorAt(
-							Math.Min(1, (currentTime - Pinger.FinalAnimationTime) / (float)FailAnimationDuration)));
-
-					effectLayer.Set(Keys.keys[i], (Color)keyColor);
-				}
-
+				gradLayers.Draw(Keys.freeform, effectLayer);
 			}
 			else
 			{
-				//// Animating by rectangle.
-				//pingPos *= Region.Width;
-				//pingOldBarWidth *= Region.Width;
-				//pingNewBarWidth *= Region.Width;
+				for (int i = 0; i < Keys.keys.Count; i++)
+				{
+					var keyColor = effectLayer.Get(Keys.keys[i]);
 
-				//var oldPingBarRect = RectangleF.FromLTRB(
-				//	Region.Left + pingPos, Region.Top,
-				//	Region.Left + pingOldBarWidth, Region.Bottom);
+					float kL = i / (Keys.keys.Count - 1f);
 
-				//oldPingBarRect.Intersect(Region);
+					if (EffectType == EffectTypes.PingGraph)
+					{
+						keyColor = ColorUtils.BlendColors(keyColor,
+							GraphGradient(Data.Replies.ToArray(), (int)PingsInGraphMode, graphShift).GetColorAt(kL),
+							GetKeyBlend(pingPos, i, oldBarEnd));
 
-				//var newPingBarRect = RectangleF.FromLTRB(
-				//	Region.Left, Region.Top,
-				//	Region.Left + Math.Min(pingNewBarWidth, pingPos), Region.Bottom);
+						if (Data.Phase != AnimationPhase.CompletingFailAnimation)
+							keyColor = ColorUtils.BlendColors(keyColor,
+								GraphGradient(Data.Replies.ToArray(), (int)PingsInGraphMode, 0).GetColorAt(kL), GetKeyBlend(0, i, newBarEnd));
+					}
+					else
+					{
+						keyColor = ColorUtils.BlendColors(keyColor, BarGradient.GetColorAt(kL), GetKeyBlend(pingPos, i, oldBarEnd));
+						keyColor = ColorUtils.BlendColors(keyColor, BarGradient.GetColorAt(kL), GetKeyBlend(0, i, newBarEnd));
+					}
 
-				//newPingBarRect.Intersect(Region);
+					if (PingShadowWidth > 0f)
+						keyColor = ColorUtils.BlendColors(keyColor, Color.Black,
+							GetKeyBlend(pingPos, i, pingPos + PingShadowWidth)
+							* (1 - ((i / (float)Keys.keys.Count - pingPos) / PingShadowWidth)));
 
-				//var pingSignalRect = RectangleF.FromLTRB(
-				//	Region.Left + pingPos - (PingSignalWidth * Region.Width), Region.Top,
-				//	Region.Left + pingPos, Region.Bottom);
+					if (PingSignalWidth > 0f)
+						keyColor = ColorUtils.BlendColors(keyColor, PingSignalColor,
+							GetKeyBlend(pingPos - PingSignalWidth, i, pingPos)
+							* (((i + 1) / (float)Keys.keys.Count - (pingPos - PingSignalWidth)) / PingSignalWidth));
 
-				//var pingShadowRect = RectangleF.FromLTRB(
-				//	Region.Left + pingPos, Region.Top,
-				//	Region.Left + pingPos + (PingShadowWidth * Region.Width), Region.Bottom);
+					if (Data.Phase == AnimationPhase.CompletingFailAnimation)
+						keyColor = ColorUtils.AddColors(keyColor, FailAnimationGradient.GetColorAt(
+							Math.Min(1, (CurrentTime - Data.FinalAnimationEndTime) / (float)FailAnimationDuration)));
 
-				//var shadowBrush = new LinearGradientBrush(pingShadowRect,
-				//	Color.Black, Color.FromArgb(0, Color.Black), LinearGradientMode.Horizontal);
-
-				//var signalBrush = new LinearGradientBrush(pingSignalRect,
-				//	Color.FromArgb(0, Gradient.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width))),
-				//	Gradient.GetColorAt(Math.Min(1, pingNewBarWidth / Region.Width)), LinearGradientMode.Horizontal);
-
-				//pingShadowRect.Intersect(Region);
-				//pingSignalRect.Intersect(Region);
-
-				//var pingBarBrush = Gradient.ToLinearGradient(Region.Width, Region.Height, Region.Left, Region.Top);
-
-				//shadowBrush.WrapMode = WrapMode.TileFlipX;
-				//signalBrush.WrapMode = WrapMode.TileFlipX;
-				//pingBarBrush.WrapMode = WrapMode.TileFlipX;
-
-				//using (var g = effectLayer.GetGraphics())
-				//{
-
-				//	if (oldPingBarRect.Width > 0)
-				//		g.FillRectangle(pingBarBrush, oldPingBarRect);
-
-				//	if (pingShadowRect.Width > 0)
-				//		g.FillRectangle(shadowBrush, pingShadowRect);
-
-				//	if (newPingBarRect.Width > 0)
-				//		g.FillRectangle(pingBarBrush, newPingBarRect);
-
-				//	if (pingSignalRect.Width > 0)
-				//		g.FillRectangle(signalBrush, pingSignalRect);
-
-				//	if (Pinger.Phase == Pinger.PingPhase.TimeoutErrorAnimation)
-				//		g.FillRectangle(new SolidBrush(FailAnimationGradient.GetColorAt(
-				//			Math.Min(1, (currentTime - Pinger.FinalAnimationTime) / (float)FailAnimationDuration))), Region);
-
-				//}
+					effectLayer.Set(Keys.keys[i], keyColor);
+				}
 			}
 		}
 
+		private void ProcessAnimationPhase()
+		{
+			switch (Data.Phase)
+			{
+				case AnimationPhase.WaitingForNextRequest:
+					if (CurrentTime > Data.NextPingStartTime && Pinger.SendRequest())
+					{
+						Data.Phase = EffectType == EffectTypes.PingPulse ?
+							AnimationPhase.WaitingForPingStart : AnimationPhase.WaitingForPingEnd;
+					}
+					break;
+				case AnimationPhase.WaitingForPingStart:
+					if (Pinger.State == PingerState.RequestSent
+						|| Pinger.State == PingerState.ResponseRecieved)
+					{
+						var minimalRequiredReserveTime = Math.Max(0,
+							(long)(MaxPing - (SuccessAnimationDuration * (1f + PingShadowWidth) /
+											   (1f + PingSignalWidth + PingShadowWidth))));
+						Data.SuccessAnimationStartTime = Pinger.PingStartedTime + AnimationReserveDelay + minimalRequiredReserveTime;
+						Data.FinalAnimationEndTime = Data.SuccessAnimationStartTime + SuccessAnimationDuration;
+						Data.Phase = AnimationPhase.WaitingForPingEnd;
+					}
+					break;
+				case AnimationPhase.WaitingForPingEnd:
+					if (Pinger.State == PingerState.ResponseRecieved)
+					{
+						if (EffectType == EffectTypes.PingGraph)
+						{
+							if (Pinger.Reply != null && Pinger.Reply.Status == IPStatus.Success)
+							{
+								if (Data.Replies.Count > 0)
+									Data.Replies.RemoveLast();
+								Data.Replies.AddLast((int?)Pinger.Reply.RoundtripTime);
+							}
+							Data.SuccessAnimationStartTime = CurrentTime;
+						}
+						if (CurrentTime < Data.SuccessAnimationStartTime)
+						{
+							Data.SuccessAnimationStartTime = CurrentTime;
+						}
+						Data.FinalAnimationEndTime = Data.SuccessAnimationStartTime + SuccessAnimationDuration;
+						Data.Phase = AnimationPhase.CompletingSuccessAnimation;
+						if (Pinger.Reply == null || Pinger.Reply.Status != IPStatus.Success)
+						{
+							Data.FailAnimationStartTime = Math.Max(CurrentTime, Data.SuccessAnimationStartTime);
+							Data.FinalAnimationEndTime = Data.FailAnimationStartTime + FailAnimationDuration;
+							Data.Phase = AnimationPhase.CompletingFailAnimation;
+						}
+						Data.NextPingStartTime = Math.Max(Data.FinalAnimationEndTime + DelayAfterAnimation,
+							Pinger.PingStartedTime + DelayBetweenRequests);
+					}
+					break;
+				case AnimationPhase.CompletingSuccessAnimation:
+				case AnimationPhase.CompletingFailAnimation:
+					if (CurrentTime > Data.FinalAnimationEndTime)
+					{
+						if (EffectType == EffectTypes.PingGraph)
+						{
+							Data.Replies.AddLast((int?)null);
+							while (Data.Replies.Count > PingsInGraphMode + 1)
+								Data.Replies.RemoveFirst();
+						}
+						Data.OldReply = Pinger.Reply;
+						Pinger.Reset();
+						Data.Phase = AnimationPhase.WaitingForNextRequest;
+					}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		public float GetKeyBlend(float leftEdge, float pos, float rightEdge)
+		{
+			var leftEdgePercent = (1 + pos) / Keys.keys.Count - leftEdge;
+			var rightEdgePercent = rightEdge - (pos / Keys.keys.Count);
+			leftEdgePercent /= 1f / Keys.keys.Count;
+			rightEdgePercent /= 1f / Keys.keys.Count;
+			leftEdgePercent = 1 - Math.Max(0, Math.Min(1, leftEdgePercent));
+			rightEdgePercent = 1 - Math.Max(0, Math.Min(1, rightEdgePercent));
+			return 1 - leftEdgePercent - rightEdgePercent;
+		}
+
+		public ColorSpectrum GraphGradient(int?[] replies, int count, int shift)
+		{
+			var blackTransparent = Color.FromArgb(0, Color.Black);
+			var gradient = new ColorSpectrum();
+			for (int i = 0; i < count; i++)
+			{
+				int? reply = null;
+				int ri = i - (count - replies.Length) + shift;
+
+				if (ri >= 0 && ri < replies.Length)
+				{
+					reply = replies[ri];
+				}
+
+				gradient.SetColorAt((float)i / (count - 1),
+					(reply.HasValue)
+						? BarGradient.GetColorAt(Math.Min(1, (float)reply.Value / MaxPing))
+						: blackTransparent);
+			}
+
+			return gradient;
+		}
 	}
 
 	internal static class ScriptHelper
@@ -356,7 +444,7 @@ namespace Aurora.Scripts.VoronScripts
 			foreach (var colorset in colors.Select((x, i) => new
 			{
 				Color = ColorTranslator.FromHtml(x[0]),
-				Position = x.Length > 1 ? float.Parse(x[1]) : (1f / colors.Length * i)
+				Position = x.Length > 1 ? float.Parse(x[1]) : (1f / (colors.Length - 1) * i)
 			}))
 			{
 				spectrum.SetColorAt(colorset.Position, colorset.Color);
@@ -372,59 +460,254 @@ namespace Aurora.Scripts.VoronScripts
 		}
 	}
 
-	internal struct PingSettings
+	internal static class ColorSpectrumExtensionMethods
 	{
+		public static Color GetRegionAverageColor(this ColorSpectrum spectrum, float start, float end)
+		{
+			var width = Math.Abs(end - start);
+			start = Math.Min(1, Math.Max(0, start));
+			end = Math.Min(1, Math.Max(0, end));
+			var colors = spectrum.GetSpectrumColors()
+				.Where(x => x.Key > start && x.Key < end)
+				.Concat(new[]
+					{new KeyValuePair<float, Color>(start, spectrum.GetColorAt(start)), new KeyValuePair<float, Color>(end, spectrum.GetColorAt(end))})
+				.OrderBy(x => x.Key).ToArray();
+			float red = 0;
+			float green = 0;
+			float blue = 0;
+			float alpha = 0;
+			for (var i = 1; i < colors.Length; i++)
+			{
+				var subcolor = spectrum.GetColorAt(((colors[i].Key - colors[i - 1].Key) / 2f) + colors[i - 1].Key);
+				var ratio = Math.Abs(colors[i].Key - colors[i - 1].Key) / width;
+				red += subcolor.R * ratio;
+				green += subcolor.G * ratio;
+				blue += subcolor.B * ratio;
+				alpha += subcolor.A * ratio;
+			}
+			return Color.FromArgb((int)alpha, (int)red, (int)green, (int)blue);
+		}
 
+		public static ColorSpectrum Overlay(this ColorSpectrum spectrum, ColorSpectrum overlayGradient, float start, float end)
+		{
+			var overlayed = new ColorSpectrum();
+			var sizeRatio = Math.Abs(end - start);
+			foreach (var color in spectrum.GetSpectrumColors())
+			{
+				var pos = (color.Key - start) * sizeRatio;
+				overlayed.SetColorAt(color.Key, ColorUtils.AddColors(color.Value, overlayGradient.GetColorAt(pos)));
+			}
+			foreach (var color in overlayGradient.GetSpectrumColors())
+			{
+				var pos = (color.Key / sizeRatio) + start;
+				if (pos >= 0f && pos <= 1f)
+					overlayed.SetColorAt(pos, ColorUtils.AddColors(spectrum.GetColorAt(pos), color.Value));
+			}
+			return overlayed;
+		}
+
+		public static ColorSpectrum Cut(this ColorSpectrum spectrum, float start, float end)
+		{
+			var cutted = new ColorSpectrum();
+			cutted.SetColorAt(0.0f, spectrum.GetColorAt(start));
+			cutted.SetColorAt(1.0f, spectrum.GetColorAt(end));
+			foreach (var color in spectrum.GetSpectrumColors()
+				.Where(x => x.Key > start && x.Key < end))
+			{
+				cutted.SetColorAt((color.Key - start) / Math.Abs(end - start), color.Value);
+			}
+			Debug.WriteLine(start.ToString() + " " + end.ToString() + "|" + string.Join(" ", cutted.GetSpectrumColors().Select(x => x.Key.ToString() + " " + x.Value.ToString())));
+			return cutted;
+		}
 	}
 
-	//internal sealed class PingAnimation : Pinger
-	//{
-	//	private RectangleF region;
+	internal class GradientCascade
+	{
+		private readonly List<Tuple<ColorSpectrum, PointF, PointF>> gradients
+			= new List<Tuple<ColorSpectrum, PointF, PointF>>();
 
-	//	public RectangleF Region
-	//	{
-	//		get
-	//		{
-	//			return new RectangleF(
-	//				(float)Math.Round((region.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width),
-	//				(float)Math.Round((region.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height),
-	//				(float)Math.Round(region.Width * Effects.editor_to_canvas_width),
-	//				(float)Math.Round(region.Height * Effects.editor_to_canvas_height));
-	//		}
-	//		set { region = value; }
-	//	}
+		public void Add(ColorSpectrum spectrum, float gradientStart, float gradientEnd, float targetStart, float targetEnd)
+		{
+			if (((targetStart >= 0 && targetStart <= 1)
+				|| (targetEnd >= 0 && targetEnd <= 1))
+				&& targetStart < targetEnd)
+			{
+				gradients.Add(new Tuple<ColorSpectrum, PointF, PointF>(spectrum,
+					new PointF(gradientStart, gradientEnd), new PointF(targetStart, targetEnd)));
+			}
+		}
 
-	//	public DeviceKeys[] Keys { get; set; }
+		public void Draw(List<DeviceKeys> keys, EffectLayer effectLayer)
+		{
+			var keyWidth = 1f / keys.Count;
+			for (var i = 0; i < keys.Count; i++)
+			{
+				var keyStart = i * keyWidth;
+				var keyEnd = (i + 1) * keyWidth;
+				var keyColor = effectLayer.Get(keys[i]);
+				foreach (var gradient in gradients)
+				{
+					var left = Math.Max(0, Math.Max(keyStart, gradient.Item3.X));
+					var right = Math.Min(1, Math.Min(keyEnd, gradient.Item3.Y));
+					var gradWidthRatio = gradient.Item3.Y - gradient.Item3.X;
+					var gr_left = (keyStart - gradient.Item3.X) / gradWidthRatio;
+					var gr_right = (keyEnd - gradient.Item3.X) / gradWidthRatio;
+					if (gr_left >= 0 && gr_left <= 1
+						|| gr_right >= 0 && gr_right <= 1)
+					{
+						if (right - left > 0)
+						{
+							var alfa = (right - left) / keyWidth;
+							var gr_cut_ratio = gradient.Item2.Y - gradient.Item2.X;
+							var gr_cut_left = (gr_left * gr_cut_ratio) + gradient.Item2.X;
+							var gr_cut_right = (gr_right * gr_cut_ratio) + gradient.Item2.X;
+							var gradColor = gradient.Item1.GetRegionAverageColor(gr_cut_left, gr_cut_right);
+							keyColor = ColorUtils.BlendColors(keyColor, gradColor, gradColor.A / 255f * alfa);
+						}
+					}
+				}
+				effectLayer.Set(keys[i], keyColor);
+			}
+		}
 
-	//	protected static PingReply OldReply;
-	//	protected long FinalAnimationTime;
+		public void DrawBright(List<DeviceKeys> keys, EffectLayer effectLayer)
+		{
+			Func<float, float, float, float> getBlend2 = (l, pos, r) =>
+			{
+				var leftEdgePercent = (1 + pos) / keys.Count - l;
+				var rightEdgePercent = r - (pos / keys.Count);
+				leftEdgePercent /= 1f / keys.Count;
+				rightEdgePercent /= 1f / keys.Count;
+				leftEdgePercent = 1 - Math.Max(0, Math.Min(1, leftEdgePercent));
+				rightEdgePercent = 1 - Math.Max(0, Math.Min(1, rightEdgePercent));
+				return 1 - leftEdgePercent - rightEdgePercent;
+			};
 
-	//	public PingAnimation()
-	//	{
-	//		Region = new Rectangle(60, -3, 495, 35); // Region 
+			var keyWidth = 1f / keys.Count;
+			for (var i = 0; i < keys.Count; i++)
+			{
+				var keyStart = i * keyWidth;
+				var keyEnd = (i + 1) * keyWidth;
+				var keyColor = effectLayer.Get(keys[i]);
+				foreach (var gradient in gradients)
+				{
+					var left = Math.Max(0, Math.Max(keyStart, gradient.Item3.X));
+					var right = Math.Min(1, Math.Min(keyEnd, gradient.Item3.Y));
+					var gradWidthRatio = gradient.Item3.Y - gradient.Item3.X;
+					var gr_left = (keyStart - gradient.Item3.X) / gradWidthRatio;
+					var gr_right = (keyEnd - gradient.Item3.X) / gradWidthRatio;
+					if (gr_left >= 0 && gr_left <= 1
+						|| gr_right >= 0 && gr_right <= 1)
+					{
+						if (right - left > 0)
+						{
+							var alfa = (right - left) / keyWidth;
+							var gr_cut_ratio = gradient.Item2.Y - gradient.Item2.X;
+							var gr_cut_left = (gr_left * gr_cut_ratio) + gradient.Item2.X;
+							var gr_cut_right = (gr_right * gr_cut_ratio) + gradient.Item2.X;
+							var middle = Math.Min(1, Math.Max(0, gr_cut_left + (gr_cut_right - gr_cut_left) / 2f));
+							var gradColor = gradient.Item1.GetColorAt(middle);
+							keyColor = ColorUtils.BlendColors(keyColor, gradColor, gradColor.A / 255f * getBlend2(gradient.Item3.X, i, gradient.Item3.Y));
+						}
+					}
+				}
+				effectLayer.Set(keys[i], keyColor);
+			}
+		}
 
-	//	}
+		public void Draw(FreeFormObject freeform, EffectLayer effectLayer)
+		{
+			using (Graphics g = effectLayer.GetGraphics())
+			{
+				float x_pos = (float)Math.Round((freeform.X + Effects.grid_baseline_x) * Effects.editor_to_canvas_width);
+				float y_pos = (float)Math.Round((freeform.Y + Effects.grid_baseline_y) * Effects.editor_to_canvas_height);
+				float width = (float)(freeform.Width * Effects.editor_to_canvas_width);
+				float height = (float)(freeform.Height * Effects.editor_to_canvas_height);
 
-	//}
+				if (width < 3) width = 3;
+				if (height < 3) height = 3;
+
+				var rotatePoint = new PointF(x_pos + (width / 2.0f), y_pos + (height / 2.0f));
+				var myMatrix = new Matrix();
+				myMatrix.RotateAt(freeform.Angle, rotatePoint, MatrixOrder.Append);
+				g.Transform = myMatrix;
+
+				foreach (var gradient in gradients)
+				{
+					var x_pos_gr = x_pos + width * gradient.Item3.X;
+					var width_gr = width * (gradient.Item3.Y - gradient.Item3.X);
+
+					var rect = new RectangleF(x_pos_gr, y_pos, width_gr, height);
+					rect.Intersect(new RectangleF(x_pos, y_pos, width, height));
+					if (!rect.IsEmpty)
+					{
+						LinearGradientBrush brush = gradient.Item1.ToLinearGradient(
+							width_gr / (gradient.Item2.Y - gradient.Item2.X), 0,
+							x_pos_gr - (width_gr * gradient.Item2.X / (gradient.Item2.Y - gradient.Item2.X)), 0);
+
+						brush.WrapMode = WrapMode.TileFlipX;
+						g.FillRectangle(brush, rect);
+					}
+				}
+			}
+		}
+	}
+
+	internal enum AnimationPhase
+	{
+		WaitingForNextRequest, WaitingForPingStart, WaitingForPingEnd, CompletingSuccessAnimation, CompletingFailAnimation
+	}
+	internal class AnimationData
+	{
+
+		public long SuccessAnimationStartTime;
+		public long FailAnimationStartTime;
+		public long NextPingStartTime;
+		public long FinalAnimationEndTime;
+		public AnimationPhase Phase;
+		public PingReply OldReply;
+		public readonly LinkedList<int?> Replies
+			= new LinkedList<int?>();
+	}
+	internal enum PingerState
+	{
+		Initial, RequestSent, ResponseRecieved,
+	}
 
 	internal class Pinger
 	{
-		public static PingReply OldReply;
-		public long FinalAnimationTime;
+		private long pingStartedTime;
+		private long pingEndedTime;
+		private PingReply reply;
+		private volatile PingerState state;
 
-		public long PingStartedTime;
-		protected long PingEndedTime;
-		public PingReply Reply;
-		public PingPhase Phase = PingPhase.WaitingForActivation;
 
 		private Dictionary<string, string> HostsPerApplication { get; set; }
 		private string DefaultHost { get; set; }
 
-		public enum PingPhase
+		public long PingStartedTime
 		{
-			WaitingForActivation, Activated, PingStarted, PingEnded, SuccessCompleteAnimation, TimeoutErrorAnimation
+			get { return Volatile.Read(ref pingStartedTime); }
+			private set { Volatile.Write(ref pingStartedTime, value); }
 		}
 
+		public long PingEndedTime
+		{
+			get { return Volatile.Read(ref pingEndedTime); }
+			private set { Volatile.Write(ref pingEndedTime, value); }
+		}
+
+		public PingReply Reply
+		{
+			get { return Volatile.Read(ref reply); }
+			private set { Volatile.Write(ref reply, value); }
+		}
+
+		public PingerState State
+		{
+			get { return state; }
+			private set { state = value; }
+		}
 		private readonly Task updater;
 
 		public Pinger(string defaultHost, Dictionary<string, string> hostsPerApplication)
@@ -441,8 +724,8 @@ namespace Aurora.Scripts.VoronScripts
 						while (true)
 						{
 							var pingReplyTask = ping.SendPingAsync(ChooseHost());
-							PingStartedTime = Utils.Time.GetMillisecondsSinceEpoch();
-							Phase = PingPhase.PingStarted;
+							PingStartedTime = Time.GetMillisecondsSinceEpoch();
+							State = PingerState.RequestSent;
 							try
 							{
 								Reply = await pingReplyTask;
@@ -451,10 +734,10 @@ namespace Aurora.Scripts.VoronScripts
 							{
 								Reply = null;
 							}
-							PingEndedTime = Utils.Time.GetMillisecondsSinceEpoch();
-							Phase = PingPhase.PingEnded;
+							PingEndedTime = Time.GetMillisecondsSinceEpoch();
+							State = PingerState.ResponseRecieved;
 							var newActivator = new TaskCompletionSource<bool>();
-							pingActivator = newActivator;
+							Volatile.Write(ref pingActivator, newActivator);
 							await newActivator.Task;
 						}
 					}
@@ -470,16 +753,24 @@ namespace Aurora.Scripts.VoronScripts
 
 		private TaskCompletionSource<bool> pingActivator;
 
-		public void AllowNextPing()
+		public bool SendRequest()
 		{
-			var pingActivatorCopy = pingActivator;
+			var pingActivatorCopy = Volatile.Read(ref pingActivator);
 			if (pingActivatorCopy != null)
 			{
 				if (Interlocked.CompareExchange(ref pingActivator, null, pingActivatorCopy) == pingActivatorCopy)
 				{
-					Task.Run(() => pingActivatorCopy.TrySetResult(true));
+					Task.Run(() => pingActivatorCopy.SetResult(true));
+					return true;
 				}
 			}
+			return false;
+		}
+
+		public void Reset()
+		{
+			Reply = null;
+			State = PingerState.Initial;
 		}
 
 		private string ChooseHost()
@@ -523,4 +814,5 @@ namespace Aurora.Scripts.VoronScripts
 		}
 
 	}
+
 }

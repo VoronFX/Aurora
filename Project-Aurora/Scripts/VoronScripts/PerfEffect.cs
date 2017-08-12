@@ -131,14 +131,14 @@ namespace Aurora.Scripts.VoronScripts
 
 		private static readonly MathParser MathParser = new MathParser();
 
-		private static readonly ConcurrentDictionary<string, PerformanceCounterManager.IntervalPerformanceCounter> valueSources
+		private static readonly ConcurrentDictionary<string, PerformanceCounterManager.IntervalPerformanceCounter> ValueSources
 			= new ConcurrentDictionary<string, PerformanceCounterManager.IntervalPerformanceCounter>();
 
-		private static readonly ConcurrentDictionary<string, ColorSpectrum> gradients
+		private static readonly ConcurrentDictionary<string, ColorSpectrum> Gradients
 			= new ConcurrentDictionary<string, ColorSpectrum>();
 
 		private static readonly ConcurrentDictionary<CircleGradientStateKey, CircleGradientState>
-			circleShidtStates = new ConcurrentDictionary<CircleGradientStateKey, CircleGradientState>();
+			CircleShidtStates = new ConcurrentDictionary<CircleGradientStateKey, CircleGradientState>();
 
 		private KeySequence Keys { get; set; }
 		private EffectTypes EffectType { get; set; }
@@ -159,14 +159,14 @@ namespace Aurora.Scripts.VoronScripts
 			Keys = properties.GetVariable<KeySequence>("Keys or Freestyle");
 			EffectType = (EffectTypes)properties.GetVariable<long>("Effect type");
 
-			ValueSource = valueSources.GetOrAdd(properties.GetVariable<string>("Value source"), key =>
+			ValueSource = ValueSources.GetOrAdd(properties.GetVariable<string>("Value source"), key =>
 			{
 				var parsedValueSource = key.Split('|').Select(x => x.Trim()).ToArray();
 				return PerformanceCounterManager.GetCounter(parsedValueSource[0], parsedValueSource[1], parsedValueSource[2],
 					1000);
 			});
 			ValueExpression = properties.GetVariable<string>("Value expression");
-			Gradient = gradients.GetOrAdd(properties.GetVariable<string>("Gradient"), ScriptHelper.StringToSpectrum);
+			Gradient = Gradients.GetOrAdd(properties.GetVariable<string>("Gradient"), ScriptHelper.StringToSpectrum);
 
 			EnableOverloadBlinking = properties.GetVariable<bool>("Enable Overload Blinking");
 			OverloadStartThreshold = properties.GetVariable<long>("Overload Start Threshold") / 100f;
@@ -206,9 +206,7 @@ namespace Aurora.Scripts.VoronScripts
 				blinkingLevel = Math.Max(0f, Math.Min(1f, blinkingLevel))
 								* Math.Abs(1f - (time % OverloadBlinkingSpeed) / (OverloadBlinkingSpeed / 2f));
 
-				gradient.SetColorAt(1, (Color)EffectColor.BlendColors(
-					new EffectColor(gradient.GetColorAt(1f)),
-					new EffectColor(OverloadBlinkingColor), blinkingLevel));
+				gradient.SetColorAt(1, ColorUtils.BlendColors(gradient.GetColorAt(1f), OverloadBlinkingColor, blinkingLevel));
 			}
 
 			if (EffectType == EffectTypes.CycledGradientShift)
@@ -216,13 +214,25 @@ namespace Aurora.Scripts.VoronScripts
 				var currSpeed = value * Math.Abs(CycledGradientShiftBaseSpeed - CycledGradientShiftFullSpeed) +
 								CycledGradientShiftBaseSpeed;
 
-				var gradState = circleShidtStates.AddOrUpdate(
+				var gradState = CircleShidtStates.AddOrUpdate(
 					new CircleGradientStateKey(
 						Gradient, ValueSource, CycledGradientShiftBaseSpeed, CycledGradientShiftFullSpeed), (key) =>
 					new CircleGradientState(0, time), (keys, prevState) =>
 					new CircleGradientState((prevState.Key + (time - prevState.Value) * currSpeed / 1000f) % 1f, time));
 
-				layer.PercentEffect(gradient.Shift(gradState.Key), Keys, 1, 1, PercentEffectType.Progressive_Gradual);
+				var grad = gradient.Shift(gradState.Key);
+
+				if (Keys.type == KeySequenceType.Sequence)
+				{
+					for (int i = 0; i < Keys.keys.Count; i++)
+					{
+						layer.Set(Keys.keys[i], grad.GetColorAt(i / (float)Keys.keys.Count));
+					}
+				}
+				else
+				{
+					layer.PercentEffect(grad, Keys, 1, 1, PercentEffectType.Progressive);
+				}
 			}
 			else
 			{
@@ -243,39 +253,6 @@ namespace Aurora.Scripts.VoronScripts
 				}
 				layer.PercentEffect(gradient, Keys, value, 1, effectType);
 			}
-
-
-
-			//var cpuLoad = Cpu.GetValue();
-
-			//var blinkingLevel = (cpuLoad[0] - OverloadThreshold) / (1 - OverloadThreshold);
-			//blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel));
-
-			//var CPULayer = new EffectLayer(ID + " - CPULayer",
-			//	Color.FromArgb((byte)(EnableFullOverload ? (255 * blinkingLevel) : 0), OverloadColor));
-			//var CPULayerCircle = new EffectLayer(ID + " - CPULayerCircle");
-
-			//for (int i = 0; i < Math.Min(CoreKeys.Count, cpuLoad.Length - 1); i++)
-			//{
-			//	CPULayer.Set(CoreKeys[i], LoadGradient.Value.GetColorAt(cpuLoad[i + 1]));
-
-			//	blinkingLevel = (cpuLoad[i + 1] - OverloadThreshold) / (1 - OverloadThreshold);
-			//	blinkingLevel = Math.Max(0, Math.Min(1, blinkingLevel))
-			//					* Math.Abs(1f - (Utils.Time.GetMillisecondsSinceEpoch() % BlinkingSpeed) / (BlinkingSpeed / 2f));
-
-			//	CPULayer.Set(CoreKeys[i], (Color)EffectColor.BlendColors(
-			//		new EffectColor(CPULayer.Get(CoreKeys[i])),
-			//		new EffectColor(OverloadColor), EnableCoreOverload ? blinkingLevel : 0f));
-			//}
-
-			//LoadCircleGradient.Value.Shift((float)(-0.005 + -0.02 * cpuLoad[0]));
-
-			//for (int i = 0; i < LoadCircleKeys.Count; i++)
-			//{
-			//	CPULayerCircle.Set(LoadCircleKeys[i],
-			//		Color.FromArgb((byte)(255 * cpuLoad[0]),
-			//			LoadCircleGradient.Value.GetColorAt(i / (float)LoadCircleKeys.Count)));
-			//}
 
 			return layer;
 		}
@@ -306,7 +283,7 @@ namespace Aurora.Scripts.VoronScripts
 			foreach (var colorset in colors.Select((x, i) => new
 			{
 				Color = ColorTranslator.FromHtml(x[0]),
-				Position = x.Length > 1 ? float.Parse(x[1]) : (1f / colors.Length * i)
+				Position = x.Length > 1 ? float.Parse(x[1]) : (1f / (colors.Length - 1) * i)
 			}))
 			{
 				spectrum.SetColorAt(colorset.Position, colorset.Color);
@@ -1160,7 +1137,7 @@ namespace Aurora.Scripts.VoronScripts
 		internal class MathParser
 		{
 			/// <summary>
-			/// This constructor will add some basic operators, functions, and variables
+			/// This consconstructor will add some basic operators, functions, and variables
 			/// to the parser. Please note that you are able to change that using
 			/// boolean flags
 			/// </summary>
