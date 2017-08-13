@@ -15,6 +15,8 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Aurora.Devices;
@@ -65,8 +67,11 @@ namespace Aurora.Scripts.VoronScripts
 			//	(long)Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Max());
 
 			Properties.RegProp("Default Host", "google.com", "Ping this host when no known apps in foreground.");
-			Properties.RegProp("Per App Hosts", "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Client.exe\" 109.105.133.67",
-				"Ping special host (i.e. game server) when certain app is in foreground. Separate apps with \"|\".");
+			Properties.RegProp("Per App Hosts", "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Blade & Soul\" 109.105.133.67",
+				String.Join(Environment.NewLine, "Ping special host (i.e. game server) when certain app is in foreground.",
+				"Enter process name or window title followed by host.",
+				"Elevated processes can't be detected only by window title.",
+				" Use double quotes if name contains spaces.Separate apps with \"|\"."));
 
 			Properties.RegProp("Max Ping", 400L, "Such pings or higher will fill full bar.", 50L, 3000L);
 			//Properties.RegProp("Animation Reserve Delay", 100L, String.Join(Environment.NewLine,
@@ -775,36 +780,76 @@ namespace Aurora.Scripts.VoronScripts
 
 		private string ChooseHost()
 		{
-			var currentApp = GetActiveWindowsProcessname();
-			if (!string.IsNullOrWhiteSpace(currentApp))
-				currentApp = Path.GetFileName(currentApp).ToLowerInvariant();
-
-			if (!string.IsNullOrWhiteSpace(currentApp) && HostsPerApplication != null)
-			{
-				string host;
-				if (HostsPerApplication.TryGetValue(currentApp, out host))
-				{
-					return host;
-				}
-			}
-			return DefaultHost;
-		}
-
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
-		private static extern IntPtr GetForegroundWindow();
-
-		[System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-		private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-		private static string GetActiveWindowsProcessname()
-		{
 			try
 			{
 				IntPtr handle = GetForegroundWindow();
 
+				var activeProcessName = GetActiveWindowsProcessname(handle);
+				if (!string.IsNullOrWhiteSpace(activeProcessName))
+					activeProcessName = Path.GetFileName(activeProcessName).ToLowerInvariant();
+				var activeWindowTitle = GetActiveWindowsTitle(handle);
+
+				if (HostsPerApplication != null)
+				{
+					string host;
+					if (HostsPerApplication.TryGetValue(activeProcessName, out host)
+						|| HostsPerApplication.TryGetValue(activeWindowTitle, out host))
+					{
+						return host;
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				Global.logger.LogLine(exception.ToString(), Logging_Level.Error);
+			}
+			return DefaultHost;
+		}
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetForegroundWindow();
+
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		public static extern int GetWindowTextLength(HandleRef hWnd);
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		public static extern int GetWindowText(HandleRef hWnd, StringBuilder lpString, int nMaxCount);
+
+		private static string GetActiveWindowsProcessname(IntPtr handle)
+		{
+			try
+			{
 				uint processId;
-				return GetWindowThreadProcessId(handle, out processId) > 0 ?
-					Process.GetProcessById((int)processId).MainModule.FileName : "";
+				return GetWindowThreadProcessId(handle, out processId) > 0
+					? Process.GetProcessById((int)processId).MainModule.FileName
+					: "";
+			}
+			catch (Exception exception)
+			{
+				if (exception.Message == "A 32 bit processes cannot access modules of a 64 bit process."
+					|| exception.Message == "Access is denied")
+				{
+					Global.logger.LogLine(exception.ToString(), Logging_Level.Debug);
+				}
+				else
+				{
+					Global.logger.LogLine(exception.ToString(), Logging_Level.Error);
+				}
+				return "";
+			}
+		}
+
+		private static string GetActiveWindowsTitle(IntPtr handle)
+		{
+			try
+			{
+				int capacity = GetWindowTextLength(new HandleRef(null, handle)) * 2;
+				var stringBuilder = new StringBuilder(capacity);
+				GetWindowText(new HandleRef(null, handle), stringBuilder, stringBuilder.Capacity);
+				return stringBuilder.ToString();
 			}
 			catch (Exception exception)
 			{
@@ -812,7 +857,5 @@ namespace Aurora.Scripts.VoronScripts
 				return "";
 			}
 		}
-
 	}
-
 }
