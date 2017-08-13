@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - PerformanceEffect
-// v1.0-beta.6
+// v1.0-beta.7
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -222,17 +222,8 @@ namespace Aurora.Scripts.VoronScripts
 
 				var grad = gradient.Shift(gradState.Key);
 
-				if (Keys.type == KeySequenceType.Sequence)
-				{
-					for (int i = 0; i < Keys.keys.Count; i++)
-					{
-						layer.Set(Keys.keys[i], grad.GetColorAt(i / (float)Keys.keys.Count));
-					}
-				}
-				else
-				{
-					layer.PercentEffect(grad, Keys, 1, 1, PercentEffectType.Progressive);
-				}
+				layer.PercentEffect(grad, Keys, 1, 1, PercentEffectType.Progressive);
+
 			}
 			else
 			{

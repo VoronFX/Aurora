@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - PingEffect
-// v1.0-beta.6
+// v1.0-beta.7
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -65,7 +65,7 @@ namespace Aurora.Scripts.VoronScripts
 			//	(long)Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Max());
 
 			Properties.RegProp("Default Host", "google.com", "Ping this host when no known apps in foreground.");
-			Properties.RegProp("Per App Hosts", "\"LolClient\" 185.40.64.69",
+			Properties.RegProp("Per App Hosts", "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Client.exe\" 109.105.133.67",
 				"Ping special host (i.e. game server) when certain app is in foreground. Separate apps with \"|\".");
 
 			Properties.RegProp("Max Ping", 400L, "Such pings or higher will fill full bar.", 50L, 3000L);
@@ -159,7 +159,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			var data = PingAnimations.GetOrAdd(new Tuple<KeySequence, string, string>(Keys, DefaultHost, PerAppHosts),
 				key => new KeyValuePair<AnimationData, Pinger>(new AnimationData(), new Pinger(DefaultHost, PerAppHosts.Split('|')
-					.Select(x => x.Trim().Split(' ').Select(x2 => x2.Trim().ToLower()))
+					.Select(x => x.Trim().Split(' ').Select(x2 => x2.Trim().Trim('"', '\'').ToLower()))
 					.ToDictionary(s => s.First(), s => s.Last()))));
 
 			Pinger = data.Value;

@@ -175,22 +175,22 @@
   },
   "ScriptSettings": {
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[Aurora.Settings.ScriptSettings, Aurora]], mscorlib",
-    "CpuCores": {
-      "$type": "Aurora.Settings.ScriptSettings, Aurora",
-      "Keys": null,
-      "Enabled": false
-    },
-    "GpuLoad": {
-      "$type": "Aurora.Settings.ScriptSettings, Aurora",
-      "Keys": null,
-      "Enabled": false
-    },
     "Voron Scripts - PerfEffect - v1.0-beta.6": {
       "$type": "Aurora.Settings.ScriptSettings, Aurora",
       "Keys": null,
       "Enabled": false
     },
     "Voron Scripts - PingEffect - v1.0-beta.6": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "CpuCores": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "GpuLoad": {
       "$type": "Aurora.Settings.ScriptSettings, Aurora",
       "Keys": null,
       "Enabled": false
@@ -2014,12 +2014,12 @@
                 },
                 "Per App Hosts": {
                   "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
-                  "Value": "\"LolClient\" 185.40.64.69 | \"Client\" 109.105.133.67",
+                  "Value": "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Client\" 109.105.133.67",
                   "Max": null,
                   "Min": null,
                   "Title": "Per App Hosts",
                   "Remark": "Ping special host (i.e. game server) when certain app is in foreground. Separate apps with \"|\".",
-                  "Default": "\"LolClient\" 185.40.64.69"
+                  "Default": "\"LolClient.exe\" 185.40.64.69 | \"LeagueClient.exe\" 185.40.64.69 | \"Client\" 109.105.133.67"
                 },
                 "Max Ping": {
                   "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
@@ -2422,7 +2422,8 @@
                         57,
                         56,
                         55,
-                        73
+                        73,
+                        90
                       ]
                     },
                     "type": 0,
@@ -2627,6 +2628,7 @@
             "_RandomPrimaryColor": false,
             "_RandomSecondaryColor": false,
             "_EffectSpeed": 17.5,
+            "_WaitOnKeyUp": false,
             "_InteractiveEffect": 1,
             "_EffectWidth": 5,
             "_SecondaryColor": "Blue",
@@ -2799,6 +2801,7 @@
             "_RandomPrimaryColor": false,
             "_RandomSecondaryColor": false,
             "_EffectSpeed": 20.0,
+            "_WaitOnKeyUp": false,
             "_InteractiveEffect": 2,
             "_EffectWidth": 2,
             "_SecondaryColor": "Magenta",
@@ -3167,6 +3170,7 @@
           "Properties": {
             "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
             "_DimBackground": true,
+            "_MergeModifierKey": true,
             "_DimColor": "169, 0, 0, 0",
             "_ShortcutKeys": {
               "$type": "Aurora.Settings.Keybind[], Aurora",
@@ -3455,6 +3459,7 @@
           "Properties": {
             "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
             "_DimBackground": true,
+            "_MergeModifierKey": true,
             "_DimColor": "169, 0, 0, 0",
             "_ShortcutKeys": {
               "$type": "Aurora.Settings.Keybind[], Aurora",
@@ -3698,6 +3703,7 @@
           "Properties": {
             "$type": "Aurora.Settings.Layers.ShortcutAssistantLayerHandlerProperties, Aurora",
             "_DimBackground": true,
+            "_MergeModifierKey": true,
             "_DimColor": "169, 0, 0, 0",
             "_ShortcutKeys": {
               "$type": "Aurora.Settings.Keybind[], Aurora",
