@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - PingEffect
-// v1.0-beta.7
+// v1.0-beta.8
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 
@@ -67,11 +67,11 @@ namespace Aurora.Scripts.VoronScripts
 			//	(long)Enumerable.Cast<EffectTypes>(Enum.GetValues(typeof(EffectTypes))).Max());
 
 			Properties.RegProp("Default Host", "google.com", "Ping this host when no known apps in foreground.");
-			Properties.RegProp("Per App Hosts", "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Blade & Soul\" 109.105.133.67",
+			Properties.RegProp("Per App Hosts", "LolClient.exe @ 185.40.64.69 | LeagueClientUx.exe @ 185.40.64.69 | Blade & Soul @ 109.105.133.67",
 				String.Join(Environment.NewLine, "Ping special host (i.e. game server) when certain app is in foreground.",
-				"Enter process name or window title followed by host.",
+				"Enter process name or window title, then \"@\" followed by host.",
 				"Elevated processes can't be detected only by window title.",
-				" Use double quotes if name contains spaces.Separate apps with \"|\"."));
+				"Separate apps with \"|\"."));
 
 			Properties.RegProp("Max Ping", 400L, "Such pings or higher will fill full bar.", 50L, 3000L);
 			//Properties.RegProp("Animation Reserve Delay", 100L, String.Join(Environment.NewLine,
@@ -164,7 +164,7 @@ namespace Aurora.Scripts.VoronScripts
 
 			var data = PingAnimations.GetOrAdd(new Tuple<KeySequence, string, string>(Keys, DefaultHost, PerAppHosts),
 				key => new KeyValuePair<AnimationData, Pinger>(new AnimationData(), new Pinger(DefaultHost, PerAppHosts.Split('|')
-					.Select(x => x.Trim().Split(' ').Select(x2 => x2.Trim().Trim('"', '\'').ToLower()))
+					.Select(x => x.Trim().Split('@').Select(x2 => x2.Trim().ToLower()))
 					.ToDictionary(s => s.First(), s => s.Last()))));
 
 			Pinger = data.Value;
@@ -786,8 +786,8 @@ namespace Aurora.Scripts.VoronScripts
 
 				var activeProcessName = GetActiveWindowsProcessname(handle);
 				if (!string.IsNullOrWhiteSpace(activeProcessName))
-					activeProcessName = Path.GetFileName(activeProcessName).ToLowerInvariant();
-				var activeWindowTitle = GetActiveWindowsTitle(handle);
+					activeProcessName = Path.GetFileName(activeProcessName).ToLower();
+				var activeWindowTitle = GetActiveWindowsTitle(handle).ToLower();
 
 				if (HostsPerApplication != null)
 				{

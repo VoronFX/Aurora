@@ -1,6 +1,6 @@
 ﻿//
 // Voron Scripts - PerformanceEffect
-// v1.0-beta.7
+// v1.0-beta.8
 // https://github.com/VoronFX/Aurora
 // Copyright (C) 2016 Voronin Igor <Voron.exe@gmail.com>
 // 

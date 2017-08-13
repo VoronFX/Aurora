@@ -180,17 +180,17 @@
       "Keys": null,
       "Enabled": false
     },
-    "Voron Scripts - PingEffect - v1.0-beta.6": {
-      "$type": "Aurora.Settings.ScriptSettings, Aurora",
-      "Keys": null,
-      "Enabled": false
-    },
     "CpuCores": {
       "$type": "Aurora.Settings.ScriptSettings, Aurora",
       "Keys": null,
       "Enabled": false
     },
     "GpuLoad": {
+      "$type": "Aurora.Settings.ScriptSettings, Aurora",
+      "Keys": null,
+      "Enabled": false
+    },
+    "Voron Scripts - PingEffect - v1.0-beta.6": {
       "$type": "Aurora.Settings.ScriptSettings, Aurora",
       "Keys": null,
       "Enabled": false
@@ -2014,12 +2014,12 @@
                 },
                 "Per App Hosts": {
                   "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
-                  "Value": "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Blade & Soul\" 109.105.133.67",
+                  "Value": "LolClient.exe @ 185.40.64.69 | LeagueClientUx.exe @ 185.40.64.69 | Blade & Soul @ 109.105.133.67",
                   "Max": null,
                   "Min": null,
                   "Title": "Per App Hosts",
-                  "Remark": "Ping special host (i.e. game server) when certain app is in foreground.\r\nEnter process name or window title followed by host.\r\nElevated processes can't be detected only by window title.\r\n Use double quotes if name contains spaces.Separate apps with \"|\".",
-                  "Default": "\"LolClient.exe\" 185.40.64.69 | \"LeagueClientUx.exe\" 185.40.64.69 | \"Blade & Soul\" 109.105.133.67"
+                  "Remark": "Ping special host (i.e. game server) when certain app is in foreground.\r\nEnter process name or window title, then \"@\" followed by host.\r\nElevated processes can't be detected only by window title.\r\nSeparate apps with \"|\".",
+                  "Default": "LolClient.exe @ 185.40.64.69 | LeagueClientUx.exe @ 185.40.64.69 | Blade & Soul @ 109.105.133.67"
                 },
                 "Max Ping": {
                   "$type": "Aurora.Settings.VariableRegistryItem, Aurora",
