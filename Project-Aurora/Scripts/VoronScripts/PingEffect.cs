@@ -207,7 +207,7 @@ namespace Aurora.Scripts.VoronScripts
 				? 0
 				: -1;
 
-			if (CurrentTime >= Data.SuccessAnimationStartTime && CurrentTime <= Data.FinalAnimationEndTime)
+			if (CurrentTime >= Data.SuccessAnimationStartTime && (CurrentTime <= Data.FinalAnimationEndTime || (Data.Phase == AnimationPhase.WaitingForPingEnd && EffectType != EffectTypes.PingGraph)))
 			{
 				var phase = Math.Min(1, ((CurrentTime - Data.SuccessAnimationStartTime) / (float)SuccessAnimationDuration));
 
